@@ -1,0 +1,163 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
+    roi = ee.FeatureCollection("users/valeriepasquarella/simplifiedNewEngland_2");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Harmonic Baseline Generator
+// | [valpasq@bu.edu], 2020
+// |
+
+var VERSION = '5-0';
+
+// ---------------------------------- Model Parameters ---------------------------------- 
+
+var START_YEAR = 2005;  // Starts 01-01
+var END_YEAR = 2010;    // Ends 12-31
+
+var DEPENDENT = 'tcg';  // Select spectral transform   
+var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
+var TS = 'full';        // 'full' or '16d' (limits L7 use)
+
+var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
+var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zones)
+
+
+// Dictionary for asset properties
+var outputProperties = ee.Dictionary({
+    'system:time_start': ee.Date(START_YEAR+'-01-01').millis(),
+    'system:time_end': ee.Date(END_YEAR+'-12-31').millis(),
+    'spectral_band': DEPENDENT,
+    'year_start': START_YEAR,
+    'year_end': END_YEAR,
+    'version': VERSION,
+    'harmonics': HARMONICS,
+    'time_series': TS,
+});
+
+
+// ------------------------------------- Analysis -------------------------------------- 
+
+// Get specified frequencies
+if (HARMONICS == 'h13') {
+  var harmonicFrequencies = ee.List([1,3]);
+} else if (HARMONICS == 'h12') {
+  var harmonicFrequencies = ee.List([1,2]);
+}
+  
+// Construct lists of names for the harmonic terms
+var cosNames = getNames('cos_', harmonicFrequencies);
+var sinNames = getNames('sin_', harmonicFrequencies);
+
+// Make list of  variables
+var independents = ee.List(['constant', 't'])
+  .cat(cosNames).cat(sinNames);
+  
+// Get study area boundaries
+var bounds_geo = roi.geometry(); // ROI geoemtry
+
+// Select all available (full) versus limited L7 (16d) time series
+if (TS == 'full') {
+  
+  // Get all Landsat 5 imagery.
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+    .filterBounds(bounds_geo)
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    .map(preprocess457);
+  
+  // Get all Landsat 7 imagery
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+    .filterBounds(bounds_geo)
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    .map(preprocess457);
+  
+  // Get all Landsat 8 imagery.
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+    .filterBounds(bounds_geo)
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .map(preprocess8);
+    
+} else if (TS == '16d') {
+  
+  // Get all Landsat 5 imagery.
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+    .filterBounds(bounds_geo)
+    .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    .map(preprocess457);
+  
+  // Get Landsat 7 imagery to fill gap period between 5 and 8.
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+    .filterBounds(bounds_geo)
+    .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    .map(preprocess457);
+  
+  // Get all Landsat 8 imagery.
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+    .filterBounds(bounds_geo)
+    .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .map(preprocess8);
+}
+
+// Merge pre-processed Landsat 5, 7 and 8 collections
+var collection = collection5.merge(collection7).merge(collection8)
+  .map(addCloudScore)
+  .map(maskCloudScore) // mask based on simple cloud score
+  .map(spectralTransforms);
+
+
+// Get WRS2 Scene boundaries
+var scenes = wrs2.filterBounds(bounds_geo);
+
+// Join images by Scene (Path/Row)
+var join = ee.Join.saveAll('images', 'system:time_start', true)
+var collections = join.apply({
+primary: scenes, 
+secondary: collection, 
+condition: ee.Filter.and(
+  ee.Filter.equals({
+    leftField: 'PATH', 
+    rightField: 'WRS_PATH'
+  }), ee.Filter.equals({
+    leftField: 'ROW', 
+    rightField: 'WRS_ROW'
+  })
+)
+})
+
+// Map over scene collections
+var outputFull = ee.ImageCollection(collections.map(getCoeffs));
+
+// Quality mosaic based on number of observations per pixel
+var outputMosiac = ee.Image(outputFull.qualityMosaic('nobs')
+                     .multiply(OUTPUT_MULTIPLIER)
+                     .int() // convert to int
+                     .setMulti(outputProperties));
+                   
+                     
+print('Full collection:', outputFull);
+print('Mosaic product:', outputMosiac);
+
+Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
+
+// ------------------------------------- Export -------------------------------------- 
+
+Export.image.toAsset({
+  image: outputMosiac,
+  description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
+  assetId: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR,
+  region: roi.geometry().bounds(),
+  crs: OUTPUT_CRS,
+  scale: 30,
+  maxPixels: 1e13,
+})
+
+
+
+
+

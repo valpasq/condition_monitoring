@@ -66,7 +66,7 @@ var cloudScore = function(image) {
 }; 
 exports.cloudScore = cloudScore
 
-function addCloudScore(image) {
+var addCloudScore = function(image) {
       // Invert the cloudscore so 1 is least cloudy, and rename the band.
       var score = cloudScore(image.select(LTS_NAMES));
       score = ee.Image(1).subtract(score).select([0], ['cloudscore']);
@@ -76,7 +76,7 @@ function addCloudScore(image) {
 }
 exports.addCloudScore = addCloudScore
 
-function maskCloudScore(image) {
+var maskCloudScore = function(image) {
   var qa = image.select('cloudscore');
 
   var mask = qa.gte(0.8);
@@ -87,7 +87,7 @@ function maskCloudScore(image) {
 // cloud-cover-percentage-in-google-earth-engine  
 exports.maskCloudScore = maskCloudScore
 
-function spectralTransforms(img){
+var spectralTransforms = function(img){
   // make sure index string in upper case
   var index = DEPENDENT.toUpperCase();
 

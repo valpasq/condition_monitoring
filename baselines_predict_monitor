@@ -1,0 +1,365 @@
+// |
+// | Landsat Time Series Harmonic Baseline Generator
+// | [valpasq@bu.edu], 2020
+// |
+
+
+// --------------------------------- Baseline Parameters ---------------------------------- 
+
+var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
+var baseline = ee.Image(baseline_fn)
+
+var VERSION = baseline.get('version').getInfo()
+var DEPENDENT = baseline.get('spectral_band').getInfo()
+var TS = baseline.get('time_series').getInfo()
+var FREQ = baseline.get('harmonics').getInfo()
+var YEAR_START = baseline.get('year_start').getInfo()
+var YEAR_END = baseline.get('year_end').getInfo()
+var REF_PERIOD = YEAR_START + '-' + YEAR_END
+
+// -------------------------------- Monitoring Parameters --------------------------------- 
+
+var YEAR = 2017
+var DAY_START = '05-01'
+var DAY_END = '09-30'
+var MONITOR_START = YEAR + '-' + DAY_START;
+var MONITOR_END = YEAR + '-' + DAY_END;
+
+// Dictionary for asset properties
+var outputProperties = ee.Dictionary({
+      'system:time_start': ee.Date(YEAR+'-01-01').millis(),
+      'spectral_band': DEPENDENT,
+      'monitor_year': YEAR,
+      'monitor_start': MONITOR_START,
+      'monitor_end': MONITOR_END,
+      'run_version': VERSION,
+      'harmonics': FREQ,
+      'time_series': TS,
+      'ref_period': REF_PERIOD
+  });
+
+
+
+// ---------------------------------- PREPROCESS ---------------------------------- 
+
+// Band mapping for legacy re-naming
+var L8_BANDS = ['B2', 'B3', 'B4', 'B5',  'B6',  'B7', 'B10']; // Landsat OLI bands
+var L457_BANDS = ['B1', 'B2', 'B3', 'B4',  'B5',  'B7', 'B6'] // Landsat TM/ETM+ bands
+var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp']; // Common names
+
+
+// Function to reprocess L4 / L5 / L7 (mask and rename)
+var preprocess457 = function(image) {
+  var mask1 = image.select(['pixel_qa']).eq(66) // Clear land
+              .or(image.select(['pixel_qa']).eq(68)) // Clear water
+  var mask2 = image.mask().reduce('min')
+  var mask3 = image.select(['B1', 'B2', 'B3', 'B4',  'B5',  'B7']).gt(0).and(
+            image.select(['B1', 'B2', 'B3', 'B4',  'B5',  'B7']).lt(10000)).reduce('min')
+  
+  return image.updateMask(mask1.and(mask2).and(mask3))
+    .select(L457_BANDS).rename(LTS_NAMES)
+    .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
+}
+
+// Function to preprocess L8 (mask and rename)
+var preprocess8 = function(image) {
+  var mask1 = image.select(['pixel_qa']).eq(322) // Clear land
+              .or(image.select(['pixel_qa']).eq(324)) // Clear water
+  var mask2 = image.mask().reduce('min')
+  var mask3 = image.select(['B2', 'B3', 'B4', 'B5',  'B6',  'B7']).gt(0).and(
+            image.select(['B2', 'B3', 'B4', 'B5',  'B6',  'B7']).lt(10000)).reduce('min')
+               
+  return image.updateMask(mask1.and(mask2).and(mask3))
+      .select(L8_BANDS).rename(LTS_NAMES) // Map legacy band names
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
+};
+
+
+// Functions to mask using a simple image-based cloud score 
+var cloudScore = function(image) {
+  // A helper to apply an expression and linearly rescale the output.
+  var rescale = function(image, exp, thresholds) {
+    return image.expression(exp, {image: image})
+        .divide(10000) // need to divide by 10000 (SR)
+        .subtract(thresholds[0]).divide(thresholds[1] - thresholds[0]);
+  };
+
+  // Compute several indicators of cloudyness and take the minimum of them.
+  var score = ee.Image(1.0);
+  
+  // Clouds are reasonably bright in the blue band.
+  score = score.min(rescale(image, 'image.blue', [0.1, 0.3]));
+
+  // Clouds are reasonably bright in all visible bands.
+  score = score.min(rescale(image, 'image.red + image.green + image.blue', [0.2, 0.8]));
+
+  // Clouds are reasonably bright in all infrared bands.
+  score = score.min(
+      rescale(image, 'image.nir + image.swir1 + image.swir2', [0.3, 0.8]));
+
+  // Clouds are reasonably cool in temperature.
+  score = score.min(rescale(image, 'image.temp', [300, 290]));
+
+  // However, clouds are not snow.
+  var ndsi = image.normalizedDifference(['green', 'swir1']);
+  return score.min(rescale(ndsi, 'image', [0.8, 0.6]));
+
+}; 
+
+// Function to add cloudscore band
+function addCloudScore(image) {
+      // Invert the cloudscore so 1 is least cloudy, and rename the band.
+      var score = cloudScore(image.select(LTS_NAMES));
+      score = ee.Image(1).subtract(score).select([0], ['cloudscore']);
+      return image.addBands(score);
+// REF: https://gis.stackexchange.com/questions/280400/
+// cloud-cover-percentage-in-google-earth-engine 
+}
+
+// Function to mask based on cloudscore
+function maskCloudScore(image) {
+  var qa = image.select('cloudscore');
+
+  var mask = qa.gte(0.8)
+  return image.updateMask(mask)
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
+}
+// SOURCE: https://gis.stackexchange.com/questions/280400/
+// cloud-cover-percentage-in-google-earth-engine  
+
+// Function to apply spectral transforms.
+function spectralTransforms(image) {
+  
+  // Set up dictionary using band name keys.
+  var dict = {
+    blue: image.select("blue").divide(10000),
+    green: image.select("green").divide(10000), // moved divide here
+    red: image.select("red").divide(10000),
+    nir: image.select("nir").divide(10000),
+    swir1: image.select("swir1").divide(10000),
+    swir2: image.select("swir2").divide(10000),
+  }
+  
+  var index = DEPENDENT;
+  
+  var indexImg;
+  switch (index){
+    case 'ndvi':
+      indexImg = image.normalizedDifference(['nir', 'red'])
+        .rename("ndvi");
+      break;
+    case 'tcg':
+      indexImg = image.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
+        .rename("tcg")
+      break;
+
+    default:
+      print('The index you provided is not supported');
+  }
+
+  return indexImg.reproject('EPSG:5070', null, 30)
+    .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"])
+}
+
+// Function to get a sequence of band names for harmonic terms.
+var getNames = function(base, list) {
+  return ee.List(list).map(function(i) { 
+    return ee.String(base).cat(ee.Number(i).int());
+  });
+};
+
+  
+  // Function to add a constant band.
+var addConstant = function(image) {
+  return image.addBands(ee.Image(1)
+    // .setDefaultProjection(baseline_crs)
+    );
+};
+
+// Function to add a time band.
+var addTime = function(image) {
+  // Compute time in fractional years since the epoch.
+  var date = ee.Date(image.get('system:time_start'));
+  var years = date.difference(ee.Date('1970-01-01'), 'year');
+  var timeRadians = ee.Image(years.multiply(2 * Math.PI))
+    // .setDefaultProjection(baseline_crs);
+  return image.addBands(timeRadians.rename('t').float());
+};
+
+// Function to compute the specified number of harmonics
+// and add them as bands.  Assumes the time band is present.
+var addHarmonics = function(freqs) {
+  return function(image) {
+    // Make an image of frequencies.
+    var frequencies = ee.Image.constant(freqs)
+      // .setDefaultProjection(baseline_crs);
+    // This band should represent time in radians.
+    var time = ee.Image(image).select('t');
+    // Get the cosine terms.
+    var cosines = time.multiply(frequencies).cos()
+      .rename(cosNames);
+    // Get the sin terms.
+    var sines = time.multiply(frequencies).sin()
+      .rename(sinNames);
+    return image.addBands(cosines).addBands(sines);
+  };
+};
+
+// Function to build monitoring collection
+var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
+  
+// Get Landsat 5 imagery
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterDate(MONITOR_START, MONITOR_END)  
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .map(preprocess457) 
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      
+  // Get Landsat 7 imagery
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+      .filterDate(MONITOR_START, MONITOR_END) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .map(preprocess457) 
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+  
+  // Get  Landsat 8 imagery
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+      .filterDate(MONITOR_START, MONITOR_END) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .map(preprocess8)  
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+  
+  // FINAL LTS COLLECTION
+  var monitorC = collection5.merge(collection7).merge(collection8)
+      .sort('system:time_start') 
+      .map(addCloudScore).map(maskCloudScore) // mask based on simple cloud score
+      .map(spectralTransforms) // calculate spectral transforms
+      
+      
+  // Return TC images for monitoring period
+  return monitorC;
+  
+  };
+  
+  
+// Function to add predicted value
+var addPrediction = function(image) {
+  var prediction = image.select(independents)
+      .multiply(baseImage.select(independents))
+      .reduce('sum')
+      .rename('fitted')
+  var rmse = baseImage.select('rmse').rename('rmse')
+  var nobs = baseImage.select('nobs').rename('nobs')
+  var t = baseImage.select('t').rename('trend')
+  return image.addBands(prediction)
+    .addBands(rmse).addBands(nobs).addBands(t);
+}
+
+// Function to calculate residuals (observed - predicted)
+var addResidual = function(image) {
+  var observed = image.select(DEPENDENT)
+  var prediction = image.select(independents)
+      .multiply(baseImage.select(independents))
+      .reduce('sum')
+  var score = observed.subtract(prediction)
+      .divide(baseImage.select('rmse'))
+      // .multiply(image.select('mask'))
+  return image.addBands(score.rename('score'));
+}
+
+
+////////////////////////////////////////////////////////
+// Get baseline image
+
+var baseImage = ee.Image(baseline_fn).divide(10000)
+print(baseImage)
+
+// Get projection
+var baseline_crs = baseImage.projection().crs()
+// print(baseline_crs)
+
+// Get study area boundary
+// var clip_bound = baseImage.geometry()
+var clip_bound = roi.geometry().dissolve().simplify(1000)//.buffer(5000)
+
+// get frequencies
+if (FREQ == 'h13') {
+  var harmonicFrequencies = ee.List([1,3]);
+  
+} else if (FREQ == 'h12') {
+  var harmonicFrequencies = ee.List([1,2]);
+}
+
+// Construct lists of names for the harmonic terms.
+var cosNames = getNames('cos_', harmonicFrequencies);
+var sinNames = getNames('sin_', harmonicFrequencies);
+
+// Independent variables.
+var independents = ee.List(['constant', 't'])
+  .cat(cosNames).cat(sinNames);
+
+// Get monitoring period imagery
+var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
+
+// Add constant, time, and coefficients to monitoring collection.
+var harmonicLandsat = monitor.select(DEPENDENT)
+  .map(addConstant)
+  .map(addTime)
+  .map(addHarmonics(harmonicFrequencies));
+
+// Add predictions and scores
+var collectPredictions = harmonicLandsat
+  .map(addPrediction)
+  .map(addResidual);
+
+// Average over monitoring period
+var assessment = collectPredictions.select('score').reduce('mean')
+    // .addBands(baseImage.select('year').multiply(10000))
+    .clip(clip_bound)
+    .setMulti(outputProperties)
+print(assessment)
+
+// // Specify output name
+// var descrip = DEST + VERSION + '_' + DEPENDENT + '_' + REF_PERIOD + '_' + REGION + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
+
+// // Export to Asset
+// Export.image.toAsset({
+//   image: assessment,
+//   description: DEPENDENT + '_' + YEAR + '_' + REGION,
+//   assetId: descrip,
+//   region: clip_bound.bounds(),
+//   crs: 'EPSG:5070',
+//   scale: 30,
+//   maxPixels: 1e13,
+// })
+
+// Average over monitoring period
+assessment = ee.Image(assessment)
+   .updateMask(NLCD.select('percent_tree_cover').gte(MIN_TCC))
+
+
+// Colorbar
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+Map.addLayer(assessment.select('score_mean'), {min:-4, max: 0, palette: palette})
+
+
+///////////////////////////
+// MAP SETUP:
+// Configure map to have a Figure display option.
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Set map options.
+Map.setOptions(null, style);
+  

@@ -47,6 +47,8 @@ var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
+var gfc = ee.Image("UMD/hansen/global_forest_change_2018_v1_6")
+var gfc_tcc = 75;
 
 // ---------------------------------- PREPROCESS ---------------------------------- 
 
@@ -348,19 +350,18 @@ var collectPredictions = harmonicLandsat
   .map(addResidual);
 
 // Average over monitoring period
-var assessment = collectPredictions.select('score').reduce('mean')
+var assessment = ee.Image(collectPredictions.select('score').reduce('mean')
     .clip(clip_bound)
-    .setMulti(outputProperties)
+    .setMulti(outputProperties))
 print(assessment)
 
-
-// Average over monitoring period
-assessment = ee.Image(assessment)
-  // .updateMask(NLCD.select('percent_tree_cover').gte(MIN_TCC))
-
+// Mask non-forest
+var gfc_mask = gfc.select('treecover2000').gte(gfc_tcc)
+assessment = assessment.updateMask(gfc_mask)
 
 Map.addLayer(assessment.select('score_mean'), {min:-4, max: 0, palette: palette})
 
+// ---------------------------------- Map settings ---------------------------------- 
 
 var style = {
   'Figure': [{
@@ -369,6 +370,5 @@ var style = {
   }]
 };
 
-// Set map options.
 Map.setOptions(null, style);
   

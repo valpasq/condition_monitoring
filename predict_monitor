@@ -39,6 +39,13 @@ var outputProperties = ee.Dictionary({
       'ref_period': REF_PERIOD
   });
 
+// ---------------------------------- Map visualization ---------------------------------- 
+
+// Colorbar
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
 
 
 // ---------------------------------- PREPROCESS ---------------------------------- 
@@ -347,17 +354,10 @@ var assessment = collectPredictions.select('score').reduce('mean')
 print(assessment)
 
 
-
 // Average over monitoring period
 assessment = ee.Image(assessment)
   // .updateMask(NLCD.select('percent_tree_cover').gte(MIN_TCC))
 
-
-// Colorbar
-var min = -4;
-var max = 0;
-var palette = ['red', 'orange', 'yellow', 'blue']
-var viz = {min: min, max: max, palette: palette};
 
 Map.addLayer(assessment.select('score_mean'), {min:-4, max: 0, palette: palette})
 

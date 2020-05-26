@@ -1,21 +1,7 @@
 // |
-// | Landsat Time Series Harmonic Baseline Generator
+// | Landsat Time Series Harmonic Prediction & Monitoring
 // | [valpasq@bu.edu], 2020
 // |
-
-
-// --------------------------------- Baseline Parameters ---------------------------------- 
-
-var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
-var baseline = ee.Image(baseline_fn)
-
-var VERSION = baseline.get('version').getInfo()
-var DEPENDENT = baseline.get('spectral_band').getInfo()
-var TS = baseline.get('time_series').getInfo()
-var FREQ = baseline.get('harmonics').getInfo()
-var YEAR_START = baseline.get('year_start').getInfo()
-var YEAR_END = baseline.get('year_end').getInfo()
-var REF_PERIOD = YEAR_START + '-' + YEAR_END
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -24,6 +10,21 @@ var DAY_START = '05-01'
 var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
+
+
+// --------------------------------- Baseline Parameters ---------------------------------- 
+
+var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
+var baseline = ee.Image(baseline_fn)
+print(baseline)
+
+var VERSION = baseline.get('version').getInfo()
+var DEPENDENT = baseline.get('spectral_band').getInfo()
+var TS = baseline.get('time_series').getInfo()
+var FREQ = baseline.get('harmonics').getInfo()
+var YEAR_START = baseline.get('year_start').getInfo()
+var YEAR_END = baseline.get('year_end').getInfo()
+var REF_PERIOD = YEAR_START + '-' + YEAR_END
 
 // Dictionary for asset properties
 var outputProperties = ee.Dictionary({
@@ -42,7 +43,6 @@ var outputProperties = ee.Dictionary({
 
 // ---------------------------------- PREPROCESS ---------------------------------- 
 
-// 'Legacy' band renaming
 var L8_BANDS = ['B2', 'B3', 'B4', 'B5',  'B6',  'B7', 'B10']; // Landsat OLI bands
 var L457_BANDS = ['B1', 'B2', 'B3', 'B4',  'B5',  'B7', 'B6']; // Landsat TM/ETM+ bands
 var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp']; // Common names
@@ -232,7 +232,6 @@ var addHarmonics = function(freqs) {
 };
 
 
-
 // Function to build monitoring collection
 var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   
@@ -276,12 +275,12 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
 // Function to add predicted value
 var addPrediction = function(image) {
   var prediction = image.select(independents)
-      .multiply(baseImage.select(independents))
+      .multiply(baseline.select(independents))
       .reduce('sum')
       .rename('fitted')
-  var rmse = baseImage.select('rmse').rename('rmse')
-  var nobs = baseImage.select('nobs').rename('nobs')
-  var t = baseImage.select('t').rename('trend')
+  var rmse = baseline.select('rmse').rename('rmse')
+  var nobs = baseline.select('nobs').rename('nobs')
+  var t = baseline.select('t').rename('trend')
   return image.addBands(prediction)
     .addBands(rmse).addBands(nobs).addBands(t);
 }
@@ -290,28 +289,26 @@ var addPrediction = function(image) {
 var addResidual = function(image) {
   var observed = image.select(DEPENDENT)
   var prediction = image.select(independents)
-      .multiply(baseImage.select(independents))
+      .multiply(baseline.select(independents))
       .reduce('sum')
   var score = observed.subtract(prediction)
-      .divide(baseImage.select('rmse'))
+      .divide(baseline.select('rmse'))
       // .multiply(image.select('mask'))
   return image.addBands(score.rename('score'));
 }
 
 
-////////////////////////////////////////////////////////
-// Get baseline image
+// --------------------------------- Analysis ---------------------------------- 
 
-var baseImage = ee.Image(baseline_fn).divide(10000)
-print(baseImage)
+// Get baseline image
+baseline = baseline.divide(10000)
 
 // Get projection
-var baseline_crs = baseImage.projection().crs()
+var baseline_crs = baseline.projection().crs()
 // print(baseline_crs)
 
 // Get study area boundary
-// var clip_bound = baseImage.geometry()
-var clip_bound = baseline.geometry().dissolve().simplify(1000)//.buffer(5000)
+var clip_bound = baseline.geometry()
 
 // get frequencies
 if (FREQ == 'h13') {
@@ -345,24 +342,11 @@ var collectPredictions = harmonicLandsat
 
 // Average over monitoring period
 var assessment = collectPredictions.select('score').reduce('mean')
-    // .addBands(baseImage.select('year').multiply(10000))
     .clip(clip_bound)
     .setMulti(outputProperties)
 print(assessment)
 
-// // Specify output name
-// var descrip = DEST + VERSION + '_' + DEPENDENT + '_' + REF_PERIOD + '_' + REGION + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
 
-// // Export to Asset
-// Export.image.toAsset({
-//   image: assessment,
-//   description: DEPENDENT + '_' + YEAR + '_' + REGION,
-//   assetId: descrip,
-//   region: clip_bound.bounds(),
-//   crs: 'EPSG:5070',
-//   scale: 30,
-//   maxPixels: 1e13,
-// })
 
 // Average over monitoring period
 assessment = ee.Image(assessment)
@@ -378,9 +362,6 @@ var viz = {min: min, max: max, palette: palette};
 Map.addLayer(assessment.select('score_mean'), {min:-4, max: 0, palette: palette})
 
 
-///////////////////////////
-// MAP SETUP:
-// Configure map to have a Figure display option.
 var style = {
   'Figure': [{
       featureType: 'all',

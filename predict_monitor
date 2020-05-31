@@ -199,7 +199,7 @@ var spectralTransforms = function(img){
       print('The index you provided is not supported');
   }
 
-  return indexImg
+  return indexImg.reproject('EPSG:5070', null, 30)
     .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 }
 

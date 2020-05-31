@@ -14,7 +14,8 @@ var MONITOR_END = YEAR + '-' + DAY_END;
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
-var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
+// var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
+var baseline_fn = 'projects/sites-project/conditionassessment_experiments/features-v4-2_sr_2000-2010_NEWENGLAND_h13_16d'
 var baseline = ee.Image(baseline_fn)
 print(baseline)
 

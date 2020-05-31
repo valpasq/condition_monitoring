@@ -11,6 +11,7 @@ var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 
+var OUTPUT_CRS = 'EPSG:5070' 
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
@@ -198,7 +199,7 @@ var spectralTransforms = function(img){
       print('The index you provided is not supported');
   }
 
-  return indexImg.reproject('EPSG:5070', null, 30)
+  return indexImg.reproject(OUTPUT_CRS, null, 30)
     .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 }
 

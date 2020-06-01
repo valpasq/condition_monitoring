@@ -360,10 +360,10 @@ var assessment = ee.Image(collectPredictions.select('score').reduce('mean')
 print(assessment)
 
 // Mask non-forest
-var gfc_mask = gfc.select('treecover2000').gte(gfc_tcc)
-assessment = assessment.updateMask(gfc_mask)
+var gfc_mask = gfc.select('treecover2000').gte(gfc_tcc).reproject(baseline_crs, null, 30)
+var assessment_masked = assessment.updateMask(gfc_mask)
 
-Map.addLayer(assessment.select('score_mean'), {min:-4, max: 0, palette: palette})
+Map.addLayer(assessment_masked.select('score_mean'), {min:-4, max: 0, palette: palette})
 
 // ---------------------------------- Map settings ---------------------------------- 
 

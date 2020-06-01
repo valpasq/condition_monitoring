@@ -12,7 +12,6 @@ var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 
 
-
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
 // var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'

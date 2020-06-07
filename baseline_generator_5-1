@@ -7,7 +7,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | [valpasq@bu.edu], 2020
 // |
 
-var VERSION = '5-0';
+var VERSION = '5-1';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 

@@ -13,7 +13,6 @@ var MONITOR_END = YEAR + '-' + DAY_END;
 
 var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
 
-
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
 // var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
@@ -28,6 +27,9 @@ var FREQ = baseline.get('harmonics').getInfo()
 var YEAR_START = baseline.get('year_start').getInfo()
 var YEAR_END = baseline.get('year_end').getInfo()
 var REF_PERIOD = YEAR_START + '-' + YEAR_END
+
+var OUTPUT_NAME = ROOT + VERSION + '_' + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
+
 
 // Dictionary for asset properties
 var outputProperties = ee.Dictionary({

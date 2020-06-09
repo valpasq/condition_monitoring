@@ -141,42 +141,40 @@ var maskCloudScore = function(image) {
 var spectralTransforms = function(img){
   // make sure index string in upper case
   var index = DEPENDENT.toUpperCase();
+  
+  var scaled = img.divide(10000);
 
   var dict = {
-    blue: img.select("blue").divide(10000),
-    green: img.select("green").divide(10000), // moved divide here
-    red: img.select("red").divide(10000),
-    nir: img.select("nir").divide(10000),
-    swir1: img.select("swir1").divide(10000),
-    swir2: img.select("swir2").divide(10000),
+    blue: scaled.select("blue"),
+    green: scaled.select("green"), 
+    red: scaled.select("red"),
+    nir: scaled.select("nir"),
+    swir1: scaled.select("swir1"),
+    swir2: scaled.select("swir2"),
   };
   
   var indexImg;
   switch (index){
     case 'NBR':
-      indexImg = img.normalizedDifference(['nir', 'swir2'])
+      indexImg = scaled.normalizedDifference(['nir', 'swir2'])
         .rename("nbr");
       break;
     case 'NDMI':
-      indexImg = img.normalizedDifference(['nir', 'swir1'])
+      indexImg = scaled.normalizedDifference(['nir', 'swir1'])
         .rename("ndmi");
       break;
     case 'NDVI':
-      indexImg = img.normalizedDifference(['nir', 'red'])
+      indexImg = scaled.normalizedDifference(['nir', 'red'])
         .rename("ndvi");
       break;
     case 'NDSI':
-      indexImg = img.normalizedDifference(['green', 'swir1'])
+      indexImg = scaled.normalizedDifference(['green', 'swir1'])
         .rename("ndsi");
       break;
     case 'EVI':
-      indexImg = img.expression(
-          '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', 
-          {
-            'NIR': img.select('nir'),
-            'RED': img.select('red'),
-            'BLUE': img.select('blue')
-        }).rename("evi");
+      indexImg = scaled.expression(
+          '2.5 * ((nir - red/ (nir + 6 * red - 7.5 * blue + 1))', dict)
+          .rename("evi");
       break;
     case 'TCB':
       indexImg = img.expression("0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)

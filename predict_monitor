@@ -173,7 +173,7 @@ var spectralTransforms = function(img){
       break;
     case 'EVI':
       indexImg = scaled.expression(
-        '2.5 * ((nir - red/ (nir + 6 * red - 7.5 * blue + 1))', dict)
+        "2.5 * ((nir - red/ (nir + 6 * red - 7.5 * blue + 1))", dict)
         .rename("evi");
       break;
     case 'TCB':

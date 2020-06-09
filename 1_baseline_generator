@@ -9,6 +9,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // |
 
 var VERSION = '5-2';
+
 var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
 
 // Get study area boundaries
@@ -413,7 +414,7 @@ Export.image.toAsset({
   image: outputMosiac,
   description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
   assetId: OUTPUT_NAME,
-  region: roi_NE.geometry().bounds(),
+  region: roi.geometry().bounds(),
   crs: OUTPUT_CRS,
   scale: 30,
   maxPixels: 1e13,

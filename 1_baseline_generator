@@ -1,7 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
-    roi_NE = ee.FeatureCollection("users/valeriepasquarella/simplifiedNewEngland_2"),
-    roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE");
+var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Baseline Generator
@@ -9,11 +7,11 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // |
 
 var VERSION = '5-2';
-
 var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
 
-// Get study area boundaries
-var bounds_geo = roi.geometry(); // ROI geoemtry
+// Get study area ROI
+var roi_fn = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
+var roi = ee.FeatureCollection(roi_fn).geometry()
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
@@ -322,21 +320,21 @@ if (TS == 'full') {
   
   // Get all Landsat 5 imagery.
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
-    .filterBounds(bounds_geo)
+    .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess457);
   
   // Get all Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
-    .filterBounds(bounds_geo)
+    .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess457);
   
   // Get all Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
-    .filterBounds(bounds_geo)
+    .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .map(preprocess8);
     
@@ -344,7 +342,7 @@ if (TS == 'full') {
   
   // Get all Landsat 5 imagery.
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
-    .filterBounds(bounds_geo)
+    .filterBounds(roi)
     .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
@@ -352,7 +350,7 @@ if (TS == 'full') {
   
   // Get Landsat 7 imagery to fill gap period between 5 and 8.
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
-    .filterBounds(bounds_geo)
+    .filterBounds(roi)
     .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
@@ -360,7 +358,7 @@ if (TS == 'full') {
   
   // Get all Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
-    .filterBounds(bounds_geo)
+    .filterBounds(roi)
     .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .map(preprocess8);
@@ -374,7 +372,7 @@ var collection = collection5.merge(collection7).merge(collection8)
 
 
 // Get WRS2 Scene boundaries
-var scenes = wrs2.filterBounds(bounds_geo);
+var scenes = wrs2.filterBounds(roi);
 
 // Join images by Scene (Path/Row)
 var join = ee.Join.saveAll('images', 'system:time_start', true)
@@ -414,7 +412,7 @@ Export.image.toAsset({
   image: outputMosiac,
   description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
   assetId: OUTPUT_NAME,
-  region: roi.geometry().bounds(),
+  region: roi.bounds(),
   crs: OUTPUT_CRS,
   scale: 30,
   maxPixels: 1e13,

@@ -15,11 +15,11 @@ var roi = ee.FeatureCollection(roi_fn).geometry()
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var DEPENDENT = 'ndvi';  // Select spectral transform   
-var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
+var DEPENDENT = 'evi';  // Select spectral transform   
+var HARMONICS = 'h12';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2005;  // Starts 01-01
-var END_YEAR = 2015;    // Ends 12-31
+var START_YEAR = 2000;  // Starts 01-01
+var END_YEAR = 2010;    // Ends 12-31
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 

@@ -1,19 +1,10 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var roi = ee.FeatureCollection("users/valeriepasquarella/simplifiedNewEngland_2");
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
-
 // |
-// | Forest Condition Monitoring - Baseline testing
+// | Get spectral data for points
 // | [valpasq@bu.edu], 2020
 // |
 
-/////////////////////////////////////////////////////////////
-// 18-CA-11420004-293, Combining Novel Remote Sensing Methods 
-// with FIA Data to Evaluate Effects of Drought and Gypsy Moth 
-// Defoliation on Tree Mortality at Landscape Scales 
 
-
-// Monitoring period
+// Extract period
 var YEAR = 2017
 var MONITOR_START = YEAR + '-01-01';
 var MONITOR_END = YEAR + '-12-31';

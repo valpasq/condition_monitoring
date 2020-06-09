@@ -7,7 +7,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | [valpasq@bu.edu], 2020
 // |
 
-var VERSION = '5-1';
+var VERSION = '5-3';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
@@ -124,58 +124,58 @@ var spectralTransforms = function(img){
   // make sure index string in upper case
   var index = DEPENDENT.toUpperCase();
 
-  scaled = image.divide(10000)
+  var scaled = img.divide(10000)
   
   var dict = {
-    blue: scaled.select("blue"),//.divide(10000),
-    green: img.select("green"),//.divide(10000), // moved divide here
-    red: img.select("red"),//.divide(10000),
-    nir: img.select("nir"),//.divide(10000),
-    swir1: img.select("swir1"),//.divide(10000),
-    swir2: img.select("swir2"),//.divide(10000),
+    blue: scaled.select("blue"),
+    green: scaled.select("green"),
+    red: scaled.select("red"),
+    nir: scaled.select("nir"),
+    swir1: scaled.select("swir1"),
+    swir2: scaled.select("swir2"),
   };
   
   var indexImg;
   switch (index){
     case 'NBR':
-      indexImg = img.normalizedDifference(['nir', 'swir2'])
+      indexImg = scaled.normalizedDifference(['nir', 'swir2'])
         .rename("nbr");
       break;
     case 'NDMI':
-      indexImg = img.normalizedDifference(['nir', 'swir1'])
+      indexImg = scaled.normalizedDifference(['nir', 'swir1'])
         .rename("ndmi");
       break;
     case 'NDVI':
-      indexImg = img.normalizedDifference(['nir', 'red'])
+      indexImg = scaled.normalizedDifference(['nir', 'red'])
         .rename("ndvi");
       break;
     case 'NDSI':
-      indexImg = img.normalizedDifference(['green', 'swir1'])
+      indexImg = scaled.normalizedDifference(['green', 'swir1'])
         .rename("ndsi");
       break;
     case 'EVI':
-      indexImg = img.expression(
+      indexImg = scaled.expression(
           '2.5 * ((NIR - RED) / (NIR + 6 * RED - 7.5 * BLUE + 1))', 
           {
-            'NIR': img.select('nir'),
-            'RED': img.select('red'),
-            'BLUE': img.select('blue')
+            'NIR': scaled.select('nir'),
+            'RED': scaled.select('red'),
+            'BLUE': scaled.select('blue')
         }).rename("evi");
       break;
     case 'TCB':
-      indexImg = img.expression("0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)
+      indexImg = scaled.expression("0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)
         .rename("tcb");
       break;
     case 'TCG':
-      indexImg = img.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
+      indexImg = scaled.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
         .rename("tcg");
       break;
     case 'TCW':
-      indexImg = img.expression("0.0315*blue + 0.2021*green + 0.3102*red + 0.1594*nir - 0.6806*swir1 - 0.6109*swir2", dict)
+      indexImg = scaled.expression("0.0315*blue + 0.2021*green + 0.3102*red + 0.1594*nir - 0.6806*swir1 - 0.6109*swir2", dict)
         .rename("tcw");
       break;
     case 'SR':
-      indexImg = img.select('nir').divide(img.select('red'))
+      indexImg = scaled.select('nir').divide(scaled.select('red'))
         .rename("sr");
       break;
 

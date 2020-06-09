@@ -9,7 +9,7 @@ var YEAR = 2017
 var MONITOR_START = YEAR + '-01-01';
 var MONITOR_END = YEAR + '-12-31';
 
-var WHICH_SAMPLE = 2;
+var WHICH_SAMPLE = 1;
 
 var VERSION = 'SPECTRAL'; // for export naming
 var NODATA = 99;

@@ -28,7 +28,7 @@ var YEAR_START = baseline.get('year_start').getInfo()
 var YEAR_END = baseline.get('year_end').getInfo()
 var REF_PERIOD = YEAR_START + '-' + YEAR_END
 
-var OUTPUT_ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
+var OUTPUT_ROOT = 'projects/sites-project/conditionassessment_results_v5-2/'
 var OUTPUT_NAME = OUTPUT_ROOT + VERSION + '_' + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
 
 

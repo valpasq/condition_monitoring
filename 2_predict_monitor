@@ -376,15 +376,15 @@ Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
 
 // ------------------------------------- Export -------------------------------------- 
 
-Export.image.toAsset({
-  image: assessment,
-  description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END ,
-  assetId: OUTPUT_NAME,
-  region: clip_bound,
-  crs: baseline_crs,
-  scale: 30,
-  maxPixels: 1e13,
-})
+// Export.image.toAsset({
+//   image: assessment,
+//   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor',
+//   assetId: OUTPUT_NAME,
+//   region: clip_bound,
+//   crs: baseline_crs,
+//   scale: 30,
+//   maxPixels: 1e13,
+// })
 
 
 

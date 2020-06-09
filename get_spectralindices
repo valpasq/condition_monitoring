@@ -254,11 +254,10 @@ var collectPredictions = monitor.map(function(i) {
       var iMask = i.select('ndvi').lt(NODATA).rename('mask')
       return i.addBands(iMask)
      })
-// print('image check:', collectPredictions.first())
+     
   
 // Map over the sample and flatten to a single feature collection
 var samplesData = SAMPLE.map(getData).flatten();
-// print('export - first result:', samplesData.first());
 print('export - size:', samplesData.size());
 print('export - first 10', samplesData.limit(10))
 

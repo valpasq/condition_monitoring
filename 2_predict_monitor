@@ -369,21 +369,22 @@ print(assessment)
 var gfc_mask = gfc.select('treecover2000').gte(gfc_tcc).reproject(baseline_crs, null, 30)
 var assessment_masked = assessment.updateMask(gfc_mask)
 
+print(clip_bound)
 Map.addLayer(assessment_masked.select('score_mean'), {min:-4, max: 0, palette: palette})
 Map.addLayer(assessment_masked.select('score_stdDev'))
 Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
 
 // ------------------------------------- Export -------------------------------------- 
 
-// Export.image.toAsset({
-//   image: assessment,
-//   description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
-//   assetId: OUTPUT_NAME,
-//   region: roi.bounds(),
-//   crs: OUTPUT_CRS,
-//   scale: 30,
-//   maxPixels: 1e13,
-// })
+Export.image.toAsset({
+  image: assessment,
+  description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END ,
+  assetId: OUTPUT_NAME,
+  region: clip_bound,
+  crs: baseline_crs,
+  scale: 30,
+  maxPixels: 1e13,
+})
 
 
 

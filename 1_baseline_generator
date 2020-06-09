@@ -397,6 +397,7 @@ var outputFull = ee.ImageCollection(collections.map(getCoeffs));
 var outputMosiac = ee.Image(outputFull.qualityMosaic('nobs')
                      .multiply(OUTPUT_MULTIPLIER)
                      .int() // convert to int
+                     .clip(roi)
                      .setMulti(outputProperties));
                    
                      

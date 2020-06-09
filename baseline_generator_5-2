@@ -21,6 +21,9 @@ var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
 var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zones)
 
+// Specify output name.
+var OUTPUT_NAME = 'projects/sites-project/conditionassessment_experiments_v5-2/features-v' + VERSION + '_' + DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
+
 
 // Dictionary for asset properties
 var outputProperties = ee.Dictionary({
@@ -406,7 +409,7 @@ Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
 Export.image.toAsset({
   image: outputMosiac,
   description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
-  assetId: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR,
+  assetId: OUTPUT_NAME,
   region: roi.geometry().bounds(),
   crs: OUTPUT_CRS,
   scale: 30,

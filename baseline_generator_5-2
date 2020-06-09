@@ -7,7 +7,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | [valpasq@bu.edu], 2020
 // |
 
-var VERSION = '5-1';
+var VERSION = '5-2';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
@@ -124,13 +124,15 @@ var spectralTransforms = function(img){
   // make sure index string in upper case
   var index = DEPENDENT.toUpperCase();
 
+  img = img.divide(10000);
+  
   var dict = {
-    blue: img.select("blue").divide(10000),
-    green: img.select("green").divide(10000), // moved divide here
-    red: img.select("red").divide(10000),
-    nir: img.select("nir").divide(10000),
-    swir1: img.select("swir1").divide(10000),
-    swir2: img.select("swir2").divide(10000),
+    blue: img.select("blue"),
+    green: img.select("green"), // moved divide here
+    red: img.select("red"),
+    nir: img.select("nir"),
+    swir1: img.select("swir1"),
+    swir2: img.select("swir2"),
   };
   
   var indexImg;

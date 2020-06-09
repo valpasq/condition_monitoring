@@ -8,6 +8,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // |
 
 var VERSION = '5-2';
+var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
@@ -21,8 +22,7 @@ var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
 var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zones)
 
-// Specify output name.
-var OUTPUT_NAME = 'projects/sites-project/conditionassessment_experiments_v5-2/features-v' + VERSION + '_' + DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
+var OUTPUT_NAME = ROOT + 'features-v' + VERSION + '_' + DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
 
 
 // Dictionary for asset properties

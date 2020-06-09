@@ -18,7 +18,7 @@ var NODATA = 99;
 if (WHICH_SAMPLE == 1) {
   // Harvard Forest / 2017 Quabbin hotspots
   var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
-  var fileName = 'plots_hf_quabbin_' + YEAR + '_' + VERSION 
+  var fileName = 'plots_ma_quabbin_' + YEAR + '_' + VERSION 
 }
 
 if (WHICH_SAMPLE == 2) {

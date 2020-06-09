@@ -11,6 +11,8 @@ var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 
+var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
+
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 

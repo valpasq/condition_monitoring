@@ -15,8 +15,8 @@ var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
+var baseline_fn = ROOT + 'features-v5-2_tcg_2000-2010_h12_16d'
 // var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
-var baseline_fn = 'projects/sites-project/conditionassessment_experiments/features-v4-2_sr_2000-2010_NEWENGLAND_h13_16d'
 var baseline = ee.Image(baseline_fn)
 var baseline_crs = baseline.projection().crs()
 
@@ -28,7 +28,8 @@ var YEAR_START = baseline.get('year_start').getInfo()
 var YEAR_END = baseline.get('year_end').getInfo()
 var REF_PERIOD = YEAR_START + '-' + YEAR_END
 
-var OUTPUT_NAME = ROOT + VERSION + '_' + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
+var OUTPUT_ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
+var OUTPUT_NAME = OUTPUT_ROOT + VERSION + '_' + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
 
 
 // Dictionary for asset properties
@@ -375,15 +376,15 @@ Map.addLayer(assessment_masked.select('score_mean'), {min:-4, max: 0, palette: p
 
 // ------------------------------------- Export -------------------------------------- 
 
-// Export.image.toAsset({
-//   image: assessment,
-//   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor',
-//   assetId: OUTPUT_NAME,
-//   region: clip_bound,
-//   crs: baseline_crs,
-//   scale: 30,
-//   maxPixels: 1e13,
-// })
+Export.image.toAsset({
+  image: assessment,
+  description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor',
+  assetId: OUTPUT_NAME,
+  region: clip_bound,
+  crs: baseline_crs,
+  scale: 30,
+  maxPixels: 1e13,
+})
 
 
 

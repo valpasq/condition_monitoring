@@ -12,6 +12,7 @@ var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
 // Get study area ROI
 var roi_fn = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
 var roi = ee.FeatureCollection(roi_fn).geometry()
+var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zones)
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
@@ -24,8 +25,6 @@ var END_YEAR = 2015;    // Ends 12-31
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
-var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zones)
-
 var OUTPUT_NAME = ROOT + 'features-v' + VERSION + '_' + DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
 
 

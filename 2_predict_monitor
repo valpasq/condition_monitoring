@@ -363,6 +363,20 @@ var assessment_masked = assessment.updateMask(gfc_mask)
 
 Map.addLayer(assessment_masked.select('score_mean'), {min:-4, max: 0, palette: palette})
 
+// ------------------------------------- Export -------------------------------------- 
+
+Export.image.toAsset({
+  image: assessment,
+  description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
+  assetId: OUTPUT_NAME,
+  region: roi.bounds(),
+  crs: OUTPUT_CRS,
+  scale: 30,
+  maxPixels: 1e13,
+})
+
+
+
 // ---------------------------------- Map settings ---------------------------------- 
 
 var style = {

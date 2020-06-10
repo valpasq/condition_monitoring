@@ -11,12 +11,12 @@ var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 
-var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
+var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2'
 var OUTPUT_ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2_results/'
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
-var baseline_fn = ROOT + 'features-v5-2_tcg_2000-2010_h12_16d'
+var baseline_fn = ROOT + '/features-v5-2_tcg_2000-2010_h12_16d'
 // var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
 var baseline = ee.Image(baseline_fn)
 var baseline_crs = baseline.projection().crs()

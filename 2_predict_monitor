@@ -11,10 +11,10 @@ var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 
-var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
-var OUTPUT_ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2_results/'
+var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
+var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results/'
 
-var experiment = 1
+var EXPERIMENT = 1
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
@@ -22,7 +22,7 @@ var experiment = 1
 // var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
 // var baseline = ee.Image(baseline_fn)
 
-var baseline = ee.Image(EXPERIMENTS.toList(EXPERIMENTS.size()).get(experiment))
+var baseline = ee.Image(BASELINES_COLLECTION.toList(BASELINES_COLLECTION.size()).get(EXPERIMENT))
 var baseline_crs = baseline.projection().crs()
 
 var VERSION = baseline.get('version').getInfo()
@@ -33,7 +33,7 @@ var YEAR_START = baseline.get('year_start').getInfo()
 var YEAR_END = baseline.get('year_end').getInfo()
 var REF_PERIOD = YEAR_START + '-' + YEAR_END
 
-var OUTPUT_NAME = OUTPUT_ROOT + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
+var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
 
 
 // Dictionary for asset properties

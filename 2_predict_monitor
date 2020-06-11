@@ -16,7 +16,7 @@ var OUTPUT_ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2_r
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
-var baseline_fn = ROOT + 'features-v5-2_tcg_2000-2010_h12_full'
+var baseline_fn = ROOT + 'features-v5-2_evi_2000-2010_h12_16d'
 // var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
 var baseline = ee.Image(baseline_fn)
 var baseline_crs = baseline.projection().crs()
@@ -177,8 +177,7 @@ var spectralTransforms = function(img){
         .rename("ndsi");
       break;
     case 'EVI':
-      indexImg = scaled.expression(
-        "2.5 * ((nir - red/ (nir + 6 * red - 7.5 * blue + 1))", dict)
+      indexImg = scaled.expression("2.5 * ((nir - red/ (nir + 6 * red - 7.5 * blue + 1))", dict)
         .rename("evi");
       break;
     case 'TCB':

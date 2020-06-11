@@ -15,14 +15,15 @@ var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
 var OUTPUT_ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2_results/'
 
 var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
-var experiment = 3
+var experiment = 1
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
-var baseline = ee.Image(EXPERIMENTS.toList(32).get(3))
 // var baseline_fn = ROOT + 'features-v5-2_sr_2005-2015_h13_full'
 // var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
 // var baseline = ee.Image(baseline_fn)
+
+var baseline = ee.Image(EXPERIMENTS.toList(EXPERIMENTS.size()).get(experiment))
 var baseline_crs = baseline.projection().crs()
 
 var VERSION = baseline.get('version').getInfo()

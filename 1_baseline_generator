@@ -16,7 +16,7 @@ var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zon
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var DEPENDENT = 'sr';  // Select spectral transform   
+var DEPENDENT = 'evi';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 2005;  // Starts 01-01
@@ -160,23 +160,19 @@ var spectralTransforms = function(img){
         .rename("ndsi");
       break;
     case 'EVI':
-      indexImg = scaled.expression(
-        "2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))", dict)
+      indexImg = scaled.expression("2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))", dict)
         .rename("evi");
       break;
     case 'TCB':
-      indexImg = scaled.expression(
-        "0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)
+      indexImg = scaled.expression("0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)
         .rename("tcb");
       break;
     case 'TCG':
-      indexImg = scaled.expression(
-        "-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
+      indexImg = scaled.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
         .rename("tcg");
       break;
     case 'TCW':
-      indexImg = scaled.expression(
-        "0.0315*blue + 0.2021*green + 0.3102*red + 0.1594*nir - 0.6806*swir1 - 0.6109*swir2", dict)
+      indexImg = scaled.expression("0.0315*blue + 0.2021*green + 0.3102*red + 0.1594*nir - 0.6806*swir1 - 0.6109*swir2", dict)
         .rename("tcw");
       break;
     case 'SR':

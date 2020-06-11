@@ -14,7 +14,7 @@ var MONITOR_END = YEAR + '-' + DAY_END;
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
 var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results/'
 
-var EXPERIMENT = 1
+var EXPERIMENT = 28
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 

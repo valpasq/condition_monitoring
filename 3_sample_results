@@ -1,11 +1,12 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var experiments = ee.ImageCollection("projects/sites-project/conditionassessment_experiments_v5-2_results");
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
 var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
+var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results')
 
 var year = 2017
+
+var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', year)
+
 var reanalysis_cn = 'reanalysis_' + year
 if (year >= 2015 & year <= 2018) {
   var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + year + '_reanalysis_meanresiduals'
@@ -14,7 +15,6 @@ if (year >= 2015 & year <= 2018) {
   var reanalysis = ee.Image.constant(99).rename(reanalysis_cn)
 }
 print(reanalysis)
-
 
 // function to convert image collection into stack of image bands
 function collectionToImage(collection){
@@ -31,7 +31,7 @@ function collectionToImage(collection){
 
 
 // create single image from collection
-var scoreImage = collectionToImage(experiments);
+var scoreImage = collectionToImage(selectedExperiments);
 scoreImage = scoreImage.addBands(reanalysis)
 
 // sample plot locations

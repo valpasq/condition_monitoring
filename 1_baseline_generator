@@ -7,7 +7,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 // |
 
 var VERSION = '5-2';
-var ROOT = 'projects/sites-project/conditionassessment_experiments_v5-2/'
+var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_collection/'
 
 // Get study area ROI
 var roi_fn = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
@@ -25,7 +25,7 @@ var END_YEAR = 2015;    // Ends 12-31
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
-var OUTPUT_NAME = ROOT + 'features-v' + VERSION + '_' + DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
+var OUTPUT_NAME = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
 
 
 // Dictionary for asset properties

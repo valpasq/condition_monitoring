@@ -58,3 +58,12 @@ Export.table.toDrive({
 Map.addLayer(SAMPLE, {}, 'points');
 Map.addLayer(scoreImage)
 
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Set map options.
+Map.setOptions(null, style);

@@ -3,13 +3,13 @@
 var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
 var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results')
 
-var year = 2017
+var YEAR = 2017
 
-var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', year)
+var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', YEAR)
 
-var reanalysis_cn = 'reanalysis_' + year
-if (year >= 2015 & year <= 2018) {
-  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + year + '_reanalysis_meanresiduals'
+var reanalysis_cn = 'reanalysis_' + YEAR
+if (YEAR >= 2015 & YEAR <= 2018) {
+  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
   var reanalysis = ee.Image(reanalysis_fn).reproject('EPSG:5070').rename(reanalysis_cn)
 } else {
   var reanalysis = ee.Image.constant(99).rename(reanalysis_cn)

@@ -45,6 +45,16 @@ var result = scoreImage.reduceRegions({
 print(result)
 
 
+
+// Export
+Export.table.toDrive({
+  collection: result,
+  description: 'exportTable',
+  folder: 'ee-conditionassessment',
+  // fileNamePrefix: fileName,
+});
+
+
 Map.addLayer(SAMPLE, {}, 'points');
 Map.addLayer(scoreImage)
 

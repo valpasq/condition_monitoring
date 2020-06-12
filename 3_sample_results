@@ -5,13 +5,6 @@ var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment
 
 var YEAR = 2017
 
-// Palette
-var min = -4;
-var max = 0;
-var palette = ['red', 'orange', 'yellow', 'blue']
-var viz = {min: min, max: max, palette: palette};
-
-
 var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', YEAR)
 
 var reanalysis_cn = 'reanalysis_' + YEAR
@@ -55,12 +48,15 @@ var result = scoreImage.reduceRegions({
 print(scoreImage)
 print(result)
 
+// Palette
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
 
+var map_result = 6
 
 Map.addLayer(SAMPLE, {}, 'sample points');
-
-var map_result = 5
-
 Map.addLayer(scoreImage.select(map_result), viz, 'result')
 print(ee.String(scoreImage.select(map_result).bandNames().get(0)))
 

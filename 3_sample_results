@@ -16,7 +16,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 }
 print(reanalysis)
 
-// function to convert image collection into stack of image bands
+// function to convert image collection to multiband image
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
     var score = img.select('score_mean')
@@ -29,11 +29,11 @@ function collectionToImage(collection){
   return stack;
 }
 
-
-// create single image from collection
+// convert collection results to image
 var scoreImage = collectionToImage(selectedExperiments);
+
+// add reanalysis result
 scoreImage = scoreImage.addBands(reanalysis)
-print(scoreImage)
 
 // sample plot locations
 var result = scoreImage.reduceRegions({
@@ -43,9 +43,13 @@ var result = scoreImage.reduceRegions({
         crs: 'EPSG:5070'
       });
 
+
+// check results
+print(scoreImage)
 print(result)
 
-
+Map.addLayer(SAMPLE, {}, 'sample points');
+Map.addLayer(scoreImage.select(0), {}, 'result')
 
 // Export
 Export.table.toDrive({
@@ -54,10 +58,6 @@ Export.table.toDrive({
   folder: 'ee-conditionassessment',
   // fileNamePrefix: fileName,
 });
-
-
-Map.addLayer(SAMPLE, {}, 'points');
-Map.addLayer(scoreImage)
 
 var style = {
   'Figure': [{

@@ -33,6 +33,7 @@ function collectionToImage(collection){
 // create single image from collection
 var scoreImage = collectionToImage(selectedExperiments);
 scoreImage = scoreImage.addBands(reanalysis)
+print(scoreImage)
 
 // sample plot locations
 var result = scoreImage.reduceRegions({

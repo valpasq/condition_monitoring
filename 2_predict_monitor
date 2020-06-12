@@ -375,7 +375,7 @@ var assessment_masked = assessment.updateMask(gfc_mask)
 
 Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
 Map.addLayer(assessment_masked.select('score_stdDev'))
-Map.addLayer(assessment_masked.select('score_mean'), {min:-4, max: 0, palette: palette})
+Map.addLayer(assessment_masked.select('score_mean'), viz)
 
 // ------------------------------------- Export -------------------------------------- 
 

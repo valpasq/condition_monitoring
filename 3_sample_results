@@ -1,21 +1,27 @@
 
 var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results')
 
-var WHICH_SAMPLE = 1;
+var WHICH_SAMPLE = 2;
+var YEAR = 2018
 
-if WHICH_SAMPLE == 1 {
-  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
-} else if WHICH_SAMPLE == 2 {
-  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
-
+// Get plot locations
+if (WHICH_SAMPLE == 1) {
+  // Massachusetts
+  var SAMPLE_FN = 'projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple'
+  var SAMPLE = ee.FeatureCollection(SAMPLE_FN)
+  
+} else if (WHICH_SAMPLE == 2) {
+  // Connecticut
+  var SAMPLE_FN = 'projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords'
+  var SAMPLE = ee.FeatureCollection(SAMPLE_FN)
+    .filterMetadata('Year', 'equals', YEAR)
+    
 }
 
-var YEAR = 2018
-print(SAMPLE.filterMetadata('Year', 'equals', YEAR))
-
+// Get results for selected year
 var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', YEAR)
 
-var reanalysis_cn = 'reanalysis' //_' + YEAR
+var reanalysis_cn = 'm_reanalysis'
 if (YEAR >= 2015 & YEAR <= 2018) {
   var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
   var reanalysis = ee.Image(reanalysis_fn).reproject('EPSG:5070').rename(reanalysis_cn)
@@ -28,7 +34,7 @@ print(reanalysis)
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
     var score = img.select('score_mean')
-    var index = ee.String(img.get('system:index'))
+    var index = ee.String('m_').cat(ee.String(img.get('system:index')))
     score = score.rename(index)
     return ee.Image(prev).addBands(score);
   }, ee.Image(1)));

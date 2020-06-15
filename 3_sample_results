@@ -6,7 +6,6 @@ var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment
 var WHICH_SAMPLE = 2;
 var YEAR = 2018
 
-
 // Get plot locations
 if (WHICH_SAMPLE == 1) {
   // Massachusetts
@@ -33,7 +32,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 } else {
   var reanalysis = ee.Image.constant(99).rename(reanalysis_cn)
 }
-print(reanalysis)
+// print(reanalysis)
 
 // function to convert image collection to multiband image
 function collectionToImage(collection){

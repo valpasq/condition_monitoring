@@ -86,7 +86,6 @@ Export.table.toDrive({
   fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION ,
 });
 
-
 // Map styling
 var style = {
   'Figure': [{

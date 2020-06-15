@@ -7,14 +7,16 @@ var YEAR = 2018
 // Get plot locations
 if (WHICH_SAMPLE == 1) {
   // Massachusetts
-  var SAMPLE_FN = 'projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple'
-  var SAMPLE = ee.FeatureCollection(SAMPLE_FN)
+  var SAMPLE_NAME = 'ma_quabbin';
+  var SAMPLE_FN = 'projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple';
+  var SAMPLE = ee.FeatureCollection(SAMPLE_FN);
   
 } else if (WHICH_SAMPLE == 2) {
   // Connecticut
-  var SAMPLE_FN = 'projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords'
+  var SAMPLE_NAME = 'ct_burlap'
+  var SAMPLE_FN = 'projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords';
   var SAMPLE = ee.FeatureCollection(SAMPLE_FN)
-    .filterMetadata('Year', 'equals', YEAR)
+    .filterMetadata('Year', 'equals', YEAR);
     
 }
 
@@ -79,7 +81,7 @@ Export.table.toDrive({
   collection: result,
   description: 'exportTable',
   folder: 'ee-conditionassessment',
-  // fileNamePrefix: fileName,
+  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_v2' ,
 });
 
 

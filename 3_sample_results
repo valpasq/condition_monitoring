@@ -1,9 +1,14 @@
 
-// var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
-var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
 var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results')
 
 var WHICH_SAMPLE = 1;
+
+if WHICH_SAMPLE == 1 {
+  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
+} else if WHICH_SAMPLE == 2 {
+  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
+
+}
 
 var YEAR = 2018
 print(SAMPLE.filterMetadata('Year', 'equals', YEAR))

@@ -3,6 +3,7 @@ var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment
 
 var WHICH_SAMPLE = 2;
 var YEAR = 2018
+var VERSION = 'v2-1'
 
 // Get plot locations
 if (WHICH_SAMPLE == 1) {
@@ -72,8 +73,9 @@ var viz = {min: min, max: max, palette: palette};
 
 var map_result = 6
 
-Map.addLayer(SAMPLE, {}, 'sample points');
 Map.addLayer(scoreImage.select(map_result), viz, 'result')
+Map.addLayer(SAMPLE, {}, 'sample points');
+
 print(ee.String(scoreImage.select(map_result).bandNames().get(0)))
 
 // Export
@@ -81,7 +83,7 @@ Export.table.toDrive({
   collection: result,
   description: 'exportTable',
   folder: 'ee-conditionassessment',
-  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_v2' ,
+  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION ,
 });
 
 

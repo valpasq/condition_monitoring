@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Prediction & Monitoring
 // | [valpasq@bu.edu], 2020
@@ -5,7 +8,7 @@
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2018
+var YEAR = 2017
 var DAY_START = '05-01'
 var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
@@ -14,16 +17,13 @@ var MONITOR_END = YEAR + '-' + DAY_END;
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
 var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results/'
 
-var EXPERIMENT = 31
+var EXPERIMENT = 27
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
-// var baseline_fn = ROOT + 'features-v5-2_sr_2005-2015_h13_full'
-// var baseline_fn = 'projects/ee-valeriepasquarella/assets/tcg_2005-2010_test'
-// var baseline = ee.Image(baseline_fn)
-
 var baseline = ee.Image(BASELINES_COLLECTION.toList(BASELINES_COLLECTION.size()).get(EXPERIMENT))
-var baseline_crs = baseline.projection().crs()
+var baseline_crs = baseline.projection().crs();
+var output_resolution = 30; // in meters
 
 var VERSION = baseline.get('version').getInfo()
 var DEPENDENT = baseline.get('spectral_band').getInfo()
@@ -205,7 +205,7 @@ var spectralTransforms = function(img){
       print('The index you provided is not supported');
   }
 
-  return indexImg.reproject(baseline_crs, null, 30)
+  return indexImg.reproject(baseline_crs, null, output_resolution)
     .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 }
 
@@ -371,9 +371,10 @@ print(assessment)
 var gfc_mask = gfc.select('treecover2000').gte(gfc_tcc).reproject(baseline_crs, null, 30)
 var assessment_masked = assessment.updateMask(gfc_mask)
 
-Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
-Map.addLayer(assessment_masked.select('score_stdDev'))
+// Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
+// Map.addLayer(assessment_masked.select('score_stdDev'))
 Map.addLayer(assessment_masked.select('score_mean'), viz)
+Map.addLayer(table, {color: 'white'})
 
 // ------------------------------------- Export -------------------------------------- 
 
@@ -383,7 +384,7 @@ Export.image.toAsset({
   assetId: OUTPUT_NAME,
   region: clip_bound,
   crs: baseline_crs,
-  scale: 30,
+  scale: output_resolution,
   maxPixels: 1e13,
 })
 
@@ -399,4 +400,6 @@ var style = {
 };
 
 Map.setOptions(null, style);
+
+
   

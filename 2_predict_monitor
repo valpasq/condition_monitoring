@@ -361,7 +361,6 @@ var mean = collectPredictions.select('score').reduce('mean');
 var stddev = collectPredictions.select('score').reduce('stdDev');
 var nobs = collectPredictions.select('score').reduce('count');
 
-
 // Average over monitoring period
 var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
     .clip(clip_bound)
@@ -372,9 +371,9 @@ print(assessment)
 var gfc_mask = gfc.select('treecover2000').gte(gfc_tcc).reproject(baseline_crs, null, 30)
 var assessment_masked = assessment.updateMask(gfc_mask)
 
-// Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
-// Map.addLayer(assessment_masked.select('score_stdDev'))
-// Map.addLayer(assessment_masked.select('score_mean'), viz)
+Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
+Map.addLayer(assessment_masked.select('score_stdDev'))
+Map.addLayer(assessment_masked.select('score_mean'), viz)
 
 // ------------------------------------- Export -------------------------------------- 
 

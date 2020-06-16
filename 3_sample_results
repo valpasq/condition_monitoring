@@ -78,7 +78,7 @@ var viz = {min: min, max: max, palette: palette};
 var map_result = 30
 
 Map.addLayer(scoreImage.select(map_result), viz, 'result')
-Map.addLayer(SAMPLE, {}, 'sample points');
+Map.addLayer(SAMPLE, {color: 'red'}, 'sample points');
 // Map.addLayer(table)
 
 print(ee.String(scoreImage.select(map_result).bandNames().get(0)))

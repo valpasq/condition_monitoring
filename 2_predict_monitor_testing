@@ -296,7 +296,8 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   }));
   
   var monitorC = filterEndlap
-      .map(addCloudScore).map(maskCloudScore) // mask based on simple cloud score
+      .map(addCloudScore)
+      .map(maskCloudScore) // mask based on simple cloud score
       .map(spectralTransforms) // calculate spectral transforms
       
   // Return TC images for monitoring period

@@ -279,7 +279,7 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   
   // ENDLAP FILTERING
   // Get all distinct acquisition dates.
-  var acquisitions = ee.List(collection.aggregate_array('SENSING_TIME')).distinct()
+  var acquisitions = collection.aggregate_array('SENSING_TIME').distinct()
   var startTS = acquisitions.get(0) // start of acquisitions for TS period
   
   // Take median for each acquisition date (Path)

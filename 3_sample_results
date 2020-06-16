@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var VERSION = 'v2-2'
 
@@ -76,6 +79,7 @@ var map_result = 6
 
 Map.addLayer(scoreImage.select(map_result), viz, 'result')
 Map.addLayer(SAMPLE, {}, 'sample points');
+Map.addLayer(table)
 
 print(ee.String(scoreImage.select(map_result).bandNames().get(0)))
 

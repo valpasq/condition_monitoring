@@ -138,7 +138,7 @@ var maskCloudScore = function(image) {
 
   var mask = qa.gte(0.8);
   return image.updateMask(mask)
-      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
+      .copyProperties(image);
 }
 // SOURCE: https://gis.stackexchange.com/questions/280400/
 // cloud-cover-percentage-in-google-earth-engine  
@@ -203,7 +203,7 @@ var spectralTransforms = function(img){
   }
 
   return indexImg.reproject(baseline_crs, null, output_resolution)
-    .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
+    .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
 }
 
 
@@ -275,15 +275,18 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
       .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      .map(addCloudScore)
+      .map(maskCloudScore) 
+      .map(spectralTransforms)
       .sort('system:time_start') 
-  
+      
   // ENDLAP FILTERING
   // Get all distinct acquisition dates.
   var acquisitions = collection.aggregate_array('SENSING_TIME').distinct()
   var startTS = acquisitions.get(0) 
   
   // Take median for each acquisition date (Path)
-  var filterEndlap = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
+  var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
     var date = ee.Date(d)
     var date2 = date.advance(24, 'hour')
     
@@ -291,12 +294,6 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .set('system:time_start', date.millis())
   }));
   
-  // Mask and transform
-  var monitorC = filterEndlap
-      .map(addCloudScore)
-      .map(maskCloudScore) 
-      .map(spectralTransforms) 
-      
   // Return image collection for monitoring period
   return monitorC;
   
@@ -324,7 +321,7 @@ var addResidual = function(image) {
       .reduce('sum')
   var score = observed.subtract(prediction)
       .divide(baseline.select('rmse'))
-      // .multiply(image.select('mask'))
+      
   return image.addBands(score.rename('score'));
 }
 

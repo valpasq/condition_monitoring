@@ -322,10 +322,6 @@ var addResidual = function(image) {
 // Get baseline image
 baseline = baseline.divide(10000)
 
-// Get projection
-var baseline_crs = baseline.projection().crs()
-// print(baseline_crs)
-
 // Get study area boundary
 var clip_bound = baseline.geometry()
 

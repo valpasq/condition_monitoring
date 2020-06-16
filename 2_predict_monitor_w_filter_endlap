@@ -12,9 +12,9 @@ var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
-var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_filtered/'
+var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_05-01_09-30/'
 
-var EXPERIMENT = 27
+var EXPERIMENT = 31
 
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
@@ -30,7 +30,7 @@ var YEAR_START = baseline.get('year_start').getInfo()
 var YEAR_END = baseline.get('year_end').getInfo()
 var REF_PERIOD = YEAR_START + '-' + YEAR_END
 
-var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
+var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS // + '_' + MONITOR_START + '_' + MONITOR_END
 
 
 // Dictionary for asset properties

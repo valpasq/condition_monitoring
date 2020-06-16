@@ -279,12 +279,13 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   var collection = collection5.merge(collection7).merge(collection8)
       .sort('system:time_start') 
   
+  // ENDLAP FILTERING
   // Get all distinct acquisition dates.
   var acquisitions = ee.List(collection.aggregate_array('SENSING_TIME'))
     .distinct()
   var startTS = acquisitions.get(0) // start of acquisitions for TS period
   
-  // Take median for each acquisition date to filter endlap (duplicate obs).
+  // Take median for each acquisition date (Path)
   var filterEndlap = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
     var date = ee.Date(d)
     var date2 = date.advance(24, 'hour')
@@ -293,6 +294,7 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .set('system:time_start', date.millis())
   }));
   
+  // Mask and transform
   var monitorC = filterEndlap
       .map(addCloudScore)
       .map(maskCloudScore) // mask based on simple cloud score

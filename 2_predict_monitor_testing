@@ -300,7 +300,7 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .map(maskCloudScore) // mask based on simple cloud score
       .map(spectralTransforms) // calculate spectral transforms
       
-  // Return TC images for monitoring period
+  // Return image collection for monitoring period
   return monitorC;
   
   };

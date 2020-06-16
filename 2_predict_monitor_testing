@@ -278,9 +278,6 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
       .sort('system:time_start') 
-      // .map(addCloudScore)
-      // .map(maskCloudScore) // mask based on simple cloud score
-      // .map(spectralTransforms) // calculate spectral transforms
   
   // Get all distinct acquisition dates.
   var acquisitions = ee.List(collection.aggregate_array('SENSING_TIME'))

@@ -1,6 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords");
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Prediction & Monitoring
 // | [valpasq@bu.edu], 2020
@@ -374,7 +371,6 @@ var assessment_masked = assessment.updateMask(gfc_mask)
 // Map.addLayer(assessment_masked.select('score_count'), {min:0, max:10})
 // Map.addLayer(assessment_masked.select('score_stdDev'))
 Map.addLayer(assessment_masked.select('score_mean'), viz)
-Map.addLayer(table, {color: 'white'})
 
 // ------------------------------------- Export -------------------------------------- 
 

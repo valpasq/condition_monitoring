@@ -74,7 +74,7 @@ var preprocess457 = function(image) {
   
   return image.updateMask(mask1.and(mask2).and(mask3))
     .select(L457_BANDS).rename(LTS_NAMES)
-    .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
+    .copyProperties(image);
 };
 
 
@@ -88,7 +88,7 @@ var preprocess8 = function(image) {
                
   return image.updateMask(mask1.and(mask2).and(mask3))
       .select(L8_BANDS).rename(LTS_NAMES) // Map legacy band names
-      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
+      .copyProperties(image);
 };
 
 
@@ -355,6 +355,7 @@ var independents = ee.List(['constant', 't'])
 
 // Get monitoring period imagery
 var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
+print(monitor)
 
 // Add constant, time, and coefficients to monitoring collection.
 var harmonicLandsat = monitor.select(DEPENDENT)

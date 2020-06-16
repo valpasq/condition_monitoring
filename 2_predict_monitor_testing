@@ -285,7 +285,7 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   // Take median for each acquisition date (Path)
   var filterEndlap = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
     var date = ee.Date(d)
-    var date2 = date.advance(23, 'hour')
+    var date2 = date.advance(24, 'hour')
     
     return collection.filterDate(date, date2).median()
       .set('system:time_start', date.millis())

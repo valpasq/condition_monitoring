@@ -257,7 +257,7 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
       .map(preprocess457) 
-      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      // .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
       
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
@@ -265,7 +265,7 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
       .map(preprocess457) 
-      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      // .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
   
   // Get  Landsat 8 imagery
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
@@ -273,16 +273,16 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
       .map(preprocess8)  
-      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      // .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
   
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
       .sort('system:time_start') 
   
   // ENDLAP FILTERING
   // Get all distinct acquisition dates.
-  var acquisitions = ee.List(collection.aggregate_array('SENSING_TIME'))
-    .distinct()
+  var acquisitions = ee.List(collection.aggregate_array('SENSING_TIME')).distinct()
   var startTS = acquisitions.get(0) // start of acquisitions for TS period
   
   // Take median for each acquisition date (Path)

@@ -75,11 +75,11 @@ var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
-var map_result = 6
+var map_result = 30
 
 Map.addLayer(scoreImage.select(map_result), viz, 'result')
 Map.addLayer(SAMPLE, {}, 'sample points');
-Map.addLayer(table)
+// Map.addLayer(table)
 
 print(ee.String(scoreImage.select(map_result).bandNames().get(0)))
 

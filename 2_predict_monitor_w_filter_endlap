@@ -14,6 +14,7 @@ var MONITOR_END = YEAR + '-' + DAY_END;
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
 var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_05-01_09-30/'
 
+var NUM_EXPERIMENTS = BASELINES_COLLECTION.size().getInfo()
 
 // ---------------------------------- Map visualization ---------------------------------- 
 
@@ -296,7 +297,7 @@ var addResidual = function(image) {
 // --------------------------------- Baseline Parameters ---------------------------------- 
 
   // Generate tasks for annual feature set exports
-for(var EXPERIMENT = 0; EXPERIMENT <= BASELINES_COLLECTION.size(); EXPERIMENT++){
+for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     
   var baseline = ee.Image(BASELINES_COLLECTION.toList(BASELINES_COLLECTION.size()).get(EXPERIMENT))
   var baseline_crs = baseline.projection().crs();

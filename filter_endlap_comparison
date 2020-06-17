@@ -1,7 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var test = ee.Image('projects/sites-project/conditionassessment_experiments_v5-2_results_05-01_09-30/tcg_2000-2010_h13_full')
+var test = ee.Image('projects/sites-project/conditionassessment_experiments_v5-2_results_filtered/tcg_2000-2010_h13_full_2017-05-01_2017-09-30')
 var original = ee.Image('projects/sites-project/conditionassessment_experiments_v5-2_results/tcg_2000-2010_h13_full_2017-05-01_2017-09-30')
 
 

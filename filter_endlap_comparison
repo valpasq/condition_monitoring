@@ -12,4 +12,7 @@ Map.addLayer(original.select('score_mean'), {min:-4, max:0})
 Map.addLayer(test.select('score_count'), {min:0, max:15})
 Map.addLayer(original.select('score_count'), {min:0, max:15})
 
+Map.addLayer(image.select('score_mean').subtract(test.select('score_mean')), {min:-0.01, max:0.01})
+
+
 Map.addLayer(table, {color: 'white'})

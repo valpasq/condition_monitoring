@@ -52,4 +52,5 @@ var style = {
 
 // Set map options.
 Map.setOptions(null, style);
+Map.setOptions('SATELLITE')
 

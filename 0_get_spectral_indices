@@ -141,16 +141,16 @@ function spectralTransforms(image) {
     .rename("tcg").unmask(NODATA)
 
   var evi = scaled.expression(
-          '2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))', dict)
-          .rename("evi").unmask(NODATA)
+    '2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))', dict)
+    .rename("evi").unmask(NODATA)
   
   var sr = image.select('nir').divide(image.select('red'))
-                .rename('sr').unmask(NODATA)
+    .rename('sr').unmask(NODATA)
   
   // Transform stack
   return scaled.unmask(NODATA)
       .addBands(ndvi).addBands(tcg).addBands(evi).addBands(sr)
-      .reproject(OUTPUT_CRS)
+      .reproject(OUTPUT_CRS, null, 30)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
    
 }

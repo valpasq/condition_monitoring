@@ -301,7 +301,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
   var YEAR_END = baseline.get('year_end').getInfo()
   var REF_PERIOD = YEAR_START + '-' + YEAR_END
   
-  var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS // + '_' + MONITOR_START + '_' + MONITOR_END
+  var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
   
   
   // Dictionary for asset properties

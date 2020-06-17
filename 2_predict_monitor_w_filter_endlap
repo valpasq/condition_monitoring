@@ -248,7 +248,7 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
     var date = ee.Date(d)
     var date2 = date.advance(24, 'hour')
     
-    return collection.filterDate(date, date2).median()
+    return collection.filterDate(date, date2).mean()
       .set('system:time_start', date.millis())
   }));
   

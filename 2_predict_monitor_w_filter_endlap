@@ -303,7 +303,6 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
   
   var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
   
-  
   // Dictionary for asset properties
   var outputProperties = ee.Dictionary({
         'system:time_start': ee.Date(YEAR+'-01-01').millis(),

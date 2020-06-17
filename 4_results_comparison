@@ -42,6 +42,8 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
 Map.addLayer(wrs2,{}, 'WRS2', false)
 Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots')
 Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots')
+Map.addLayer(ct_burlap.geometry().bounds(), {color: 'white'}, 'CT plots')
+Map.addLayer(ma_quabbin.geometry().bounds(), {color: 'white'}, 'MA plots')
 
 var style = {
   'Figure': [{

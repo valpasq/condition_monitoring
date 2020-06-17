@@ -317,7 +317,6 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
         'ref_period': REF_PERIOD
     });
 
-
   // Rescale from int
   baseline = baseline.divide(10000)
   

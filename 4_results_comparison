@@ -1,7 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
     ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
-    wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
+    wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending"),
+    study_area = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 
@@ -22,6 +23,19 @@ var gfc_tcc = 75;
 var gfc_mask = gfc.select('treecover2000')
   .gte(gfc_tcc)
   .reproject('EPSG:5070', null, 30)
+
+// Add reanalysis product
+var reanalysis_cn = 'reanalysis_score'
+if (YEAR >= 2015 & YEAR <= 2018) {
+  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
+  var reanalysis = ee.Image(reanalysis_fn)
+    .reproject('EPSG:5070')
+    .clip(study_area)
+    .updateMask(gfc_mask)
+    .rename(reanalysis_cn)
+
+  Map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
+} 
 
 // Get results for selected year
 var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)

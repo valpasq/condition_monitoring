@@ -2,12 +2,12 @@
 var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var VERSION = 'v2-2'
+var VERSION = 'v2-3'
 
-var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results')
+var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results_05-01_09-30')
 
-var WHICH_SAMPLE = 1;
-var YEAR = 2018
+var WHICH_SAMPLE = 2;
+var YEAR = 2017
 
 // Get plot locations
 if (WHICH_SAMPLE == 1) {

@@ -250,6 +250,8 @@ var clip_bound = SAMPLE.geometry().bounds()
 // Get monitoring period imagery
 var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
 print(monitor)
+// Map.addLayer(monitor.first().select('ndvi'), {min:0, max:1})
+
 // Add mask band
 var collectPredictions = monitor.map(function(i) {
       var iMask = i.select('ndvi').lt(NODATA).rename('mask')

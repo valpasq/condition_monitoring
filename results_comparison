@@ -1,0 +1,36 @@
+
+
+var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results_filtered')
+
+var YEAR = 2017
+
+// Colorbar
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+// Mask
+var gfc = ee.Image("UMD/hansen/global_forest_change_2018_v1_6")
+var gfc_tcc = 75;
+
+var gfc_mask = gfc.select('treecover2000')
+  .gte(gfc_tcc)
+  .reproject('EPSG:5070', null, 30)
+
+// Get results for selected year
+var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
+var NUM_RESULTS = selectedResults.size().getInfo()
+
+  // Generate tasks for annual feature set exports
+for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
+
+  var assessment = ee.Image(selectedResults.toList(selectedResults.size()).get(RESULT))
+  var assessment_masked = assessment.updateMask(gfc_mask)
+  var layer_name = assessment.get('system:index').getInfo()
+
+
+  Map.addLayer(assessment_masked.select('score_mean'), viz, layer_name)
+    
+}
+

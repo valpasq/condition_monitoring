@@ -150,7 +150,7 @@ function spectralTransforms(image) {
   // Transform stack
   return scaled.unmask(NODATA)
       .addBands(ndvi).addBands(tcg).addBands(evi).addBands(sr)
-      .reproject(OUTPUT_CRS)
+      .reproject(OUTPUT_CRS, null, 30)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
    
 }

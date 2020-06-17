@@ -363,13 +363,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
   var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
       .clip(clip_bound)
       .setMulti(outputProperties))
-  
-  // Mask non-forest
-  var gfc_mask = gfc.select('treecover2000').gte(gfc_tcc).reproject(baseline_crs, null, 30)
-  var assessment_masked = assessment.updateMask(gfc_mask)
-  
 
-  // ------------------------------------- Export -------------------------------------- 
   
   Export.image.toAsset({
     image: assessment,

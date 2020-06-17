@@ -13,8 +13,7 @@ var WHICH_SAMPLE = 1;
 
 var VERSION = 'SPECTRAL'; // for export naming
 var NODATA = 99;
-var OUTPUT_CRS = 'EPSG:5070';
-var OUTPUT_RES = 30;
+var OUTPUT_CRS = 'EPSG:5070'
 
 
 if (WHICH_SAMPLE == 1) {
@@ -48,7 +47,7 @@ var preprocess457 = function(image) {
   
   return image.updateMask(mask1.and(mask2).and(mask3))
     .select(L457_BANDS).rename(LTS_NAMES)
-    .copyProperties(image)
+    .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
 }
 
 // Function to preprocess L8 (mask and rename)
@@ -61,7 +60,7 @@ var preprocess8 = function(image) {
                
   return image.updateMask(mask1.and(mask2).and(mask3))
       .select(L8_BANDS).rename(LTS_NAMES) // Map legacy band names
-      .copyProperties(image)
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
 };
 
 
@@ -112,7 +111,7 @@ function maskCloudScore(image) {
 
   var mask = qa.gte(0.8)
   return image.updateMask(mask)
-      .copyProperties(image)
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
 }
 // SOURCE: https://gis.stackexchange.com/questions/280400/
 // cloud-cover-percentage-in-google-earth-engine  
@@ -151,7 +150,7 @@ function spectralTransforms(image) {
   // Transform stack
   return scaled.unmask(NODATA)
       .addBands(ndvi).addBands(tcg).addBands(evi).addBands(sr)
-      .reproject(OUTPUT_CRS, null, OUTPUT_RES)
+      .reproject(OUTPUT_CRS)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
    
 }
@@ -166,42 +165,32 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
       .map(preprocess457) 
-
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
       .filterDate(MONITOR_START, MONITOR_END) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
       .map(preprocess457) 
-
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+  
   // Get  Landsat 8 imagery
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
       .filterDate(MONITOR_START, MONITOR_END) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
       .map(preprocess8)  
-  
-    // FINAL LTS COLLECTION
-  var collection = collection5.merge(collection7).merge(collection8)
       .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
-      .map(addCloudScore)
-      .map(maskCloudScore) 
-      .map(spectralTransforms)
+  
+  // FINAL LTS COLLECTION
+  var monitorC = collection5.merge(collection7).merge(collection8)
       .sort('system:time_start') 
+      .map(addCloudScore).map(maskCloudScore) // mask based on simple cloud score
+      .map(spectralTransforms) // calculate spectral transforms
       
-  // ENDLAP FILTERING
-  var acquisitions = collection.aggregate_array('SENSING_TIME').distinct()
-  
-  // Take mean for each acquisition date (Path)
-  var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
-    var date = ee.Date(d)
-    var date2 = date.advance(24, 'hour')
-    
-    return collection.filterDate(date, date2).mean()
-      .set('system:time_start', date.millis())
-  }));
-  
-  // Return image collection for monitoring period
+      
+  // Return TC images for monitoring period
   return monitorC;
   
   };

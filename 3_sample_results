@@ -7,7 +7,7 @@ var VERSION = 'v2-3'
 var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results_filtered')
 
 var WHICH_SAMPLE = 2;
-var YEAR = 2017
+var YEAR = 2018
 
 // Get plot locations
 if (WHICH_SAMPLE == 1) {

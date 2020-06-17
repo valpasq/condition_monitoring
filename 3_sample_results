@@ -41,7 +41,10 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
     var score = img.select('score_mean')
-    var index = ee.String('m_').cat(ee.String(img.get('system:index')).replace('-', '_', 'g'))
+    var index = ee.String('m_')
+      .cat(ee.String(img.get('system:index'))
+      .split('_' + YEAR).get(0))
+      .replace('-', '_', 'g')
     score = score.rename(index)
     return ee.Image(prev).addBands(score);
   }, ee.Image(1)));

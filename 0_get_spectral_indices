@@ -183,14 +183,27 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
       .map(preprocess8)  
       .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
   
-  // FINAL LTS COLLECTION
-  var monitorC = collection5.merge(collection7).merge(collection8)
+    // FINAL LTS COLLECTION
+  var collection = collection5.merge(collection7).merge(collection8)
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      .map(addCloudScore)
+      .map(maskCloudScore) 
+      .map(spectralTransforms)
       .sort('system:time_start') 
-      .map(addCloudScore).map(maskCloudScore) // mask based on simple cloud score
-      .map(spectralTransforms) // calculate spectral transforms
       
-      
-  // Return TC images for monitoring period
+  // ENDLAP FILTERING
+  var acquisitions = collection.aggregate_array('SENSING_TIME').distinct()
+  
+  // Take mean for each acquisition date (Path)
+  var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
+    var date = ee.Date(d)
+    var date2 = date.advance(24, 'hour')
+    
+    return collection.filterDate(date, date2).mean()
+      .set('system:time_start', date.millis())
+  }));
+  
+  // Return image collection for monitoring period
   return monitorC;
   
   };

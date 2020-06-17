@@ -5,14 +5,11 @@ var test = ee.Image('projects/sites-project/conditionassessment_experiments_v5-2
 var original = ee.Image('projects/sites-project/conditionassessment_experiments_v5-2_results/tcg_2000-2010_h13_full_2017-05-01_2017-09-30')
 
 
-Map.addLayer(test.select('score_mean').subtract(original.select('score_mean')), {min:-0.01, max:0.01})
-Map.addLayer(test.select('score_mean'), {min:-4, max:0})
-Map.addLayer(original.select('score_mean'), {min:-4, max:0})
+Map.addLayer(test.select('score_mean').subtract(original.select('score_mean')), {min:-0.01, max:0.01}, 'Difference in scores with/without')
+Map.addLayer(test.select('score_mean'), {min:-4, max:0}, 'Score - with endlap filter')
+Map.addLayer(original.select('score_mean'), {min:-4, max:0}, 'Score - without endlap filter')
 
-Map.addLayer(test.select('score_count'), {min:0, max:15})
-Map.addLayer(original.select('score_count'), {min:0, max:15})
+Map.addLayer(test.select('score_count'), {min:0, max:15}, 'Numnber of obs - with endlap filter')
+Map.addLayer(original.select('score_count'), {min:0, max:15}, 'Number of obs - without endlap filter')
 
-Map.addLayer(image.select('score_mean').subtract(test.select('score_mean')), {min:-0.01, max:0.01})
-
-
-Map.addLayer(table, {color: 'white'})
+Map.addLayer(table, {color: 'white'}, 'WRS Scene footprints')

@@ -12,7 +12,7 @@ var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
-var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_05-01_09-30/'
+var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_filtered/'
 
 var NUM_EXPERIMENTS = BASELINES_COLLECTION.size().getInfo()
 

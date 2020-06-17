@@ -12,4 +12,4 @@ Map.addLayer(original.select('score_mean'), {min:-4, max:0}, 'Score - without en
 Map.addLayer(test.select('score_count'), {min:0, max:15}, 'Numnber of obs - with endlap filter')
 Map.addLayer(original.select('score_count'), {min:0, max:15}, 'Number of obs - without endlap filter')
 
-Map.addLayer(table, {color: 'white'}, 'WRS Scene footprints')
+Map.addLayer(table, {color: 'red'}, 'WRS Scene footprints', true, 0.5)

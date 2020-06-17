@@ -39,11 +39,28 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
     
 }
 
+
+var ct_bounds = ee.Image().byte().paint({
+  featureCollection: ct_burlap.geometry().bounds(),
+  color: 1,
+  width: 3
+});
+
+var ma_bounds = ee.Image().byte().paint({
+  featureCollection: ma_quabbin.geometry().bounds(),
+  color: 1,
+  width: 3
+});
+
+
 Map.addLayer(wrs2,{}, 'WRS2', false)
+
+Map.addLayer(ct_bounds, {}, 'CT plots')
+Map.addLayer(ma_bounds, {}, 'MA plots')
+
 Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots')
 Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots')
-Map.addLayer(ct_burlap.geometry().bounds(), {color: 'white'}, 'CT plots')
-Map.addLayer(ma_quabbin.geometry().bounds(), {color: 'white'}, 'MA plots')
+
 
 var style = {
   'Figure': [{

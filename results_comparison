@@ -1,3 +1,8 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
+    ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
+    wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 
 var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_results_filtered')
@@ -33,4 +38,18 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
   Map.addLayer(assessment_masked.select('score_mean'), viz, layer_name, false)
     
 }
+
+Map.addLayer(wrs2,{}, 'WRS2', false)
+Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots')
+Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots')
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Set map options.
+Map.setOptions(null, style);
 

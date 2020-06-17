@@ -9,6 +9,8 @@ var EXPERIMENTS = ee.ImageCollection('projects/sites-project/conditionassessment
 var WHICH_SAMPLE = 2;
 var YEAR = 2018
 
+var map_result = 27
+
 // Get plot locations
 if (WHICH_SAMPLE == 1) {
   // Massachusetts
@@ -27,6 +29,7 @@ if (WHICH_SAMPLE == 1) {
 
 // Get results for selected year
 var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', YEAR)
+var crs = selectedExperiments.first().projection().crs()
 
 var reanalysis_cn = 'm_reanalysis'
 if (YEAR >= 2015 & YEAR <= 2018) {
@@ -64,7 +67,7 @@ var result = scoreImage.reduceRegions({
         reducer: ee.Reducer.min(),
         collection: SAMPLE,
         scale: 1,
-        crs: 'EPSG:5070'
+        crs: crs
       });
 
 
@@ -78,18 +81,15 @@ var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
-var map_result = 30
-
 Map.addLayer(scoreImage.select(map_result), viz, 'result')
 Map.addLayer(SAMPLE, {color: 'white'}, 'sample points');
-// Map.addLayer(table)
 
-print(ee.String(scoreImage.select(map_result).bandNames().get(0)))
+print('Showing results for:', ee.String(scoreImage.select(map_result).bandNames().get(0)))
 
 // Export
 Export.table.toDrive({
   collection: result,
-  description: 'exportTable',
+  description: 'exportTable_' + SAMPLE_NAME + '_' + YEAR ,
   folder: 'ee-conditionassessment',
   fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION ,
 });

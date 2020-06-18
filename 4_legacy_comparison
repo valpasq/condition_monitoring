@@ -5,7 +5,6 @@ var image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/asss
     image4 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_0515_meanresiduals");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-
 // Map.addLayer(image, {min:-4, max:0}, 'v4-2')
 // Map.addLayer(image4, {min:-4, max:0}, '0515')
 

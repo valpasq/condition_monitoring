@@ -7,14 +7,18 @@ var image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/asss
     ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
+var gfc_mask = gfc.select('treecover2000')
+  .gte(gfc_tcc)
+  .reproject('EPSG:5070', null, 30)
+
 // Map.addLayer(image, {min:-4, max:0}, 'v4-2')
 // Map.addLayer(image4, {min:-4, max:0}, '0515')
 
-Map.addLayer(image2.select('score_mean'), {min:-4, max:4})
-Map.addLayer(image3, {min:-4, max:4}, '0010')
+Map.addLayer(image2.select('score_mean').updateMask(gfc_mask), {min:-4, max:4})
+Map.addLayer(image3.updateMask(gfc_mask), {min:-4, max:4}, '0010')
 
 
-Map.addLayer(image3.subtract(image2.select('score_mean')), {}, 'diff')
+Map.addLayer(image3.subtract(image2.select('score_mean')).updateMask(gfc_mask), {}, 'diff')
 
 
 var ct_bounds = ee.Image().byte().paint({

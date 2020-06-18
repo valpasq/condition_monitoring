@@ -406,6 +406,7 @@ print('Mosaic product:', outputMosiac);
 
 Map.addLayer(outputFull, {}, 'stfs');
 Map.addLayer(image.divide(10000))
+Map.addLayer(image.select('b5').divide(10000).subtract(outputMosiac.divide(10000).select('rmse')))
 
 // ------------------------------------- Export -------------------------------------- 
 

@@ -1,11 +1,11 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/asssessment_features-v4-2_tcg_2000-2010_NEWENGLAND_h13_full_2017-05-01_2017-09-30_2"),
-    image2 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2"),
+var image2 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2"),
     image3 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
-    image4 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_0515_meanresiduals"),
     ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
     ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+// Mask
 var gfc = ee.Image("UMD/hansen/global_forest_change_2018_v1_6")
 var gfc_tcc = 75;
 
@@ -13,21 +13,19 @@ var gfc_mask = gfc.select('treecover2000')
   .gte(gfc_tcc)
   .reproject('EPSG:5070', null, 30)
 
-// Map.addLayer(image, {min:-4, max:0}, 'v4-2')
-// Map.addLayer(image4, {min:-4, max:0}, '0515')
-
-
+// Get results
 var new_map = image2.select('score_mean').updateMask(gfc_mask)
 var old_map = image3.updateMask(gfc_mask)
+
+// Difference
 var diff_map = image3.subtract(image2.select('score_mean')).updateMask(gfc_mask)
 
+// Display
 Map.addLayer(new_map, {min:-4, max:4})
 Map.addLayer(old_map, {min:-4, max:4}, '0010')
-
-
 Map.addLayer(diff_map, {}, 'diff')
 
-
+// Study area bounds
 var ct_bounds = ee.Image().byte().paint({
   featureCollection: ct_burlap.geometry().bounds(),
   color: 1,
@@ -40,6 +38,7 @@ var ma_bounds = ee.Image().byte().paint({
   width: 3
 });
 
+// Histograms
 print(ui.Chart.image.histogram(diff_map, ct_burlap.geometry().bounds(), 30, 150, 0.001));
 print(ui.Chart.image.histogram(diff_map, ma_quabbin.geometry().bounds(), 30, 150, 0.001));
 

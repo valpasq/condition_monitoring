@@ -6,6 +6,8 @@ var image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/asss
     ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
     ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+var gfc = ee.Image("UMD/hansen/global_forest_change_2018_v1_6")
+var gfc_tcc = 75;
 
 var gfc_mask = gfc.select('treecover2000')
   .gte(gfc_tcc)

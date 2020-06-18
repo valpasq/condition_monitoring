@@ -288,7 +288,7 @@ var getCoeffs = function(feature) {
     'WRS_ROW': feature.get('ROW')
 });
   
-  return harmonicTrendCoefficients//.reproject(crs)
+  return harmonicTrendCoefficients//.reproject(OUTPUT_CRS)
     .setMulti(outputProperties);
 };
 

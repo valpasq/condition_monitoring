@@ -40,8 +40,8 @@ var ma_bounds = ee.Image().byte().paint({
   width: 3
 });
 
-print(ui.Chart.image.histogram(diff_map, ct_burlap.geometry().bounds(), 30, 128, 0.005));
-print(ui.Chart.image.histogram(diff_map, ma_quabbin.geometry().bounds(), 30, 128, 0.005));
+print(ui.Chart.image.histogram(diff_map, ct_burlap.geometry().bounds(), 30, 150, 0.001));
+print(ui.Chart.image.histogram(diff_map, ma_quabbin.geometry().bounds(), 30, 150, 0.001));
 
 
 Map.addLayer(ct_bounds, {}, 'CT plots - bounds')

@@ -8,9 +8,9 @@ var image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/asss
 // Map.addLayer(image, {min:-4, max:0}, 'v4-2')
 // Map.addLayer(image4, {min:-4, max:0}, '0515')
 
-Map.addLayer(image2.select('score_mean'), {min:-4, max:0})
-Map.addLayer(image3, {min:-4, max:0}, '0010')
+Map.addLayer(image2.select('score_mean'), {min:-4, max:4})
+Map.addLayer(image3, {min:-4, max:4}, '0010')
 
 
-Map.addLayer(image4.subtract(image2.select('score_mean')), {}, 'diff')
+Map.addLayer(image3.subtract(image2.select('score_mean')), {}, 'diff')
 

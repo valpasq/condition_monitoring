@@ -1,0 +1,17 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/asssessment_features-v4-2_tcg_2000-2010_NEWENGLAND_h13_full_2017-05-01_2017-09-30_2"),
+    image2 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2"),
+    image3 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
+    image4 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_0515_meanresiduals");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+
+// Map.addLayer(image, {min:-4, max:0}, 'v4-2')
+// Map.addLayer(image4, {min:-4, max:0}, '0515')
+
+Map.addLayer(image2.select('score_mean'), {min:-4, max:0})
+Map.addLayer(image3, {min:-4, max:0}, '0010')
+
+
+Map.addLayer(image4.subtract(image2.select('score_mean')), {}, 'diff')
+

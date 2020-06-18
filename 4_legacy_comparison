@@ -42,3 +42,15 @@ Map.addLayer(ma_bounds, {}, 'MA plots - bounds')
 
 Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots')
 Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots')
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Set map options.
+Map.setOptions(null, style);
+// Map.setOptions('SATELLITE')
+

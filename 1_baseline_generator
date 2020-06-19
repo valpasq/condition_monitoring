@@ -341,7 +341,7 @@ if (TS == 'full') {
     .filterBounds(roi)
     .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess457);
   
   // Get Landsat 7 imagery to fill gap period between 5 and 8.
@@ -349,7 +349,7 @@ if (TS == 'full') {
     .filterBounds(roi)
     .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess457);
   
   // Get all Landsat 8 imagery.
@@ -357,7 +357,7 @@ if (TS == 'full') {
     .filterBounds(roi)
     .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess8);
 }
 
@@ -365,7 +365,8 @@ if (TS == 'full') {
 var collection = collection5.merge(collection7).merge(collection8)
   .map(addCloudScore)
   .map(maskCloudScore) // mask based on simple cloud score
-  .map(spectralTransforms);
+  .map(spectralTransforms)
+  .sort('system:time_start');
 
 
 // Get WRS2 Scene boundaries

@@ -331,6 +331,7 @@ if (TS == 'full') {
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess8);
     
 } else if (TS == '16d') {
@@ -356,6 +357,7 @@ if (TS == 'full') {
     .filterBounds(roi)
     .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess8);
 }
 

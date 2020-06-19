@@ -10,6 +10,7 @@ var DAY_START = '05-01'
 var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
+var CC_THRESH = 50;
 
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
 var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_filtered/'
@@ -215,21 +216,21 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
       .filterDate(MONITOR_START, MONITOR_END)  
       .filterBounds(clipBound) 
-      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(preprocess457) 
     
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
       .filterDate(MONITOR_START, MONITOR_END) 
       .filterBounds(clipBound) 
-      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(preprocess457) 
 
   // Get  Landsat 8 imagery
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
       .filterDate(MONITOR_START, MONITOR_END) 
       .filterBounds(clipBound) 
-      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(preprocess8)  
 
   // FINAL LTS COLLECTION

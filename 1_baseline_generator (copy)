@@ -320,20 +320,21 @@ if (TS == 'full') {
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
     .map(preprocess457);
   
   // Get all Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
     .map(preprocess457);
   
   // Get all Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
     .map(preprocess8);
     
 } else if (TS == '16d') {
@@ -359,6 +360,7 @@ if (TS == 'full') {
     .filterBounds(roi)
     .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
+    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess8);
 }
 
@@ -367,7 +369,7 @@ var collection = collection5.merge(collection7).merge(collection8)
   .map(addCloudScore)
   .map(maskCloudScore) // mask based on simple cloud score
   .map(spectralTransforms);
-
+print(collection)
 
 // Get WRS2 Scene boundaries
 var scenes = wrs2.filterBounds(roi);
@@ -406,7 +408,8 @@ print('Mosaic product:', outputMosiac);
 
 Map.addLayer(outputFull, {}, 'stfs');
 Map.addLayer(image.divide(10000))
-Map.addLayer(image.select('b5').divide(10000).subtract(outputMosiac.divide(10000).select('rmse')))
+Map.addLayer(image.select('b5').divide(10000)
+    .subtract(outputMosiac.divide(10000).select('rmse')), {min:-0.005, max:0.005})
 
 // ------------------------------------- Export -------------------------------------- 
 

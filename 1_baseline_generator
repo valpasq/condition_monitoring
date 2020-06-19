@@ -15,11 +15,11 @@ var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zon
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var DEPENDENT = 'evi';  // Select spectral transform   
+var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2005;  // Starts 01-01
-var END_YEAR = 2015;    // Ends 12-31
+var START_YEAR = 2000;  // Starts 01-01
+var END_YEAR = 2010;    // Ends 12-31
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 
@@ -317,21 +317,21 @@ if (TS == 'full') {
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess457);
   
   // Get all Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess457);
   
   // Get all Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 80))
     .map(preprocess8);
     
 } else if (TS == '16d') {
@@ -367,7 +367,7 @@ var collection = collection5.merge(collection7).merge(collection8)
   .map(maskCloudScore) // mask based on simple cloud score
   .map(spectralTransforms)
   .sort('system:time_start');
-
+print(collection)
 
 // Get WRS2 Scene boundaries
 var scenes = wrs2.filterBounds(roi);

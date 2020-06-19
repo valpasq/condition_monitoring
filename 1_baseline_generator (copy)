@@ -314,27 +314,27 @@ var independents = ee.List(['constant', 't'])
   .cat(cosNames).cat(sinNames);
 
 // Select all available (full) versus limited L7 (16d) time series
-if (TS == 'full') {
+if (TS === 'full') {
   
   // Get all Landsat 5 imagery.
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
     .map(preprocess457);
   
   // Get all Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
     .map(preprocess457);
   
   // Get all Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
+    // .filter(ee.Filter.lt('CLOUD_COVER_LAND', 100))
     .map(preprocess8);
     
 } else if (TS == '16d') {
@@ -366,9 +366,10 @@ if (TS == 'full') {
 
 // Merge pre-processed Landsat 5, 7 and 8 collections
 var collection = collection5.merge(collection7).merge(collection8)
-  .map(addCloudScore)
-  .map(maskCloudScore) // mask based on simple cloud score
-  .map(spectralTransforms);
+  // .map(addCloudScore)
+  // .map(maskCloudScore) // mask based on simple cloud score
+  .map(spectralTransforms)
+  .sort('system:time_start');
 print(collection)
 
 // Get WRS2 Scene boundaries

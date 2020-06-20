@@ -287,92 +287,94 @@ var addResidual = function(image) {
 
 // --------------------------------- PREDICT ---------------------------------- 
 
-for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
+var EXPERIMENT = 27
+// for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     
-  var baseline = ee.Image(BASELINES_COLLECTION.toList(BASELINES_COLLECTION.size()).get(EXPERIMENT))
-  var baseline_crs = baseline.projection().crs();
-  var output_resolution = 30; // in meters
-  
-  var VERSION = baseline.get('version').getInfo()
-  var DEPENDENT = baseline.get('spectral_band').getInfo()
-  var TS = baseline.get('time_series').getInfo()
-  var FREQ = baseline.get('harmonics').getInfo()
-  var YEAR_START = baseline.get('year_start').getInfo()
-  var YEAR_END = baseline.get('year_end').getInfo()
-  var REF_PERIOD = YEAR_START + '-' + YEAR_END
-  
-  var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
-  
-  // Dictionary for asset properties
-  var outputProperties = ee.Dictionary({
-        'system:time_start': ee.Date(YEAR+'-01-01').millis(),
-        'spectral_band': DEPENDENT,
-        'monitor_year': YEAR,
-        'monitor_start': MONITOR_START,
-        'monitor_end': MONITOR_END,
-        'run_version': VERSION,
-        'harmonics': FREQ,
-        'time_series': TS,
-        'ref_period': REF_PERIOD
-    });
+var baseline = ee.Image(BASELINES_COLLECTION.toList(BASELINES_COLLECTION.size()).get(EXPERIMENT))
+var baseline_crs = baseline.projection().crs();
+var output_resolution = 30; // in meters
 
-  // Rescale from int
-  baseline = baseline.divide(10000)
-  
-  // Get study area boundary
-  var clip_bound = baseline.geometry()
-  
-  // get frequencies
-  if (FREQ == 'h13') {
-    var harmonicFrequencies = ee.List([1,3]);
-    
-  } else if (FREQ == 'h12') {
-    var harmonicFrequencies = ee.List([1,2]);
-  }
-  
-  // Construct lists of names for the harmonic terms.
-  var cosNames = getNames('cos_', harmonicFrequencies);
-  var sinNames = getNames('sin_', harmonicFrequencies);
-  
-  // Independent variables.
-  var independents = ee.List(['constant', 't'])
-    .cat(cosNames).cat(sinNames);
-  
-  // Get monitoring period imagery
-  var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
-  
-  // Add constant, time, and coefficients to monitoring collection.
-  var harmonicLandsat = monitor.select(DEPENDENT)
-    .map(addConstant)
-    .map(addTime)
-    .map(addHarmonics(harmonicFrequencies));
-  
-  // Add predictions and scores
-  var collectPredictions = harmonicLandsat
-    .map(addPrediction)
-    .map(addResidual);
-  
-  
-  var mean = collectPredictions.select('score').reduce('mean');
-  var stddev = collectPredictions.select('score').reduce('stdDev');
-  var nobs = collectPredictions.select('score').reduce('count');
-  
-  // Average over monitoring period
-  var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
-      .clip(clip_bound)
-      .setMulti(outputProperties))
+var VERSION = baseline.get('version').getInfo()
+var DEPENDENT = baseline.get('spectral_band').getInfo()
+var TS = baseline.get('time_series').getInfo()
+var FREQ = baseline.get('harmonics').getInfo()
+var YEAR_START = baseline.get('year_start').getInfo()
+var YEAR_END = baseline.get('year_end').getInfo()
+var REF_PERIOD = YEAR_START + '-' + YEAR_END
 
+var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
+
+// Dictionary for asset properties
+var outputProperties = ee.Dictionary({
+      'system:time_start': ee.Date(YEAR+'-01-01').millis(),
+      'spectral_band': DEPENDENT,
+      'monitor_year': YEAR,
+      'monitor_start': MONITOR_START,
+      'monitor_end': MONITOR_END,
+      'run_version': VERSION,
+      'harmonics': FREQ,
+      'time_series': TS,
+      'ref_period': REF_PERIOD
+  });
+
+// Rescale from int
+baseline = baseline.divide(10000)
+
+// Get study area boundary
+var clip_bound = baseline.geometry()
+
+// get frequencies
+if (FREQ == 'h13') {
+  var harmonicFrequencies = ee.List([1,3]);
   
-  Export.image.toAsset({
-    image: assessment,
-    description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor',
-    assetId: OUTPUT_NAME,
-    region: clip_bound,
-    crs: baseline_crs,
-    scale: output_resolution,
-    maxPixels: 1e13,
-  })
+} else if (FREQ == 'h12') {
+  var harmonicFrequencies = ee.List([1,2]);
 }
+
+// Construct lists of names for the harmonic terms.
+var cosNames = getNames('cos_', harmonicFrequencies);
+var sinNames = getNames('sin_', harmonicFrequencies);
+
+// Independent variables.
+var independents = ee.List(['constant', 't'])
+  .cat(cosNames).cat(sinNames);
+
+// Get monitoring period imagery
+var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
+
+// Add constant, time, and coefficients to monitoring collection.
+var harmonicLandsat = monitor.select(DEPENDENT)
+  .map(addConstant)
+  .map(addTime)
+  .map(addHarmonics(harmonicFrequencies));
+
+// Add predictions and scores
+var collectPredictions = harmonicLandsat
+  .map(addPrediction)
+  .map(addResidual);
+
+
+
+var mean = collectPredictions.select('score').reduce('mean');
+var stddev = collectPredictions.select('score').reduce('stdDev');
+var nobs = collectPredictions.select('score').reduce('count');
+
+// Average over monitoring period
+var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
+    .clip(clip_bound)
+    .setMulti(outputProperties))
+
+
+// Export.image.toAsset({
+//   image: assessment,
+//   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor',
+//   assetId: OUTPUT_NAME,
+//   region: clip_bound,
+//   crs: baseline_crs,
+//   scale: output_resolution,
+//   maxPixels: 1e13,
+// })
+// }
 
 
 

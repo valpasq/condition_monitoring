@@ -2,7 +2,8 @@
 var image2 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2"),
     image3 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
     ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
-    ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple");
+    ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
+    image = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2018-05-01_2018-09-30_CCthresh");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Mask
@@ -14,7 +15,8 @@ var gfc_mask = gfc.select('treecover2000')
   .reproject('EPSG:5070', null, 30)
 
 // Get results
-var new_map = image2.select('score_mean').updateMask(gfc_mask)
+var new_map = image.select('score_mean').updateMask(gfc_mask)
+var new_map_2 = image2.select('score_mean').updateMask(gfc_mask)
 var old_map = image3.updateMask(gfc_mask)
 
 // Difference
@@ -22,6 +24,7 @@ var diff_map = image3.subtract(image2.select('score_mean')).updateMask(gfc_mask)
 
 // Display
 Map.addLayer(new_map, {min:-4, max:4})
+Map.addLayer(new_map_2, {min:-4, max:4}, 'all CC')
 Map.addLayer(old_map, {min:-4, max:4}, '0010')
 Map.addLayer(diff_map, {}, 'diff')
 

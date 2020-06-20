@@ -287,7 +287,6 @@ var addResidual = function(image) {
 
 // --------------------------------- PREDICT ---------------------------------- 
 
-var EXPERIMENT = 27
 for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
       
   var baseline = ee.Image(BASELINES_COLLECTION.toList(BASELINES_COLLECTION.size()).get(EXPERIMENT))

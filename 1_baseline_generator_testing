@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
+var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
+    image = ee.Image("projects/sites-project/conditionassessment_experiments_v5-2/features-v5-2_tcg_2000-2010_h13_full");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Baseline Generator
@@ -251,18 +252,26 @@ var getCoeffs = function(feature) {
     .arrayProject([0])
     .arrayFlatten([independents]);
   
-  // Compute fitted values
-  var fittedHarmonic = harmonicLandsat.map(function(image) {
-    return image.addBands(
-      image.select(independents)
-        .multiply(harmonicTrendCoefficients)
-        .reduce('sum')
-        .rename('fitted'));
-      });
+    // Turn the array image into a multi-band image of coefficients
+  var harmonicResiduals = harmonicTrend.select('residuals')
+    .arrayProject([0])
+    .arrayFlatten([ee.List(['residuals'])]);
+  
+  
+  // // Compute fitted values
+  // var fittedHarmonic = harmonicLandsat.map(function(image) {
+  //   return image.addBands(
+  //     image.select(independents)
+  //       .multiply(harmonicTrendCoefficients)
+  //       .reduce('sum')
+  //       .rename('fitted'));
+  //     });
   
   // Calculate residuals
-  var withResiduals = fittedHarmonic.map(function(image) {
-    var residuals = image.select(DEPENDENT).subtract(image.select('fitted'))
+  // var withResiduals = fittedHarmonic.map(function(image) {
+  var withResiduals = harmonicLandsat.map(function(image) {
+    // var residuals = image.select(DEPENDENT).subtract(image.select('fitted'))
+    var residuals = harmonicResiduals.select('residuals')
         .rename('residual');
     var residualsSquared = residuals.pow(2).rename('residualSquared');
     
@@ -404,6 +413,8 @@ print('Full collection:', outputFull);
 print('Mosaic product:', outputMosiac);
 
 Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
+Map.addLayer(image.select('rmse'), {min:0, max:500}, 'RMSE - exported');
+// Map.addLayer(image.select('rmse').subtract(outputMosiac.select('rmse')), {min:0, max:10}, 'RMSE - diff');
 
 // ------------------------------------- Export -------------------------------------- 
 

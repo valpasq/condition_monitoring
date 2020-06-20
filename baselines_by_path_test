@@ -9,3 +9,15 @@ var p12p13 = imageCollection.filterMetadata('WRS_PATH', 'equals', 12).first()
 print(imageCollection.first().projection())
 
 Map.addLayer(p12p13.divide(10000), {min:-0.01, max:0.01 })
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Set map options.
+Map.setOptions(null, style);
+Map.setOptions('SATELLITE')
+

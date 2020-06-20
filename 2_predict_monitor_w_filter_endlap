@@ -352,8 +352,6 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     .map(addPrediction)
     .map(addResidual);
   
-  
-  
   var mean = collectPredictions.select('score').reduce('mean');
   var stddev = collectPredictions.select('score').reduce('stdDev');
   var nobs = collectPredictions.select('score').reduce('count');

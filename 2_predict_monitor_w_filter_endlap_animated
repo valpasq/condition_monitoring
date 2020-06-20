@@ -10,7 +10,7 @@ var DAY_START = '05-01'
 var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
-var CC_THRESH = 80;
+var CC_THRESH = 50;
 
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/conditionassessment_experiments_v5-2_collection')
 var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_filtered/'

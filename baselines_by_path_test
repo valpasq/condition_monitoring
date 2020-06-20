@@ -8,7 +8,7 @@ var p12p13 = imageCollection.filterMetadata('WRS_PATH', 'equals', 12).first()
   .subtract(imageCollection.filterMetadata('WRS_PATH', 'equals', 13).first())
 print(imageCollection.first().projection())
 
-Map.addLayer(p12p13.divide(10000), {min:-0.01, max:0.01 })
+Map.addLayer(p12p13.divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01 })
 
 var style = {
   'Figure': [{

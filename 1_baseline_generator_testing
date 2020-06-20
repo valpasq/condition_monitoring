@@ -246,19 +246,16 @@ var getCoeffs = function(feature) {
   var harmonicTrend = harmonicLandsat
     .select(independents.add(DEPENDENT))
     .reduce(ee.Reducer.linearRegression(independents.length(), 1))
-    .setDefaultProjection(crs);
   
   // Turn the array image into a multi-band image of coefficients
   var harmonicTrendCoefficients = harmonicTrend.select('coefficients')
     .arrayProject([0])
     .arrayFlatten([independents])
-    .setDefaultProjection(crs);
   
   // Get RMS from linearRegression result
   var rmse = harmonicTrend.select('residuals')
     .arrayProject([0])
     .arrayFlatten([ee.List(['rmse'])])
-    .setDefaultProjection(crs);
 
   harmonicTrendCoefficients = harmonicTrendCoefficients
     .addBands([rmse, numObs])

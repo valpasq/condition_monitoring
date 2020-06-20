@@ -255,7 +255,6 @@ var getCoeffs = function(feature) {
   var rmse = harmonicTrend.select('residuals')
     .arrayProject([0])
     .arrayFlatten([ee.List(['rmse'])])
-    .setDefaultProjection(crs);
 
   harmonicTrendCoefficients = harmonicTrendCoefficients
     .addBands([rmse, numObs])

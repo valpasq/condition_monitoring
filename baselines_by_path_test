@@ -4,7 +4,7 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_
 
 var PATH_MIN = 11;
 var PATH_MAX = 14;
-var OBS_MIN = 100
+var OBS_MIN = 100;
 
 for(var path = PATH_MIN; path <= PATH_MAX; path++){
   var baseline_prev = imageCollection.filterMetadata('WRS_PATH', 'equals', path-1)

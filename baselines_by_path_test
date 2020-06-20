@@ -2,20 +2,19 @@
 var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var p11 = imageCollection.filterMetadata('WRS_PATH', 'equals', 11).first()
-var p12 = imageCollection.filterMetadata('WRS_PATH', 'equals', 12).first()
-var p13 = imageCollection.filterMetadata('WRS_PATH', 'equals', 13).first()
-
-Map.addLayer(p11.select('rmse'), {min:0, max:500}, 'Path 11')
-Map.addLayer(p12.select('rmse'), {min:0, max:500}, 'Path 12')
-Map.addLayer(p13.select('rmse'), {min:0, max:500}, 'Path 13')
+for(var path = 11; path <= 14; path++){
+  var baseline_prev = imageCollection.filterMetadata('WRS_PATH', 'equals', path-1).first()
+  var baseline = imageCollection.filterMetadata('WRS_PATH', 'equals', path).first()
+  Map.addLayer(baseline.select('rmse'), {min:0, max:500}, 'Path ' + path)
+  Map.addLayer(baseline_prev.subtract(baseline).divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, 'Path ' + path)
+}
   
 
-var p12p13 = p12.subtract(p13)
+// var p12p13 = p12.subtract(p13)
 
 print(imageCollection.first().projection())
 
-Map.addLayer(p12p13.divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01 })
+// Map.addLayer(p12p13.divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01 })
 
 var style = {
   'Figure': [{

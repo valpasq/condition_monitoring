@@ -11,6 +11,8 @@ Map.addLayer(p12.select('rmse'), {min:0, max:500}, 'Path 12')
 Map.addLayer(p13.select('rmse'), {min:0, max:500}, 'Path 13')
   
 
+var p12p13 = p12.subtract(p13)
+
 print(imageCollection.first().projection())
 
 Map.addLayer(p12p13.divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01 })

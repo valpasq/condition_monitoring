@@ -398,7 +398,6 @@ for(var path = 11; path <= 14; path++){
     .setMulti(outputProperties))
     .set('WRS_PATH', path);
 
-
   print('Mosaic product:', outputMosaic);
   
   Map.addLayer(outputMosaic.select('rmse'), {min:0, max:500}, 'RMSE');

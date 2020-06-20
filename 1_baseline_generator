@@ -6,7 +6,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 // | [valpasq@bu.edu], 2020
 // |
 
-var VERSION = '5-2';
+var VERSION = '5-3';
 
 // Get study area ROI
 var roi_fn = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
@@ -251,31 +251,16 @@ var getCoeffs = function(feature) {
     .arrayProject([0])
     .arrayFlatten([independents]);
   
-  // Compute fitted values
-  var fittedHarmonic = harmonicLandsat.map(function(image) {
-    return image.addBands(
-      image.select(independents)
-        .multiply(harmonicTrendCoefficients)
-        .reduce('sum')
-        .rename('fitted'));
-      });
-  
-  // Calculate residuals
-  var withResiduals = fittedHarmonic.map(function(image) {
-    var residuals = image.select(DEPENDENT).subtract(image.select('fitted'))
-        .rename('residual');
-    var residualsSquared = residuals.pow(2).rename('residualSquared');
-    
-    return image.addBands([residuals, residualsSquared]);
-  });
-  
-  // Calculate model RMSE
-  var rmse = withResiduals.select('residualSquared')
-    .mean().sqrt().rename('rmse');
-  
+    // Get RMS from linearRegression result
+  var rmse = harmonicTrend.select('residuals')
+    .arrayProject([0])
+    .arrayFlatten([ee.List(['rmse'])])
+    .setDefaultProjection(crs);
+
   harmonicTrendCoefficients = harmonicTrendCoefficients
-    .addBands([rmse, numObs]);
-    
+    .addBands([rmse, numObs])
+    .setDefaultProjection(crs);
+  
   var outputProperties = ee.Dictionary({
     'system:time_start': ee.Date(START_YEAR+'-01-01').millis(),
     'system:time_end': ee.Date(END_YEAR+'-01-01').millis(),

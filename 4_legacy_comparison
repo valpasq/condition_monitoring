@@ -3,7 +3,7 @@ var image2 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_
     image3 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
     ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
     ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
-    image = ee.Image("projects/sites-project/conditionassessment_experiments_v5-2/features-v5-2_evi_2000-2010_h13_full");
+    image = ee.Image("projects/sites-project/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30_CCthresh");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Mask

@@ -240,22 +240,25 @@ var getCoeffs = function(feature) {
   var harmonicLandsat = collectionScene.select(DEPENDENT)
     .map(addConstant)
     .map(addTime)
-    .map(addHarmonics(harmonicFrequencies));
+    .map(addHarmonics(harmonicFrequencies))
     
   // The output of the regression reduction is a 4x1 array image
   var harmonicTrend = harmonicLandsat
     .select(independents.add(DEPENDENT))
-    .reduce(ee.Reducer.linearRegression(independents.length(), 1));
+    .reduce(ee.Reducer.linearRegression(independents.length(), 1))
+    .setDefaultProjection(crs);
   
   // Turn the array image into a multi-band image of coefficients
   var harmonicTrendCoefficients = harmonicTrend.select('coefficients')
     .arrayProject([0])
-    .arrayFlatten([independents]);
+    .arrayFlatten([independents])
+    .setDefaultProjection(crs);
   
     // Turn the array image into a multi-band image of coefficients
   var harmonicResiduals = harmonicTrend.select('residuals')
     .arrayProject([0])
-    .arrayFlatten([ee.List(['residuals'])]);
+    .arrayFlatten([ee.List(['residuals'])])
+    .setDefaultProjection(crs);
   
   
   // // Compute fitted values
@@ -402,7 +405,7 @@ condition: ee.Filter.and(
 // Map over scene collections
 var outputFull = ee.ImageCollection(collections.map(getCoeffs));
 
-
+print(outputFull)
 
 
 // // Quality mosaic based on number of observations per pixel

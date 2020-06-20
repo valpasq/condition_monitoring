@@ -260,7 +260,6 @@ var getCoeffs = function(feature) {
     .arrayFlatten([ee.List(['rmse'])])
     .setDefaultProjection(crs);
 
-
   harmonicTrendCoefficients = harmonicTrendCoefficients
     .addBands([rmse, numObs])
     .setDefaultProjection(crs);

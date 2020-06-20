@@ -295,10 +295,11 @@ var getCoeffs = function(feature) {
     'harmonics': HARMONICS,
     'time_series': TS,
     'WRS_PATH': feature.get('PATH'),
-    'WRS_ROW': feature.get('ROW')
+    'WRS_ROW': feature.get('ROW'),
+    'crs': crs
 });
   
-  return harmonicTrendCoefficients//.reproject(OUTPUT_CRS)
+  return harmonicTrendCoefficients
     .setMulti(outputProperties);
 };
 
@@ -401,32 +402,35 @@ condition: ee.Filter.and(
 // Map over scene collections
 var outputFull = ee.ImageCollection(collections.map(getCoeffs));
 
-// Quality mosaic based on number of observations per pixel
-var outputMosiac = ee.Image(outputFull.qualityMosaic('nobs')
-                     .multiply(OUTPUT_MULTIPLIER)
-                     .int() // convert to int
-                     .clip(roi)
-                     .setMulti(outputProperties));
+
+
+
+// // Quality mosaic based on number of observations per pixel
+// var outputMosiac = ee.Image(outputFull.qualityMosaic('nobs')
+//                     .multiply(OUTPUT_MULTIPLIER)
+//                     .int() // convert to int
+//                     .clip(roi)
+//                     .setMulti(outputProperties));
                    
                      
-print('Full collection:', outputFull);
-print('Mosaic product:', outputMosiac);
+// print('Full collection:', outputFull);
+// print('Mosaic product:', outputMosiac);
 
-Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
-Map.addLayer(image.select('rmse'), {min:0, max:500}, 'RMSE - exported');
-// Map.addLayer(image.select('rmse').subtract(outputMosiac.select('rmse')), {min:0, max:10}, 'RMSE - diff');
+// Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
+// Map.addLayer(image.select('rmse'), {min:0, max:500}, 'RMSE - exported');
+// // Map.addLayer(image.select('rmse').subtract(outputMosiac.select('rmse')), {min:0, max:10}, 'RMSE - diff');
 
-// ------------------------------------- Export -------------------------------------- 
+// // ------------------------------------- Export -------------------------------------- 
 
-Export.image.toAsset({
-  image: outputMosiac,
-  description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
-  assetId: OUTPUT_NAME,
-  region: roi.bounds(),
-  crs: OUTPUT_CRS,
-  scale: 30,
-  maxPixels: 1e13,
-})
+// Export.image.toAsset({
+//   image: outputMosiac,
+//   description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR ,
+//   assetId: OUTPUT_NAME,
+//   region: roi.bounds(),
+//   crs: OUTPUT_CRS,
+//   scale: 30,
+//   maxPixels: 1e13,
+// })
 
 
 

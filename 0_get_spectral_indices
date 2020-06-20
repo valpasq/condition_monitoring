@@ -28,7 +28,6 @@ if (WHICH_SAMPLE == 2) {
   var fileName = 'plots_ct_burlap_' + YEAR + '_' + VERSION 
 }
 
-
 // ---------------------------------- PREPROCESS ---------------------------------- 
 
 // Band mapping for legacy re-naming

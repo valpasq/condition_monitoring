@@ -364,6 +364,8 @@ var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
     .clip(clip_bound)
     .setMulti(outputProperties))
 
+Map.addLayer(collectPredictions.first().select('tcg'))
+Map.addLayer(collectPredictions.first().select('fitted'))
 
 // Export.image.toAsset({
 //   image: assessment,

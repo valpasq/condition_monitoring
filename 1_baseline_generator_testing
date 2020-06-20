@@ -380,11 +380,12 @@ var outputFull = ee.ImageCollection(collections.map(getCoeffs));
 print('Full collection:', outputFull);
 
 var paths = outputFull.aggregate_array('WRS_PATH').distinct().sort()
-// var num_paths = paths.size().getInfo()
+var num_paths = paths.size().getInfo()
 print(paths)
+var path_start = paths.get(0).getInfo()
+var path_stop = paths.get(num_paths-1).getInfo()
 
-
-for(var path = 11; path <= 14; path++){
+for(var path = path_start; path <= path_stop; path++){
   print(path)
   var images = outputFull.filterMetadata('WRS_PATH', 'equals', path)
   var path_proj = images.first().projection()

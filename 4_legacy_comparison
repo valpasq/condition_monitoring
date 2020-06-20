@@ -3,7 +3,7 @@ var image2 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_
     image3 = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
     ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
     ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
-    image = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2018-05-01_2018-09-30_CCthresh");
+    image = ee.Image("projects/sites-project/conditionassessment_experiments_v5-2/features-v5-2_evi_2000-2010_h13_full");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 // Mask
@@ -18,6 +18,7 @@ var gfc_mask = gfc.select('treecover2000')
 var new_map = image.select('score_mean').updateMask(gfc_mask)
 var new_map_2 = image2.select('score_mean').updateMask(gfc_mask)
 var old_map = image3.updateMask(gfc_mask)
+
 
 // Difference
 var diff_map = image3.subtract(image2.select('score_mean')).updateMask(gfc_mask)

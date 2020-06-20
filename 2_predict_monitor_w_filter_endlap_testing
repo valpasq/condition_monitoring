@@ -237,12 +237,10 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
       .map(function(image) {
-        return image.set(
-        {
+        return image.set({
           'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
           'WRS_PATH': image.get('WRS_PATH')
-          
-        })
+         })
         
       })
       .map(addCloudScore)
@@ -259,8 +257,9 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
     var date2 = date.advance(24, 'hour')
     
     return collection.filterDate(date, date2).mean()
-      .set({'system:time_start': date.millis(), 
-      'WRS_PATH': collection.first().get('WRS_PATH')
+      .set({
+        'system:time_start': date.millis(), 
+        'WRS_PATH': collection.first().get('WRS_PATH')
       })
   }));
   

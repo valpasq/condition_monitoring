@@ -2,19 +2,24 @@
 var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var path_min = 11;
-var path_max = 14;
+var PATH_MIN = 11;
+var PATH_MAX = 14;
+var OBS_MIN = 100
 
-for(var path = path_min; path <= path_max; path++){
-  var baseline_prev = imageCollection.filterMetadata('WRS_PATH', 'equals', path-1).first()
-  baseline_prev = baseline_prev.updateMask(baseline_prev.select('nobs').divide(10000).gte(100))
+for(var path = PATH_MIN; path <= PATH_MAX; path++){
+  var baseline_prev = imageCollection.filterMetadata('WRS_PATH', 'equals', path-1)
+    .first()
+    .divide(10000)
+  baseline_prev = baseline_prev.updateMask(baseline_prev.select('nobs').gte(OBS_MIN))
   
-  var baseline = imageCollection.filterMetadata('WRS_PATH', 'equals', path).first()
-  baseline = baseline.updateMask(baseline.select('nobs').divide(10000).gte(100))
+  var baseline = imageCollection.filterMetadata('WRS_PATH', 'equals', path)
+    .first()
+    .divide(10000)
+  baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
   
-  Map.addLayer(baseline.select('nobs').divide(10000), {min:0, max:200}, 'Path ' + path)
+  Map.addLayer(baseline.select('nobs'), {min:0, max:200}, 'Path ' + path)
   
-  if (path > path_min){
+  if (path > PATH_MIN){
     var diff_name = 'Path ' + path + '_minus_prev'
     var diff = baseline.subtract(baseline_prev).divide(10000)
     Map.addLayer(diff.select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)

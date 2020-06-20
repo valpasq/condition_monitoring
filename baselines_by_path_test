@@ -3,4 +3,9 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 Map.addLayer(imageCollection.select('rmse'), {min:0, max:500})
-print(imageCollection)
+
+var p12p13 = imageCollection.filterMetadata('WRS_PATH', 'equals', 12).first()
+  .subtract(imageCollection.filterMetadata('WRS_PATH', 'equals', 13).first())
+print(imageCollection.first().projection())
+
+Map.addLayer(p12p13.divide(10000), {min:-0.01, max:0.01 })

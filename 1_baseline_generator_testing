@@ -26,7 +26,7 @@ var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
-var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_collection/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
 var OUTPUT_NAME = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
 
 
@@ -377,23 +377,45 @@ condition: ee.Filter.and(
 
 // Map over scene collections
 var outputFull = ee.ImageCollection(collections.map(getCoeffs));
-
-print(outputFull)
-
-
-// Quality mosaic based on number of observations per pixel
-var outputMosiac = ee.Image(outputFull.qualityMosaic('nobs')
-                    .multiply(OUTPUT_MULTIPLIER)
-                    .int() // convert to int
-                    .clip(roi)
-                    .setMulti(outputProperties));
-                   
-                     
 print('Full collection:', outputFull);
-print('Mosaic product:', outputMosiac);
 
-Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
+var paths = outputFull.aggregate_array('WRS_PATH').distinct().sort()
+// var num_paths = paths.size().getInfo()
+print(paths)
+
+
+for(var path = 11; path <= 14; path++){
+  print(path)
+  var images = outputFull.filterMetadata('WRS_PATH', 'equals', path)
+  var path_proj = images.first().projection()
+  
+    // Quality mosaic based on number of observations per pixel
+  var outputMosaic = ee.Image(images
+    .qualityMosaic('nobs')
+    .multiply(OUTPUT_MULTIPLIER)
+    .int() 
+    .clip(roi)
+    .setMulti(outputProperties))
+    .set('WRS_PATH', path);
+
+
+  print('Mosaic product:', outputMosaic);
+  
+  Map.addLayer(outputMosaic.select('rmse'), {min:0, max:500}, 'RMSE');
+    
+  Export.image.toAsset({
+    image: outputMosaic,
+    description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '-' + path,
+    assetId: OUTPUT_NAME + '_' + path,
+    region: roi.bounds(),
+    crs: path_proj,
+    scale: 30,
+    maxPixels: 1e13,
+  })
+}
+
 Map.addLayer(image.select('rmse'), {min:0, max:500}, 'RMSE - exported');
+
 // // Map.addLayer(image.select('rmse').subtract(outputMosiac.select('rmse')), {min:0, max:10}, 'RMSE - diff');
 
 // // ------------------------------------- Export -------------------------------------- 

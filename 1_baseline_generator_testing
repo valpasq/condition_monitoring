@@ -260,33 +260,13 @@ var getCoeffs = function(feature) {
     .arrayFlatten([ee.List(['residuals'])])
     .setDefaultProjection(crs);
   
-  
-  // // Compute fitted values
-  // var fittedHarmonic = harmonicLandsat.map(function(image) {
-  //   return image.addBands(
-  //     image.select(independents)
-  //       .multiply(harmonicTrendCoefficients)
-  //       .reduce('sum')
-  //       .rename('fitted'));
-  //     });
-  
-  // Calculate residuals
-  // var withResiduals = fittedHarmonic.map(function(image) {
-  var withResiduals = harmonicLandsat.map(function(image) {
-    // var residuals = image.select(DEPENDENT).subtract(image.select('fitted'))
-    var residuals = harmonicResiduals.select('residuals')
-        .rename('residual');
-    var residualsSquared = residuals.pow(2).rename('residualSquared');
-    
-    return image.addBands([residuals, residualsSquared]);
-  });
-  
-  // Calculate model RMSE
-  var rmse = withResiduals.select('residualSquared')
-    .mean().sqrt().rename('rmse');
+  var rmse = harmonicResiduals.select('residuals')
+    .rename('rmse')
+    .setDefaultProjection(crs);
   
   harmonicTrendCoefficients = harmonicTrendCoefficients
-    .addBands([rmse, numObs]);
+    .addBands([rmse, numObs])
+    .setDefaultProjection(crs);
     
   var outputProperties = ee.Dictionary({
     'system:time_start': ee.Date(START_YEAR+'-01-01').millis(),
@@ -408,19 +388,19 @@ var outputFull = ee.ImageCollection(collections.map(getCoeffs));
 print(outputFull)
 
 
-// // Quality mosaic based on number of observations per pixel
-// var outputMosiac = ee.Image(outputFull.qualityMosaic('nobs')
-//                     .multiply(OUTPUT_MULTIPLIER)
-//                     .int() // convert to int
-//                     .clip(roi)
-//                     .setMulti(outputProperties));
+// Quality mosaic based on number of observations per pixel
+var outputMosiac = ee.Image(outputFull.qualityMosaic('nobs')
+                    .multiply(OUTPUT_MULTIPLIER)
+                    .int() // convert to int
+                    .clip(roi)
+                    .setMulti(outputProperties));
                    
                      
-// print('Full collection:', outputFull);
-// print('Mosaic product:', outputMosiac);
+print('Full collection:', outputFull);
+print('Mosaic product:', outputMosiac);
 
-// Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
-// Map.addLayer(image.select('rmse'), {min:0, max:500}, 'RMSE - exported');
+Map.addLayer(outputMosiac.select('rmse'), {min:0, max:500}, 'RMSE');
+Map.addLayer(image.select('rmse'), {min:0, max:500}, 'RMSE - exported');
 // // Map.addLayer(image.select('rmse').subtract(outputMosiac.select('rmse')), {min:0, max:10}, 'RMSE - diff');
 
 // // ------------------------------------- Export -------------------------------------- 

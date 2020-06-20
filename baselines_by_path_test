@@ -2,12 +2,20 @@
 var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-for(var path = 11; path <= 14; path++){
+var path_min = 11;
+var path_max = 14;
+
+for(var path = path_min; path <= path_max; path++){
   var baseline_prev = imageCollection.filterMetadata('WRS_PATH', 'equals', path-1).first()
   var baseline = imageCollection.filterMetadata('WRS_PATH', 'equals', path).first()
-  Map.addLayer(baseline.select('rmse'), {min:0, max:500}, 'Path ' + path)
-  Map.addLayer(baseline_prev.subtract(baseline).divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, 'Path ' + path)
-}
+  Map.addLayer(baseline.select('nobs').divide(10000), {min:0, max:200}, 'Path ' + path)
+  
+  if (path > path_min){
+    var diff_name = 'Path ' + path + '_minus_E'
+    Map.addLayer(baseline.subtract(baseline_prev).divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
+
+  }
+  }
   
 
 // var p12p13 = p12.subtract(p13)

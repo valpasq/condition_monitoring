@@ -254,16 +254,13 @@ var getCoeffs = function(feature) {
     .arrayFlatten([independents])
     .setDefaultProjection(crs);
   
-    // Turn the array image into a multi-band image of coefficients
-  var harmonicResiduals = harmonicTrend.select('residuals')
+  // Get RMS from linearRegression result
+  var rmse = harmonicTrend.select('residuals')
     .arrayProject([0])
-    .arrayFlatten([ee.List(['residuals'])])
+    .arrayFlatten([ee.List(['rmse'])])
     .setDefaultProjection(crs);
-  
-  var rmse = harmonicResiduals.select('residuals')
-    .rename('rmse')
-    .setDefaultProjection(crs);
-  
+
+
   harmonicTrendCoefficients = harmonicTrendCoefficients
     .addBands([rmse, numObs])
     .setDefaultProjection(crs);

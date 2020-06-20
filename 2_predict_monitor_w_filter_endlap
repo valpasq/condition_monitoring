@@ -5,7 +5,7 @@
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2018
+var YEAR = 2017
 var DAY_START = '05-01'
 var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;

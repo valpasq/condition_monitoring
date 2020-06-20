@@ -7,12 +7,17 @@ var path_max = 14;
 
 for(var path = path_min; path <= path_max; path++){
   var baseline_prev = imageCollection.filterMetadata('WRS_PATH', 'equals', path-1).first()
+  baseline_prev = baseline_prev.updateMask(baseline_prev.select('nobs').divide(10000).gte(100))
+  
   var baseline = imageCollection.filterMetadata('WRS_PATH', 'equals', path).first()
+  baseline = baseline.updateMask(baseline.select('nobs').divide(10000).gte(100))
+  
   Map.addLayer(baseline.select('nobs').divide(10000), {min:0, max:200}, 'Path ' + path)
   
   if (path > path_min){
     var diff_name = 'Path ' + path + '_minus_prev'
-    Map.addLayer(baseline.subtract(baseline_prev).divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
+    var diff = baseline.subtract(baseline_prev).divide(10000)
+    Map.addLayer(diff.select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
 
   }
 }

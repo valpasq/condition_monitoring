@@ -26,7 +26,7 @@ var weightScore = function(image) {
 
 var experiments = resultsCollection.aggregate_array('name').distinct()
 var result = resultsCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
-print(experiments.get(EXPERIMENT))
+print('Experiment name:', experiments.get(EXPERIMENT))
 
 // Get total number of observations per pixel
 var totalObs = result.select('score_count').reduce('sum')
@@ -38,10 +38,10 @@ var resultWts = result.map(weightScore)
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 
 
-Map.addLayer(legacy.clip(roi), viz, 'existing reanalysis product -- reference?')
-Map.addLayer(albers.select('score_mean'), viz, 'projection test -- analysis in Albers')
-Map.addLayer(resultFinal, viz, 'weighted mean score -- analysis in UTM')
-Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations used for monitoring', false)
+Map.addLayer(legacy.clip(roi), viz, 'Original non-EE results (reference?)')
+Map.addLayer(albers.select('score_mean'), viz, 'Analysis in Albers')
+Map.addLayer(resultFinal, viz, 'Analysis in UTM, Albers as last step')
+Map.addLayer(totalObs, {min: 0, max:20}, 'Number of observations per pixel', false)
 
 for(var path = PATH_MIN; path <= PATH_MAX; path++){
   var path_result = result.filterMetadata('WRS_PATH', 'equals', path)

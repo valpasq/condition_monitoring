@@ -328,11 +328,8 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
         'time_series': TS,
         'ref_period': REF_PERIOD
     });
-  
-  // // Rescale from int
-  // baselines = baselines.map(function(image) {return image.divide(10000).copyProperties(image)})
-  
-  // // Get study area boundary
+
+  // Get study area boundary
   var clip_bound = baselines.geometry().bounds()
   Map.addLayer(clip_bound)
   

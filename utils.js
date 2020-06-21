@@ -43,6 +43,7 @@ var preprocess8 = function(image) {
 // SOURCE: https://gis.stackexchange.com/questions/280400/
 // cloud-cover-percentage-in-google-earth-engine  
 
+
 var cloudScore = function(image) {
   // A helper to apply an expression and linearly rescale the output.
   var rescale = function(image, exp, thresholds) {
@@ -79,8 +80,7 @@ var addCloudScore = function(image) {
       var score = cloudScore(image.select(LTS_NAMES));
       score = ee.Image(1).subtract(score).select([0], ['cloudscore']);
       return image.addBands(score);
-// REF: https://gis.stackexchange.com/questions/280400/
-// cloud-cover-percentage-in-google-earth-engine 
+
 }
 
 
@@ -91,6 +91,47 @@ var maskCloudScore = function(image) {
   return image.updateMask(mask)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 }
+
+
+// -------------------------------- Export -------------------------------- 
+
+
+var getNames = function(base, list) {
+  return ee.List(list).map(function(i) { 
+    return ee.String(base).cat(ee.Number(i).int());
+  });
+};
+
+
+var addConstant = function(image) {
+  return image.addBands(ee.Image(1));
+};
+
+
+var addTime = function(image) {
+  // Compute time in fractional years since the epoch.
+  var date = ee.Date(image.get('system:time_start'));
+  var years = date.difference(ee.Date('1970-01-01'), 'year');
+  var timeRadians = ee.Image(years.multiply(2 * Math.PI));
+  return image.addBands(timeRadians.rename('t').float());
+};
+
+
+var addHarmonics = function(freqs) {
+  return function(image) {
+    // Make an image of frequencies.
+    var frequencies = ee.Image.constant(freqs);
+    // This band should represent time in radians.
+    var time = ee.Image(image).select('t');
+    // Get the cosine terms.
+    var cosines = time.multiply(frequencies).cos()
+      .rename(cosNames);
+    // Get the sin terms.
+    var sines = time.multiply(frequencies).sin()
+      .rename(sinNames);
+    return image.addBands(cosines).addBands(sines);
+  };
+};
 
 
 

@@ -15,6 +15,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 // --------------------------------- Imports & Outputs --------------------------------- 
 
 var VERSION = '6-0';
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // Specify study area polygon(s)
 var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
@@ -23,7 +24,6 @@ var roi = ee.FeatureCollection(ROI_FN).geometry()
 // Specify output collection (empty collection created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
 
-var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 

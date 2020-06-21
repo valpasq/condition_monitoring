@@ -15,9 +15,11 @@ var CC_THRESH = 50;
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v5-3_by_path')
 var OUTPUT_COLLECTION = 'projects/sites-project/conditionassessment_experiments_v5-2_results_filtered/'
 
-print(BASELINES_COLLECTION)
-var NUM_EXPERIMENTS = BASELINES_COLLECTION.size().getInfo()
 
+var EXPERIMENTS = BASELINES_COLLECTION.aggregate_array('name').distinct()
+var NUM_EXPERIMENTS = EXPERIMENTS.size().getInfo()
+print(EXPERIMENTS)
+print(NUM_EXPERIMENTS)
 
 // ---------------------------------- FUNCTIONS ---------------------------------- 
 
@@ -236,12 +238,9 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
 
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
-      .map(function(image) {
-        return image.set({
+      .map(function(image) {return image.set({
           'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
-          'WRS_PATH': image.get('WRS_PATH')
-         })
-        
+          'WRS_PATH': image.get('WRS_PATH')})
       })
       .map(addCloudScore)
       .map(maskCloudScore) 
@@ -351,13 +350,13 @@ var independents = ee.List(['constant', 't'])
 var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
 print(monitor)
 
-var monitor_join = ee.ImageCollection(ee.Join.saveFirst('cloud_prob').apply(
-    s2, 
-    s2c, 
-    ee.Filter.equals({leftField: 'system:index', rightField: 'system:index'})));
-s2 = s2.map(function(i) {
-  return i.addBands(ee.Image(i.get('cloud_prob')));
-});
+// var monitor_join = ee.ImageCollection(ee.Join.saveFirst('cloud_prob').apply(
+//     s2, 
+//     s2c, 
+//     ee.Filter.equals({leftField: 'system:index', rightField: 'system:index'})));
+// s2 = s2.map(function(i) {
+//   return i.addBands(ee.Image(i.get('cloud_prob')));
+// });
 
 
 // Add constant, time, and coefficients to monitoring collection.

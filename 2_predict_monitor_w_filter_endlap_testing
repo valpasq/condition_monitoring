@@ -363,11 +363,9 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
   print('Full monitoring collection:', monitor)
   
-//   var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
-// var num_paths = paths.size().getInfo()
-
+  
   for(var i = 0; i < num_paths; i++){
-    var path = paths.get(i)
+    var path = paths.get(i).getInfo()
     print('Path:', path)
     var baseline = baselines
       .filterMetadata('WRS_PATH', 'equals', path)
@@ -417,13 +415,13 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
         .setMulti(outputProperties))
     print('Assessment:', assessment)
     
-    var layer_name = 'Path ' + PATH
+    var layer_name = 'Path ' + path
     Map.addLayer(assessment.select('score_mean'), viz, layer_name)
     
     Export.image.toAsset({
       image: assessment,
-      description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + PATH,
-      assetId: OUTPUT_NAME + '_p' + PATH,
+      description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
+      assetId: OUTPUT_NAME + '_p' + path,
       region: clip_bound,
       crs: baseline.projection().crs(),
       scale: 30,

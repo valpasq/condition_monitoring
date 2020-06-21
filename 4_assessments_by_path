@@ -49,8 +49,7 @@ var resultWts = result.map(weightScore)
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 
 Map.addLayer(resultFinal, viz, 'weighted mean score')
-Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations during monitoring', false)
-
+Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations used for monitoring', false)
 
 // Map results for each Path
 for(var path = PATH_MIN; path <= PATH_MAX; path++){

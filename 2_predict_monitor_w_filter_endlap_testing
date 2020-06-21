@@ -246,7 +246,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   
   var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('name', 'equals', experiment_name))
-  print('Baseline collection:', experiment_baselines)
+  // print('Baseline collection:', experiment_baselines)
 
   var VERSION = experiment_baselines.first().get('version').getInfo()
   var DEPENDENT = experiment_baselines.first().get('spectral_band').getInfo()
@@ -280,7 +280,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   
   // Get monitoring period imagery
   var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
-  print('Full monitoring collection:', monitor)
+  // print('Full monitoring collection:', monitor)
   
   
   for(var i = 0; i < num_paths; i++){

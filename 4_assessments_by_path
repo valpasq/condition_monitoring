@@ -24,20 +24,9 @@ var weightScore = function(image) {
  return image.addBands(weighted).reproject('EPSG:5070', null, 30)
 }
 
-// Get experiments
 var experiments = resultsCollection.aggregate_array('name').distinct()
-
-// Get specified experiment
 var result = resultsCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
 print(experiments.get(EXPERIMENT))
-
-
-// Add reanalysis product
-Map.addLayer(legacy.clip(roi), viz, 'existing reanalysis product -- reference?')
-
-// Add test with Albers baseline approach
-Map.addLayer(albers.select('score_mean'), viz, 'projection test -- analysis in Albers')
-
 
 // Get total number of observations per pixel
 var totalObs = result.select('score_count').reduce('sum')
@@ -45,14 +34,15 @@ var totalObs = result.select('score_count').reduce('sum')
 // Weight score by nobs per Path
 var resultWts = result.map(weightScore)
 
-
 // Compute weighted mean
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 
+
+Map.addLayer(legacy.clip(roi), viz, 'existing reanalysis product -- reference?')
+Map.addLayer(albers.select('score_mean'), viz, 'projection test -- analysis in Albers')
 Map.addLayer(resultFinal, viz, 'weighted mean score -- analysis in UTM')
 Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations used for monitoring', false)
 
-// Map results for each Path
 for(var path = PATH_MIN; path <= PATH_MAX; path++){
   var path_result = result.filterMetadata('WRS_PATH', 'equals', path)
     .first()

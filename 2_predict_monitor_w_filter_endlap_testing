@@ -11,6 +11,7 @@ var DAY_END = '09-30'
 var MONITOR_START = YEAR + '-' + DAY_START;
 var MONITOR_END = YEAR + '-' + DAY_END;
 var CC_THRESH = 50;
+var OBS_MIN = 75;
 
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v5-3_by_path')
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path_monitoring'
@@ -306,7 +307,8 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
   
   var experiment_name = EXPERIMENTS.get(EXPERIMENT)
   print(experiment_name)
-  var baselines = ee.ImageCollection(BASELINES_COLLECTION.filterMetadata('name', 'equals', experiment_name))
+  var baselines = ee.ImageCollection(BASELINES_COLLECTION
+    .filterMetadata('name', 'equals', experiment_name))
   print(baselines)
   
   // var baseline_crs = baseline.projection().crs();
@@ -362,7 +364,11 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
   
   for(var PATH = 11; PATH <= 14; PATH++){
     print(PATH)
-    var baseline = baselines.filterMetadata('WRS_PATH', 'equals', PATH).first().divide(10000)
+    var baseline = baselines
+      .filterMetadata('WRS_PATH', 'equals', PATH)
+      .first()
+      .divide(10000)
+    baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
     print(baseline.projection().crs())
 
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', PATH)

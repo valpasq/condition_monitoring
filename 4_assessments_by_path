@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path_monitoring"),
-    image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals");
+    image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
+    image3 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var experiments = imageCollection.aggregate_array('name').distinct()
@@ -21,6 +22,7 @@ var weightScore = function(image) {
 }
 
 Map.addLayer(image, viz, 'reanalysis product')
+Map.addLayer(image3.select('score_mean'), viz, 'projection test')
 
 var totalObs = result.select('score_count').reduce('sum')
 print(totalObs)

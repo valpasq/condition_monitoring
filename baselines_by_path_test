@@ -17,11 +17,11 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
     .divide(10000)
   baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
   
-  Map.addLayer(baseline.select('nobs'), {min:0, max:200}, 'Path ' + path)
+  Map.addLayer(baseline.select('nobs'), {min:0, max:250}, 'Path ' + path)
   
   if (path > PATH_MIN){
     var diff_name = 'Path ' + path + '_minus_prev'
-    var diff = baseline.subtract(baseline_prev).divide(10000)
+    var diff = baseline.subtract(baseline_prev)
     Map.addLayer(diff.select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
 
   }

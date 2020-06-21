@@ -3,9 +3,18 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var experiments = imageCollection.aggregate_array('name').distinct()
-
 var result = imageCollection.filterMetadata('name', 'equals', experiments.get(0))
-Map.addLayer(result.select('score_mean'))
+
+var PATH_MIN = 11;
+var PATH_MAX = 14;
+var OBS_MIN = 75;
+
+for(var path = PATH_MIN; path <= PATH_MAX; path++){
+  var path_result = result.filterMetadata('WRS_PATH', 'equals', path)
+    .first()
+  
+  Map.addLayer(path_result.select('score_mean'), {}, 'Path ' + path)
+}
 
 var weightScore = function(image) {
  var score = image.select('score_mean')

@@ -21,6 +21,12 @@ var NUM_EXPERIMENTS = EXPERIMENTS.size().getInfo()
 print(EXPERIMENTS)
 print(NUM_EXPERIMENTS)
 
+
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
 // ---------------------------------- FUNCTIONS ---------------------------------- 
 
 var L8_BANDS = ['B2', 'B3', 'B4', 'B5',  'B6',  'B7', 'B10']; // Landsat OLI bands
@@ -384,7 +390,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
         .setMulti(outputProperties))
     print(assessment)
     
-    Map.addLayer(assessment.select('score_mean'))
+    Map.addLayer(assessment.select('score_mean'), viz, PATH)
 
 }
 // Export.image.toAsset({

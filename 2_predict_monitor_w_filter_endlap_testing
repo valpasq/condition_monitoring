@@ -351,6 +351,15 @@ var independents = ee.List(['constant', 't'])
 var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
 print(monitor)
 
+var monitor_join = ee.ImageCollection(ee.Join.saveFirst('cloud_prob').apply(
+    s2, 
+    s2c, 
+    ee.Filter.equals({leftField: 'system:index', rightField: 'system:index'})));
+s2 = s2.map(function(i) {
+  return i.addBands(ee.Image(i.get('cloud_prob')));
+});
+
+
 // Add constant, time, and coefficients to monitoring collection.
 var harmonicLandsat = monitor.select(DEPENDENT)
   .map(addConstant)

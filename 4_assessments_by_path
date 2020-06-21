@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path_monitoring");
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path_monitoring"),
+    image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var experiments = imageCollection.aggregate_array('name').distinct()
@@ -28,6 +29,7 @@ print(resultWts)
 
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 Map.addLayer(resultFinal, viz, 'weighted mean score')
+Map.addLayer(image, viz, 'reanalysis product')
 
 
 var PATH_MIN = 11;

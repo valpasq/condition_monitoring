@@ -32,7 +32,7 @@ print(experiments.get(EXPERIMENT))
 
 
 // Add reanalysis product
-Map.addLayer(legacy, viz, 'reanalysis product')
+Map.addLayer(legacy, viz, 'existing reanalysis product')
 
 // Add test with Albers baseline approach
 Map.addLayer(albers.select('score_mean'), viz, 'projection test')

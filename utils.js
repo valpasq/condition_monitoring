@@ -1,8 +1,10 @@
 // |
-// | Landsat Time Series Harmonic Baseline Generator
+// | Utility functions for Forest Condition Monitoring Workflow
 // | [valpasq@bu.edu], 2020
 // |
 // |
+
+// ---------------------------- LANDSAT Pre-processing ---------------------------- 
 
 
 var L8_BANDS = ['B2', 'B3', 'B4', 'B5',  'B6',  'B7', 'B10']; // Landsat OLI bands
@@ -37,6 +39,9 @@ var preprocess8 = function(image) {
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 };
 
+// ------------------------- Simple Cloud Score for SR ------------------------- 
+// SOURCE: https://gis.stackexchange.com/questions/280400/
+// cloud-cover-percentage-in-google-earth-engine  
 
 var cloudScore = function(image) {
   // A helper to apply an expression and linearly rescale the output.
@@ -86,8 +91,9 @@ var maskCloudScore = function(image) {
   return image.updateMask(mask)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 }
-// SOURCE: https://gis.stackexchange.com/questions/280400/
-// cloud-cover-percentage-in-google-earth-engine  
+
+
+// ---------------------------- LANDSAT Pre-processing ---------------------------- 
 
 
 exports = {

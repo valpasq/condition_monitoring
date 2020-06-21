@@ -263,16 +263,7 @@ var getCoeffs = function(feature) {
     .setDefaultProjection(crs);
     
   var outputProperties = ee.Dictionary({
-    'system:time_start': ee.Date(START_YEAR+'-01-01').millis(),
-    'system:time_end': ee.Date(END_YEAR+'-01-01').millis(),
-    'spectral_band': DEPENDENT,
-    'year_start': START_YEAR,
-    'year_end': END_YEAR,
-    'version': VERSION,
-    'harmonics': HARMONICS,
-    'time_series': TS,
     'WRS_PATH': feature.get('PATH'),
-    'WRS_ROW': feature.get('ROW'),
     'crs': crs
 });
   

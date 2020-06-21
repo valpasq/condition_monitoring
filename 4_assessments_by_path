@@ -4,8 +4,11 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_
     image3 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
+var EXPERIMENT = 0
+
 var experiments = imageCollection.aggregate_array('name').distinct()
-var result = imageCollection.filterMetadata('name', 'equals', experiments.get(0))
+var result = imageCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
+print(experiments.get(EXPERIMENT))
 
 var min = -4;
 var max = 0;

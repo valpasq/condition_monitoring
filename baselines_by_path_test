@@ -27,12 +27,7 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   }
 }
   
-
-// var p12p13 = p12.subtract(p13)
-
 print(imageCollection.first().projection())
-
-// Map.addLayer(p12p13.divide(10000).select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01 })
 
 var style = {
   'Figure': [{

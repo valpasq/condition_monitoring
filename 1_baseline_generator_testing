@@ -12,7 +12,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 // | observations, and a scene-based cloud cover threshold. Results are
 // | generated per Path and are exported to an Image Collection. 
 
-// --------------------------------- Inputs & Outputs --------------------------------- 
+// --------------------------------- Imports & Outputs --------------------------------- 
 
 var VERSION = '6-0';
 

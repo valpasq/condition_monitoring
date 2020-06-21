@@ -33,15 +33,16 @@ var OBS_MIN = 75;       // exclude baseline models fit with less than minimum no
 var monitor_start = YEAR + '-' + DAY_START;
 var monitor_end = YEAR + '-' + DAY_END;
 
+// Get baselines
 var experiments = BASELINES_COLLECTION.aggregate_array('name').distinct()
 var num_experiments = experiments.size().getInfo()
-print(experiments)
-print(num_experiments)
 
+// Get WRS2 paths
 var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
 var num_paths = paths.size().getInfo()
 
 // -------------------------------- Visualization -------------------------------- 
+// Default visualization palette used in Pasquarella et al. 2017, 2018
 
 var min = -4;
 var max = 0;

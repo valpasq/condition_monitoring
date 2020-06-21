@@ -1,6 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
-    image = ee.Image("projects/sites-project/conditionassessment_experiments_v5-2/features-v5-2_tcg_2000-2010_h13_full");
+var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Baseline Generator
@@ -335,6 +334,4 @@ for(var path = path_start; path <= path_stop; path++){
     maxPixels: 1e13,
   })
 }
-
-Map.addLayer(image.select('rmse'), {min:0, max:500}, 'RMSE - exported');
 

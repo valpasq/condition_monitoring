@@ -6,15 +6,14 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_
 
 var EXPERIMENT = 0
 
-var experiments = imageCollection.aggregate_array('name').distinct()
-var result = imageCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
-print(experiments.get(EXPERIMENT))
+var PATH_MIN = 11;
+var PATH_MAX = 14;
 
+// Palette for mapped results
 var min = -4;
 var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
-
 
 var weightScore = function(image) {
  var score = image.select('score_mean')
@@ -24,25 +23,36 @@ var weightScore = function(image) {
  return image.addBands(weighted).reproject('EPSG:5070', null, 30)
 }
 
+// Get experiments
+var experiments = imageCollection.aggregate_array('name').distinct()
+
+// Get specified experiment
+var result = imageCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
+print(experiments.get(EXPERIMENT))
+
+
+// Add reanalysis product
 Map.addLayer(image, viz, 'reanalysis product')
+
+// Add test with Albers baseline approach
 Map.addLayer(image3.select('score_mean'), viz, 'projection test')
 
+
+// Get total number of observations per pixel
 var totalObs = result.select('score_count').reduce('sum')
 print(totalObs)
 Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations during monitoring', false)
 
 
+// Weight score by Path n
 var resultWts = result.map(weightScore)
 print(resultWts)
 
+// Compute weighted mean
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 Map.addLayer(resultFinal, viz, 'weighted mean score')
 
-
-var PATH_MIN = 11;
-var PATH_MAX = 14;
-var OBS_MIN = 75;
-
+// Map results for each Path
 for(var path = PATH_MIN; path <= PATH_MAX; path++){
   var path_result = result.filterMetadata('WRS_PATH', 'equals', path)
     .first()

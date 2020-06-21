@@ -88,3 +88,12 @@ var maskCloudScore = function(image) {
 }
 // SOURCE: https://gis.stackexchange.com/questions/280400/
 // cloud-cover-percentage-in-google-earth-engine  
+
+
+exports = {
+  preprocess457: preprocess457,
+  preprocess8: preprocess8,
+  cloudScore: cloudScore,
+  addCloudScore: addCloudScore,
+  maskCloudScore: maskCloudScore
+}

@@ -302,13 +302,14 @@ var addScore = function(image) {
 
 // --------------------------------- PREDICT ---------------------------------- 
 
+// Loop over experiments in baselines collection
 for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
   
   var experiment_name = EXPERIMENTS.get(EXPERIMENT)
-  print(experiment_name)
+  print('Experiment:', experiment_name)
   var baselines = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('name', 'equals', experiment_name))
-  print(baselines)
+  print('Baseline collection:', baselines)
 
   
   var VERSION = baselines.first().get('version').getInfo()
@@ -343,11 +344,10 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
   
   // Get monitoring period imagery
   var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
-  print(monitor)
-  print(baselines)
+  print('Full monitoring collection:', monitor)
   
   for(var PATH = 11; PATH <= 14; PATH++){
-    print(PATH)
+    print('Path:', PATH)
     var baseline = baselines
       .filterMetadata('WRS_PATH', 'equals', PATH)
       .first()
@@ -356,7 +356,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     print(baseline.projection().crs())
 
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', PATH)
-    print(monitor_subset)
+    print('Monitoring dates within Path:', monitor_subset)
   
     // Add constant, time, and coefficients to monitoring collection.
     var harmonicLandsat = monitor_subset.select(DEPENDENT)
@@ -368,7 +368,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     var collectPredictions = harmonicLandsat
       .map(addPrediction)
       .map(addScore);
-    print(collectPredictions)
+    print('Collection of results for Path', collectPredictions)
     
     var mean = collectPredictions.select('score').reduce('mean');
     var stddev = collectPredictions.select('score').reduce('stdDev');
@@ -377,7 +377,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     
         // Dictionary for asset properties
     var outputProperties = ee.Dictionary({
-          'system:time_start': ee.Date(YEAR+'-01-01').millis(),
+          'system:time_start': ee.Date(MONITOR_START).millis(),
           'spectral_band': DEPENDENT,
           'monitor_year': YEAR,
           'monitor_start': MONITOR_START,
@@ -394,7 +394,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
         .clip(clip_bound)
         .setMulti(outputProperties))
-    print(assessment)
+    print('Assessment:', assessment)
     
     var layer_name = 'Path ' + PATH
     Map.addLayer(assessment.select('score_mean'), viz, layer_name)

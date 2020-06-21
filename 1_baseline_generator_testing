@@ -22,6 +22,8 @@ var roi = ee.FeatureCollection(ROI_FN).geometry()
 // Specify output collection (empty collection created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
 
+var utils = require('users/valeriepasquarella/condition_monitoring/utils.js');
+
 // ---------------------------------- Model Parameters ---------------------------------- 
 
 var DEPENDENT = 'tcg';  // Select spectral transform   

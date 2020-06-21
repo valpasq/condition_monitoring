@@ -31,7 +31,7 @@ print(experiments.get(EXPERIMENT))
 // Get total number of observations per pixel
 var totalObs = result.select('score_count').reduce('sum')
 
-// Weight score by nobs per Path
+// Weight mean scores by nobs per Path
 var resultWts = result.map(weightScore)
 
 // Compute weighted mean

@@ -138,10 +138,10 @@ var maskCloudScore = function(image) {
 // -------------------------------- Export -------------------------------- 
 
 exports = {
-  getNames: getNames,
-  addConstant: addConstant,
-  addTime: addTime,
-  addHarmonics: addHarmonics,
+  // getNames: getNames,
+  // addConstant: addConstant,
+  // addTime: addTime,
+  // addHarmonics: addHarmonics,
   preprocess457: preprocess457,
   preprocess8: preprocess8,
   cloudScore: cloudScore,

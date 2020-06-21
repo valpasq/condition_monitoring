@@ -306,7 +306,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var collectPredictions = harmonicLandsat
       .map(addPrediction)
       .map(addScore);
-    print('Collection of results for Path', collectPredictions)
+    // print('Collection of results for Path', collectPredictions)
     
     var mean = collectPredictions.select('score').reduce('mean');
     var stddev = collectPredictions.select('score').reduce('stdDev');

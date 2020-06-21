@@ -26,10 +26,10 @@ var weightScore = function(image) {
 
 var totalObs = result.select('score_count').reduce('sum')
 print(totalObs)
-Map.addLayer(totalObs, {min: 0, max:13})
+Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations during monitoring')
 
 var resultWts = result.map(weightScore)
 print(resultWts)
 
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
-Map.addLayer(resultFinal)
+Map.addLayer(resultFinal, {}, 'weighted mean score')

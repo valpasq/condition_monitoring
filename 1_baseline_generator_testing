@@ -22,7 +22,7 @@ var roi = ee.FeatureCollection(ROI_FN).geometry()
 // Specify output collection (empty collection created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
 
-var utils = require('users/valeriepasquarella/condition_monitoring/utils.js');
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
@@ -309,21 +309,21 @@ if (TS == 'full') {
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-    .map(preprocess457);
+    .map(utils.preprocess457);
   
   // Get all Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-    .map(preprocess457);
+    .map(utils.preprocess457);
   
   // Get all Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-    .map(preprocess8);
+    .map(utils.preprocess8);
     
 } else if (TS == '16d') {
   
@@ -333,7 +333,7 @@ if (TS == 'full') {
     .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-    .map(preprocess457);
+    .map(utils.preprocess457);
   
   // Get Landsat 7 imagery to fill gap period between 5 and 8.
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
@@ -341,7 +341,7 @@ if (TS == 'full') {
     .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-    .map(preprocess457);
+    .map(utils.preprocess457);
   
   // Get all Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
@@ -349,13 +349,13 @@ if (TS == 'full') {
     .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
     .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') // WINDOW
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-    .map(preprocess8);
+    .map(utils.preprocess8);
 }
 
 // Merge pre-processed Landsat 5, 7 and 8 collections
 var collection = collection5.merge(collection7).merge(collection8)
-  .map(addCloudScore)
-  .map(maskCloudScore) // mask based on simple cloud score
+  .map(utils.addCloudScore)
+  .map(utils.maskCloudScore) // mask based on simple cloud score
   .map(spectralTransforms)
   .sort('system:time_start');
 print(collection)

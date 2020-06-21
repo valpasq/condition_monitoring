@@ -366,8 +366,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
 //   var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
 // var num_paths = paths.size().getInfo()
 
-  for(var PATH = 0; PATH < num_paths; PATH++){
-    var path = paths.get(PATH)
+  for(var i = 0; i < num_paths; i++){
+    var path = paths.get(i)
     print('Path:', path)
     var baseline = baselines
       .filterMetadata('WRS_PATH', 'equals', path)

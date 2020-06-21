@@ -47,5 +47,5 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   var path_result = result.filterMetadata('WRS_PATH', 'equals', path)
     .first()
   
-  Map.addLayer(path_result.select('score_mean'), viz, 'Path ' + path, false)
+  Map.addLayer(path_result.select('score_mean'), viz, 'Path ' + path + ' (in UTM)', false)
 }

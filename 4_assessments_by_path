@@ -20,16 +20,18 @@ var weightScore = function(image) {
  return image.addBands(weighted)
 }
 
+Map.addLayer(image, viz, 'reanalysis product')
+
 var totalObs = result.select('score_count').reduce('sum')
 print(totalObs)
-Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations during monitoring')
+Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations during monitoring', false)
+
 
 var resultWts = result.map(weightScore)
 print(resultWts)
 
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 Map.addLayer(resultFinal, viz, 'weighted mean score')
-Map.addLayer(image, viz, 'reanalysis product')
 
 
 var PATH_MIN = 11;

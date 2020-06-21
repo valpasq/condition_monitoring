@@ -1,7 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path_monitoring"),
-    image = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
-    image3 = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2");
+var resultsCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path_monitoring"),
+    legacy = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
+    albers = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var EXPERIMENT = 0
@@ -24,18 +24,18 @@ var weightScore = function(image) {
 }
 
 // Get experiments
-var experiments = imageCollection.aggregate_array('name').distinct()
+var experiments = resultsCollection.aggregate_array('name').distinct()
 
 // Get specified experiment
-var result = imageCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
+var result = resultsCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
 print(experiments.get(EXPERIMENT))
 
 
 // Add reanalysis product
-Map.addLayer(image, viz, 'reanalysis product')
+Map.addLayer(legacy, viz, 'reanalysis product')
 
 // Add test with Albers baseline approach
-Map.addLayer(image3.select('score_mean'), viz, 'projection test')
+Map.addLayer(albers.select('score_mean'), viz, 'projection test')
 
 
 // Get total number of observations per pixel

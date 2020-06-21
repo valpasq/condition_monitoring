@@ -5,6 +5,12 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_
 var experiments = imageCollection.aggregate_array('name').distinct()
 var result = imageCollection.filterMetadata('name', 'equals', experiments.get(0))
 
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+
 var weightScore = function(image) {
  var score = image.select('score_mean')
  var nobs = image.select('score_count')
@@ -21,7 +27,7 @@ var resultWts = result.map(weightScore)
 print(resultWts)
 
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
-Map.addLayer(resultFinal, {}, 'weighted mean score')
+Map.addLayer(resultFinal, viz, 'weighted mean score')
 
 
 var PATH_MIN = 11;
@@ -32,5 +38,5 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   var path_result = result.filterMetadata('WRS_PATH', 'equals', path)
     .first()
   
-  Map.addLayer(path_result.select('score_mean'), {}, 'Path ' + path)
+  Map.addLayer(path_result.select('score_mean'), viz, 'Path ' + path)
 }

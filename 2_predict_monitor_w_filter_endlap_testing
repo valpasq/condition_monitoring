@@ -11,17 +11,19 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path_monitorin
 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
 var YEAR = 2017
 var DAY_START = '05-01'
 var DAY_END = '09-30'
-var MONITOR_START = YEAR + '-' + DAY_START;
-var MONITOR_END = YEAR + '-' + DAY_END;
+
 var CC_THRESH = 50;
 var OBS_MIN = 75;
 
 
+var monitor_start = YEAR + '-' + DAY_START;
+var monitor_end = YEAR + '-' + DAY_END;
 
 var experiments = BASELINES_COLLECTION.aggregate_array('name').distinct()
 var num_experiments = experiments.size().getInfo()
@@ -227,25 +229,25 @@ var addHarmonics = function(freqs) {
 
 
 // Function to build monitoring collection
-var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
+var monitorTS = function(clipBound, monitor_start, monitor_end) {
   
 // Get Landsat 5 imagery
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
-      .filterDate(MONITOR_START, MONITOR_END)  
+      .filterDate(monitor_start, monitor_end)  
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(preprocess457) 
     
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
-      .filterDate(MONITOR_START, MONITOR_END) 
+      .filterDate(monitor_start, monitor_end) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(preprocess457) 
 
   // Get  Landsat 8 imagery
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
-      .filterDate(MONITOR_START, MONITOR_END) 
+      .filterDate(monitor_start, monitor_end) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(preprocess8)  
@@ -327,7 +329,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   var YEAR_END = baselines.first().get('year_end').getInfo()
   var REF_PERIOD = YEAR_START + '-' + YEAR_END
   
-  var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + MONITOR_START + '_' + MONITOR_END
+  var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + monitor_start + '_' + monitor_end
 
   // Get study area boundary
   var clip_bound = baselines.geometry().bounds()
@@ -350,7 +352,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     .cat(cosNames).cat(sinNames);
   
   // Get monitoring period imagery
-  var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
+  var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
   print('Full monitoring collection:', monitor)
   
   for(var PATH = 11; PATH <= 14; PATH++){

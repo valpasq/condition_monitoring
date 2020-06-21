@@ -16,7 +16,6 @@ var OBS_MIN = 75;
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v5-3_by_path')
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path_monitoring/'
 
-
 var EXPERIMENTS = BASELINES_COLLECTION.aggregate_array('name').distinct()
 var NUM_EXPERIMENTS = EXPERIMENTS.size().getInfo()
 print(EXPERIMENTS)

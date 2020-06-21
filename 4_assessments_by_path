@@ -1,7 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var resultsCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path_monitoring"),
     legacy = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
-    albers = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2");
+    albers = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2"),
+    roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var EXPERIMENT = 0
@@ -32,10 +33,10 @@ print(experiments.get(EXPERIMENT))
 
 
 // Add reanalysis product
-Map.addLayer(legacy, viz, 'existing reanalysis product')
+Map.addLayer(legacy.clip(roi), viz, 'existing reanalysis product -- reference?')
 
 // Add test with Albers baseline approach
-Map.addLayer(albers.select('score_mean'), viz, 'projection test')
+Map.addLayer(albers.select('score_mean'), viz, 'projection test -- analysis in Albers')
 
 
 // Get total number of observations per pixel
@@ -48,7 +49,7 @@ var resultWts = result.map(weightScore)
 // Compute weighted mean
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 
-Map.addLayer(resultFinal, viz, 'weighted mean score')
+Map.addLayer(resultFinal, viz, 'weighted mean score -- analysis in UTM')
 Map.addLayer(totalObs, {min: 0, max:20}, 'number of observations used for monitoring', false)
 
 // Map results for each Path

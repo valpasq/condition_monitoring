@@ -13,7 +13,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | observations, and a scene-based cloud cover threshold. Results are
 // | generated per Path and are exported to an Image Collection. 
 
-// ------------------------------------ Model Setup ------------------------------------ 
+// --------------------------------- Inputs & Outputs --------------------------------- 
 
 var VERSION = '6-0';
 
@@ -169,9 +169,9 @@ var getCoeffs = function(feature) {
   
   // Add constant, time, and coefficients
   var harmonicLandsat = collectionScene.select(DEPENDENT)
-    .map(addConstant)
-    .map(addTime)
-    .map(addHarmonics(harmonicFrequencies))
+    .map(utils.addConstant)
+    .map(utils.addTime)
+    .map(utils.addHarmonics(harmonicFrequencies))
     
   // The output of the regression reduction is a 4x1 array image
   var harmonicTrend = harmonicLandsat
@@ -212,8 +212,8 @@ if (HARMONICS == 'h13') {
 }
   
 // Construct lists of names for the harmonic terms
-var cosNames = getNames('cos_', harmonicFrequencies);
-var sinNames = getNames('sin_', harmonicFrequencies);
+var cosNames = utils.getNames('cos_', harmonicFrequencies);
+var sinNames = utils.getNames('sin_', harmonicFrequencies);
 
 // Make list of  variables
 var independents = ee.List(['constant', 't'])

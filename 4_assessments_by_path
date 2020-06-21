@@ -3,4 +3,19 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var experiments = imageCollection.aggregate_array('name').distinct()
-print(imageCollection.filterMetadata('name', 'equals', experiments.get(0)))
+
+var result = imageCollection.filterMetadata('name', 'equals', experiments.get(0))
+
+
+var weightScore = function(image) {
+ var score = image.select('score_mean')
+ var nobs = image.select('score_count')
+ var weighted = score.multiply(nobs).rename('score_weighted')
+ 
+ return image.addBands(weighted)
+}
+
+var totalObs = result.select('score_count').reduce('sum')
+Map.addLayer(totalObs, {min: 0, max:13})
+var resultWts = result.map(weightScore)
+print(resultWts)

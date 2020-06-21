@@ -254,11 +254,12 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
     var date = ee.Date(d)
     var date2 = date.advance(24, 'hour')
+    var path = collection.filterDate(date, date2).first().get('WRS_PATH')
     
     return collection.filterDate(date, date2).mean()
       .set({
         'system:time_start': date.millis(), 
-        'WRS_PATH': collection.first().get('WRS_PATH')
+        'WRS_PATH': path
       })
   }));
   
@@ -377,6 +378,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     var collectPredictions = harmonicLandsat
       .map(addPrediction)
       .map(addScore);
+    print(collectPredictions)
     
     var mean = collectPredictions.select('score').reduce('mean');
     var stddev = collectPredictions.select('score').reduce('stdDev');

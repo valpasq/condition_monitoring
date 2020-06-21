@@ -28,8 +28,8 @@ var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
 
-var EXPERIMENT_NAME = DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
-var OUTPUT_NAME = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + EXPERIMENT_NAME;
+var experiment_name = DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
+var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + experiment_name;
 
 // Dictionary for asset properties
 var outputProperties = ee.Dictionary({
@@ -41,7 +41,7 @@ var outputProperties = ee.Dictionary({
     'version': VERSION,
     'harmonics': HARMONICS,
     'time_series': TS,
-    'name': EXPERIMENT_NAME
+    'name': experiment_name
 });
 
 
@@ -399,7 +399,7 @@ for(var path = path_start; path <= path_stop; path++){
   Export.image.toAsset({
     image: outputMosaic,
     description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '-' + path,
-    assetId: OUTPUT_NAME + '_p' + path,
+    assetId: output_name + '_p' + path,
     region: roi.bounds(),
     crs: path_proj,
     scale: 30,

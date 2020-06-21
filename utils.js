@@ -93,8 +93,8 @@ var maskCloudScore = function(image) {
 }
 
 
-// ---------------------------- LANDSAT Pre-processing ---------------------------- 
 
+// -------------------------------- Export -------------------------------- 
 
 exports = {
   preprocess457: preprocess457,

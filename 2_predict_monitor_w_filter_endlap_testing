@@ -6,7 +6,10 @@
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 
+// Specify collection with experiments from 1_baseline_generator
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v5-3_by_path')
+
+// Specify collection for saving monitoring results (created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path_monitoring/'
 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
@@ -15,12 +18,14 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
 var YEAR = 2017
-var DAY_START = '05-01'
+var DAY_START = '05-01' 
 var DAY_END = '09-30'
 
-var CC_THRESH = 50;
-var OBS_MIN = 75;
+var CC_THRESH = 50;   // maximum CLOUD_COVER_LAND 
+var OBS_MIN = 75;     // exclude baseline models fit with less than minimum nobs
 
+
+// -------------------------------- Monitoring Setup -------------------------------- 
 
 var monitor_start = YEAR + '-' + DAY_START;
 var monitor_end = YEAR + '-' + DAY_END;
@@ -29,6 +34,9 @@ var experiments = BASELINES_COLLECTION.aggregate_array('name').distinct()
 var num_experiments = experiments.size().getInfo()
 print(experiments)
 print(num_experiments)
+
+var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
+var num_paths = paths.size().getInfo()
 
 // -------------------------------- Visualization -------------------------------- 
 
@@ -355,16 +363,20 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
   print('Full monitoring collection:', monitor)
   
-  for(var PATH = 11; PATH <= 14; PATH++){
-    print('Path:', PATH)
+//   var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
+// var num_paths = paths.size().getInfo()
+
+  for(var PATH = 0; PATH < num_paths; PATH++){
+    var path = paths.get(PATH)
+    print('Path:', path)
     var baseline = baselines
-      .filterMetadata('WRS_PATH', 'equals', PATH)
+      .filterMetadata('WRS_PATH', 'equals', path)
       .first()
       .divide(10000)
     baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
     print(baseline.projection().crs())
 
-    var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', PATH)
+    var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
     print('Monitoring dates within Path:', monitor_subset)
   
     // Add constant, time, and coefficients to monitoring collection.
@@ -386,17 +398,17 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     
         // Dictionary for asset properties
     var outputProperties = ee.Dictionary({
-          'system:time_start': ee.Date(MONITOR_START).millis(),
+          'system:time_start': ee.Date(monitor_start).millis(),
           'spectral_band': DEPENDENT,
           'monitor_year': YEAR,
-          'monitor_start': MONITOR_START,
-          'monitor_end': MONITOR_END,
+          'monitor_start': monitor_start,
+          'monitor_end': monitor_end,
           'run_version': VERSION,
           'harmonics': FREQ,
           'time_series': TS,
           'ref_period': REF_PERIOD,
           'name': experiment_name,
-          'WRS_PATH': PATH
+          'WRS_PATH': path
       });
     
     // Average over monitoring period

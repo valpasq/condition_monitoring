@@ -358,10 +358,7 @@ for(var EXPERIMENT = 0; EXPERIMENT < NUM_EXPERIMENTS; EXPERIMENT++){
     print(PATH)
     var baseline = baselines.filterMetadata('WRS_PATH', 'equals', PATH).first().divide(10000)
     print(baseline)
-    // var clip_bound = baseline.geometry()
-    
-    
-    // var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
+
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', PATH)
     print(monitor_subset)
   

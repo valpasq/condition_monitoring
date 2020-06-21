@@ -6,6 +6,12 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | Landsat Time Series Harmonic Baseline Generator
 // | [valpasq@bu.edu], 2020
 // |
+// |
+// | This script generates harmonic baseline models for a user-specified
+// | roi. Baseline parameters include time period, vegetation/spectral 
+// | index, harmonic frequencies, limited or full use of Landsat 7
+// | observations, and a scene-based cloud cover threshold. Results are
+// | generated per Path and are exported to an Image Collection. 
 
 var VERSION = '6-0';
 

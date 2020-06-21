@@ -19,8 +19,8 @@ var OUTPUT_CRS = 'EPSG:5070'   // Projection for export (scenes may span UTM zon
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2000;  // Starts 01-01
-var END_YEAR = 2010;    // Ends 12-31
+var START_YEAR = 2005;  // Starts 01-01
+var END_YEAR = 2015;    // Ends 12-31
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs

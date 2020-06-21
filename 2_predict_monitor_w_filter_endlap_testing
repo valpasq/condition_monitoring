@@ -243,23 +243,23 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   
   var experiment_name = experiments.get(experiment)
   print('Experiment:', experiment_name)
-  var baselines = ee.ImageCollection(BASELINES_COLLECTION
-    .filterMetadata('name', 'equals', experiment_name))
-  print('Baseline collection:', baselines)
-
   
-  var VERSION = baselines.first().get('version').getInfo()
-  var DEPENDENT = baselines.first().get('spectral_band').getInfo()
-  var TS = baselines.first().get('time_series').getInfo()
-  var FREQ = baselines.first().get('harmonics').getInfo()
-  var YEAR_START = baselines.first().get('year_start').getInfo()
-  var YEAR_END = baselines.first().get('year_end').getInfo()
+  var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
+    .filterMetadata('name', 'equals', experiment_name))
+  print('Baseline collection:', experiment_baselines)
+
+  var VERSION = experiment_baselines.first().get('version').getInfo()
+  var DEPENDENT = experiment_baselines.first().get('spectral_band').getInfo()
+  var TS = experiment_baselines.first().get('time_series').getInfo()
+  var FREQ = experiment_baselines.first().get('harmonics').getInfo()
+  var YEAR_START = experiment_baselines.first().get('year_start').getInfo()
+  var YEAR_END = experiment_baselines.first().get('year_end').getInfo()
   var REF_PERIOD = YEAR_START + '-' + YEAR_END
   
   var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + monitor_start + '_' + monitor_end
 
   // Get study area boundary
-  var clip_bound = baselines.geometry().bounds()
+  var clip_bound = experiment_baselines.geometry().bounds()
   // Map.addLayer(clip_bound)
   
   // get frequencies
@@ -286,7 +286,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   for(var i = 0; i < num_paths; i++){
     var path = paths.get(i).getInfo()
     print('Path:', path)
-    var baseline = baselines
+    var baseline = experiment_baselines
       .filterMetadata('WRS_PATH', 'equals', path)
       .first()
       .divide(10000)
@@ -312,8 +312,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var stddev = collectPredictions.select('score').reduce('stdDev');
     var nobs = collectPredictions.select('score').reduce('count');
     
-    
-        // Dictionary for asset properties
+    // Dictionary for asset properties
     var outputProperties = ee.Dictionary({
           'system:time_start': ee.Date(monitor_start).millis(),
           'spectral_band': DEPENDENT,

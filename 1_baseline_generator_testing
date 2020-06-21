@@ -13,6 +13,8 @@ var VERSION = '6-0';
 var roi_fn = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
 var roi = ee.FeatureCollection(roi_fn).geometry()
 
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
+
 // ---------------------------------- Model Parameters ---------------------------------- 
 
 var DEPENDENT = 'tcg';  // Select spectral transform   
@@ -25,7 +27,7 @@ var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
+
 var EXPERIMENT_NAME = DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
 var OUTPUT_NAME = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + EXPERIMENT_NAME;
 

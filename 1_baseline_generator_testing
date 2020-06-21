@@ -15,10 +15,11 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 
 var VERSION = '6-0';
 
-// Get study area ROI
+// Specify study area polygon(s)
 var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
 var roi = ee.FeatureCollection(ROI_FN).geometry()
 
+// Specify output collection (empty collection created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
 
 // ---------------------------------- Model Parameters ---------------------------------- 
@@ -33,6 +34,8 @@ var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int
+
+// ---------------------------------- Model Setup ---------------------------------- 
 
 var experiment_name = DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '_' + HARMONICS + '_' + TS;
 var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + experiment_name;

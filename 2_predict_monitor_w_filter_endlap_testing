@@ -333,7 +333,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
 
   // Get study area boundary
   var clip_bound = baselines.geometry().bounds()
-  Map.addLayer(clip_bound)
+  // Map.addLayer(clip_bound)
   
   // get frequencies
   if (FREQ == 'h13') {

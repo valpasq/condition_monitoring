@@ -10,8 +10,8 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 var VERSION = '6-0';
 
 // Get study area ROI
-var roi_fn = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
-var roi = ee.FeatureCollection(roi_fn).geometry()
+var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
+var roi = ee.FeatureCollection(ROI_FN).geometry()
 
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
 

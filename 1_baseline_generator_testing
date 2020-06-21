@@ -122,42 +122,42 @@ var spectralTransforms = function(img){
 }
 
 
-// var getNames = function(base, list) {
-//   return ee.List(list).map(function(i) { 
-//     return ee.String(base).cat(ee.Number(i).int());
-//   });
-// };
+var getNames = function(base, list) {
+  return ee.List(list).map(function(i) { 
+    return ee.String(base).cat(ee.Number(i).int());
+  });
+};
 
 
-// var addConstant = function(image) {
-//   return image.addBands(ee.Image(1));
-// };
+var addConstant = function(image) {
+  return image.addBands(ee.Image(1));
+};
 
 
-// var addTime = function(image) {
-//   // Compute time in fractional years since the epoch.
-//   var date = ee.Date(image.get('system:time_start'));
-//   var years = date.difference(ee.Date('1970-01-01'), 'year');
-//   var timeRadians = ee.Image(years.multiply(2 * Math.PI));
-//   return image.addBands(timeRadians.rename('t').float());
-// };
+var addTime = function(image) {
+  // Compute time in fractional years since the epoch.
+  var date = ee.Date(image.get('system:time_start'));
+  var years = date.difference(ee.Date('1970-01-01'), 'year');
+  var timeRadians = ee.Image(years.multiply(2 * Math.PI));
+  return image.addBands(timeRadians.rename('t').float());
+};
 
 
-// var addHarmonics = function(freqs) {
-//   return function(image) {
-//     // Make an image of frequencies.
-//     var frequencies = ee.Image.constant(freqs);
-//     // This band should represent time in radians.
-//     var time = ee.Image(image).select('t');
-//     // Get the cosine terms.
-//     var cosines = time.multiply(frequencies).cos()
-//       .rename(cosNames);
-//     // Get the sin terms.
-//     var sines = time.multiply(frequencies).sin()
-//       .rename(sinNames);
-//     return image.addBands(cosines).addBands(sines);
-//   };
-// };
+var addHarmonics = function(freqs) {
+  return function(image) {
+    // Make an image of frequencies.
+    var frequencies = ee.Image.constant(freqs);
+    // This band should represent time in radians.
+    var time = ee.Image(image).select('t');
+    // Get the cosine terms.
+    var cosines = time.multiply(frequencies).cos()
+      .rename(cosNames);
+    // Get the sin terms.
+    var sines = time.multiply(frequencies).sin()
+      .rename(sinNames);
+    return image.addBands(cosines).addBands(sines);
+  };
+};
 
 
 var getCoeffs = function(feature) {
@@ -169,9 +169,9 @@ var getCoeffs = function(feature) {
   
   // Add constant, time, and coefficients
   var harmonicLandsat = collectionScene.select(DEPENDENT)
-    .map(utils.addConstant)
-    .map(utils.addTime)
-    .map(utils.addHarmonics(harmonicFrequencies))
+    .map(addConstant)
+    .map(addTime)
+    .map(addHarmonics(harmonicFrequencies))
     
   // The output of the regression reduction is a 4x1 array image
   var harmonicTrend = harmonicLandsat
@@ -212,8 +212,8 @@ if (HARMONICS == 'h13') {
 }
   
 // Construct lists of names for the harmonic terms
-var cosNames = utils.getNames('cos_', harmonicFrequencies);
-var sinNames = utils.getNames('sin_', harmonicFrequencies);
+var cosNames = getNames('cos_', harmonicFrequencies);
+var sinNames = getNames('sin_', harmonicFrequencies);
 
 // Make list of  variables
 var independents = ee.List(['constant', 't'])

@@ -62,7 +62,7 @@ var spectralTransforms = function(img){
   // make sure index string in upper case
   var index = DEPENDENT.toUpperCase();
 
-  var scaled = img.divide(10000)
+  var scaled = img//.divide(10000)
   
   var dict = {
     blue: scaled.select("blue"),
@@ -315,15 +315,15 @@ for(var path = path_start; path <= path_stop; path++){
     // Quality mosaic based on number of observations per pixel
   var outputMosaic = ee.Image(images
     .qualityMosaic('nobs')
-    .multiply(OUTPUT_MULTIPLIER)
-    .int() 
+    // .multiply(OUTPUT_MULTIPLIER)
+    // .int() 
     .clip(roi)
     .setMulti(outputProperties))
     .set('WRS_PATH', path);
 
   print('Mosaic product:', outputMosaic);
   
-  Map.addLayer(outputMosaic.select('rmse'), {min:0, max:500}, 'RMSE');
+  Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.005}, 'RMSE');
     
   Export.image.toAsset({
     image: outputMosaic,

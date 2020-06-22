@@ -315,8 +315,8 @@ for(var path = path_start; path <= path_stop; path++){
     // Quality mosaic based on number of observations per pixel
   var outputMosaic = ee.Image(images
     .qualityMosaic('nobs')
-    // .multiply(OUTPUT_MULTIPLIER)
-    // .int() 
+    .multiply(OUTPUT_MULTIPLIER)
+    .int() 
     .clip(roi)
     .setMulti(outputProperties))
     .set('WRS_PATH', path);

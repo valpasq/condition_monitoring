@@ -2,7 +2,8 @@
 var resultsCollection = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path_monitoring"),
     legacy = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
     albers = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2"),
-    roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE");
+    roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE"),
+    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-1_by_path_monitoring");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var EXPERIMENT = 0
@@ -38,9 +39,24 @@ var resultWts = result.map(weightScore)
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 
 
+var result_2 = imageCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
+print('Experiment name:', experiments.get(EXPERIMENT))
+
+// Get total number of observations per pixel
+var totalObs_2 = result_2.select('score_count').reduce('sum')
+
+// Weight mean scores by nobs per Path
+var resultWts_2 = result_2.map(weightScore)
+
+// Compute weighted mean
+var resultFinal_2 = resultWts_2.select('score_weighted').reduce('sum').divide(totalObs_2)
+
+
 Map.addLayer(legacy.clip(roi), viz, 'Original non-EE results (reference?)')
 Map.addLayer(albers.select('score_mean'), viz, 'Analysis in Albers')
 Map.addLayer(resultFinal, viz, 'Analysis in UTM, Albers as last step')
+Map.addLayer(resultFinal_2, viz, 'Analysis in UTM, Albers as last step - new')
+
 Map.addLayer(totalObs, {min: 0, max:20}, 'Number of observations per pixel', false)
 
 for(var path = PATH_MIN; path <= PATH_MAX; path++){

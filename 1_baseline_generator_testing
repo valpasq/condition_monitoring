@@ -22,7 +22,7 @@ var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
 var roi = ee.FeatureCollection(ROI_FN).geometry()
 
 // Specify output collection (empty collection created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v5-3_by_path/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-0_by_path/'
 
 
 // ---------------------------------- Model Parameters ---------------------------------- 
@@ -301,10 +301,14 @@ var outputFull = ee.ImageCollection(collections.map(getCoeffs));
 print('Full collection:', outputFull);
 
 var paths = outputFull.aggregate_array('WRS_PATH').distinct().sort()
-var num_paths = paths.size().getInfo()
+
+var paths_info = ee.List(paths.getInfo())
+print(paths_info)
+
+var num_paths = paths_info.size()
 print(paths)
-var path_start = paths.get(0).getInfo()
-var path_stop = paths.get(num_paths-1).getInfo()
+var path_start = paths_info.get(0)
+var path_stop = paths_info.get(num_paths-1)
 
 for(var path = path_start; path <= path_stop; path++){
   print(path)

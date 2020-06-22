@@ -306,7 +306,6 @@ var paths_info = ee.List(paths.getInfo())
 print(paths_info)
 
 var num_paths = paths_info.size()
-print(paths)
 var path_start = paths_info.get(0)
 var path_stop = paths_info.get(num_paths-1)
 

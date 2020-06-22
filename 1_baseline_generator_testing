@@ -302,12 +302,10 @@ print('Full collection:', outputFull);
 
 var paths = outputFull.aggregate_array('WRS_PATH').distinct().sort()
 
-var paths_info = ee.List(paths.getInfo())
-print(paths_info)
-
-var num_paths = paths_info.size()
-var path_start = paths_info.get(0)
-var path_stop = paths_info.get(num_paths-1)
+var num_paths = paths.size().getInfo()
+print(paths)
+var path_start = paths.get(0).getInfo()
+var path_stop = paths.get(num_paths-1).getInfo()
 
 for(var path = path_start; path <= path_stop; path++){
   print(path)

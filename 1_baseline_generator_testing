@@ -30,10 +30,10 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-0_by_path/'
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2000;  // Starts 01-01
-var END_YEAR = 2010;    // Ends 12-31
+var START_YEAR = 2005;  // Starts 01-01
+var END_YEAR = 2015;    // Ends 12-31
 
-var TS = 'full';        // 'full' or '16d' (limits L7 use)
+var TS = '16d';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 var OUTPUT_MULTIPLIER = 10000; // To convert asset output to int

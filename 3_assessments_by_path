@@ -26,8 +26,8 @@ var weightScore = function(image) {
  return image.addBands(weighted).reproject('EPSG:5070', null, 30)
 }
 
-var experiments = imageCollection2.aggregate_array('name').distinct()
-var result = imageCollection2.filterMetadata('name', 'equals', 'tcg_2000-2010_h13_full')
+var experiments = resultsCollection.aggregate_array('name').distinct()
+var result = resultsCollection.filterMetadata('name', 'equals', 'tcg_2000-2010_h13_full')
 print('Experiment name:', experiments.get(EXPERIMENT))
 
 // Get total number of observations per pixel
@@ -40,8 +40,8 @@ var resultWts = result.map(weightScore)
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 
 
-var result_2 = imageCollection.filterMetadata('name', 'equals', 'tcg_2000-2010_h13_full')
-print('Experiment name:', experiments.get(EXPERIMENT))
+var result_2 = imageCollection2.filterMetadata('name', 'equals', 'tcg_2000-2010_h13_full')
+// print('Experiment name:', experiments.get(EXPERIMENT))
 
 // Get total number of observations per pixel
 var totalObs_2 = result_2.select('score_count').reduce('sum')
@@ -61,7 +61,7 @@ Map.addLayer(resultFinal_2, viz, 'Analysis in UTM, Albers as last step - new')
 Map.addLayer(totalObs, {min: 0, max:20}, 'Number of observations per pixel', false)
 
 for(var path = PATH_MIN; path <= PATH_MAX; path++){
-  var path_result = result.filterMetadata('WRS_PATH', 'equals', path)
+  var path_result = result_2.filterMetadata('WRS_PATH', 'equals', path)
     .first()
   
   Map.addLayer(path_result.select('score_mean'), viz, 'Path ' + path + ' (in UTM)', false)

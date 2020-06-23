@@ -32,7 +32,7 @@ var weightScore = function(image) {
  var nobs = image.select('score_count')
  var weighted = score.multiply(nobs).rename('score_weighted')
  
- return image.addBands(weighted).reproject('EPSG:5070', null, 30)
+ return image.addBands(weighted)//.reproject('EPSG:5070', null, 30)
 }
 
 var experiments = resultsCollection.aggregate_array('name').distinct()

@@ -75,3 +75,15 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   
   Map.addLayer(path_result.select('score_mean'), viz, 'Path ' + path + ' (in UTM)', false)
 }
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Set map options.
+Map.setOptions(null, style);
+Map.setOptions('SATELLITE')
+

@@ -55,7 +55,7 @@ var spectralTransforms = function(img){
   // make sure index string in upper case
   var index = DEPENDENT.toUpperCase();
   
-  var scaled = img//.divide(10000);
+  var scaled = img.divide(10000);
 
   var dict = {
     blue: scaled.select("blue"),

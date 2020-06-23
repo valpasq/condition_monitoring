@@ -27,7 +27,7 @@ var weightScore = function(image) {
 }
 
 var experiments = imageCollection2.aggregate_array('name').distinct()
-var result = imageCollection2.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
+var result = imageCollection2.filterMetadata('name', 'equals', experiments.get(0))
 print('Experiment name:', experiments.get(EXPERIMENT))
 
 // Get total number of observations per pixel
@@ -40,7 +40,7 @@ var resultWts = result.map(weightScore)
 var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
 
 
-var result_2 = imageCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
+var result_2 = imageCollection.filterMetadata('name', 'equals', experiments.get(1))
 print('Experiment name:', experiments.get(EXPERIMENT))
 
 // Get total number of observations per pixel

@@ -7,7 +7,7 @@ var resultsCollection = ee.ImageCollection("projects/sites-project/baselines_v5-
     imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v6-2_by_path_monitoring");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var EXPERIMENT = 0
+var EXPERIMENT = 1
 
 var PATH_MIN = 11;
 var PATH_MAX = 14;

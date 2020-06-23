@@ -46,7 +46,10 @@ var totalObs = result.select('score_count').reduce('sum')
 var resultWts = result.map(weightScore)
 
 // Compute weighted mean
-var resultFinal = resultWts.select('score_weighted').reduce('sum').divide(totalObs)
+var resultFinal = resultWts.select('score_weighted')
+  .reduce('sum')
+  .divide(totalObs)
+  .updateMask(gfc_mask)
 
 
 var result_2 = imageCollection2.filterMetadata('name', 'equals', 'tcg_2000-2010_h13_full')
@@ -59,11 +62,14 @@ var totalObs_2 = result_2.select('score_count').reduce('sum')
 var resultWts_2 = result_2.map(weightScore)
 
 // Compute weighted mean
-var resultFinal_2 = resultWts_2.select('score_weighted').reduce('sum').divide(totalObs_2)
+var resultFinal_2 = resultWts_2.select('score_weighted')
+  .reduce('sum')
+  .divide(totalObs_2)
+  .updateMask(gfc_mask)
 
 
-Map.addLayer(legacy.clip(roi), viz, 'Original non-EE results (reference?)')
-Map.addLayer(albers.select('score_mean'), viz, 'Analysis in Albers')
+Map.addLayer(legacy.clip(roi).updateMask(gfc_mask), viz, 'Original non-EE results (reference?)')
+Map.addLayer(albers.select('score_mean').updateMask(gfc_mask), viz, 'Analysis in Albers')
 Map.addLayer(resultFinal, viz, 'Analysis in UTM, Albers as last step')
 Map.addLayer(resultFinal_2, viz, 'Analysis in UTM, Albers as last step - new (float)')
 

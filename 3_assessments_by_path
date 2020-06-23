@@ -32,7 +32,7 @@ var weightScore = function(image) {
  var nobs = image.select('score_count')
  var weighted = score.multiply(nobs).rename('score_weighted')
  
- return image.addBands(weighted).reproject('EPSG:5070', null, 30)
+ return image.addBands(weighted)//.reproject('EPSG:5070', null, 30)
 }
 
 var experiments = resultsCollection.aggregate_array('name').distinct()
@@ -49,6 +49,7 @@ var resultWts = result.map(weightScore)
 var resultFinal = resultWts.select('score_weighted')
   .reduce('sum')
   .divide(totalObs)
+  .reproject('EPSG:5070', null, 30)
   .updateMask(gfc_mask)
 
 
@@ -65,6 +66,7 @@ var resultWts_2 = result_2.map(weightScore)
 var resultFinal_2 = resultWts_2.select('score_weighted')
   .reduce('sum')
   .divide(totalObs_2)
+  .reproject('EPSG:5070', null, 30)
   .updateMask(gfc_mask)
 
 

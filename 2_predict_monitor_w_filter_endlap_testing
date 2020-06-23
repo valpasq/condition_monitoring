@@ -13,10 +13,10 @@
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // Specify collection with experiments from 1_baseline_generator
-var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-1_by_path')
+var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-2_by_path')
 
 // Specify collection for saving monitoring results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-1_by_path_monitoring/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-2_by_path_monitoring/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 

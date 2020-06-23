@@ -56,7 +56,7 @@ var resultFinal_2 = resultWts_2.select('score_weighted').reduce('sum').divide(to
 Map.addLayer(legacy.clip(roi), viz, 'Original non-EE results (reference?)')
 Map.addLayer(albers.select('score_mean'), viz, 'Analysis in Albers')
 Map.addLayer(resultFinal, viz, 'Analysis in UTM, Albers as last step')
-Map.addLayer(resultFinal_2, viz, 'Analysis in UTM, Albers as last step - new')
+Map.addLayer(resultFinal_2, viz, 'Analysis in UTM, Albers as last step - new (float)')
 
 Map.addLayer(totalObs, {min: 0, max:20}, 'Number of observations per pixel', false)
 

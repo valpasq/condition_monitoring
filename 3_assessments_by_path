@@ -3,7 +3,8 @@ var resultsCollection = ee.ImageCollection("projects/sites-project/baselines_v5-
     legacy = ee.Image("projects/ee-valeriepasquarella/assets/ForestCondition/2017_reanalysis_meanresiduals"),
     albers = ee.Image("projects/ee-valeriepasquarella/assets/TEST_tcg_2000-2010_h13_full_2017-05-01_2017-09-30__endlap2"),
     roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE"),
-    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-1_by_path_monitoring");
+    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-1_by_path_monitoring"),
+    imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v6-2_by_path_monitoring");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var EXPERIMENT = 0
@@ -25,8 +26,8 @@ var weightScore = function(image) {
  return image.addBands(weighted).reproject('EPSG:5070', null, 30)
 }
 
-var experiments = resultsCollection.aggregate_array('name').distinct()
-var result = resultsCollection.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
+var experiments = imageCollection2.aggregate_array('name').distinct()
+var result = imageCollection2.filterMetadata('name', 'equals', experiments.get(EXPERIMENT))
 print('Experiment name:', experiments.get(EXPERIMENT))
 
 // Get total number of observations per pixel

@@ -32,7 +32,7 @@ var weightScore = function(image) {
  var nobs = image.select('score_count')
  var weighted = score.multiply(nobs).rename('score_weighted')
  
- return image.addBands(weighted)
+ return image.addBands(weighted).reproject('EPSG:5070', null, 30)
 }
 
 var experiments = resultsCollection.aggregate_array('name').distinct()
@@ -40,16 +40,16 @@ var result = resultsCollection.filterMetadata('name', 'equals', 'tcg_2000-2010_h
 print('Experiment name:', experiments.get(EXPERIMENT))
 
 // Get total number of observations per pixel
-var totalObs = result.select('score_count').reduce('sum')
+var totalObs = result.select('score_count').reduce('sum').reproject('EPSG:5070', null, 30)
 
 // Weight mean scores by nobs per Path
 var resultWts = result.map(weightScore)
 
 // Compute weighted mean
 var resultFinal = resultWts.select('score_weighted')
+  // .reproject('EPSG:5070', null, 30)
   .reduce('sum')
   .divide(totalObs)
-  .reproject('EPSG:5070', null, 30)
   .updateMask(gfc_mask)
 
 

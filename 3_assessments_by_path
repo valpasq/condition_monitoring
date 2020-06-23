@@ -47,7 +47,6 @@ var resultWts = result.map(weightScore)
 
 // Compute weighted mean
 var resultFinal = resultWts.select('score_weighted')
-  // .reproject('EPSG:5070', null, 30)
   .reduce('sum')
   .divide(totalObs)
   .updateMask(gfc_mask)

@@ -285,7 +285,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   
   for(var i = 0; i < num_paths; i++){
     var path = paths.get(i).getInfo()
-    print('Path:', path)
+    // print('Path:', path)
+    
     var baseline = experiment_baselines
       .filterMetadata('WRS_PATH', 'equals', path)
       .first()

@@ -27,7 +27,7 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path/'
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var DEPENDENT = 'sr';  // Select spectral transform   
+var DEPENDENT = 'ndvi';  // Select spectral transform   
 var HARMONICS = 'h12';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 2005;  // Starts 01-01

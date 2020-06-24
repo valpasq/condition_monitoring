@@ -13,10 +13,10 @@
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // Specify collection with experiments from 1_baseline_generator
-var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-2_by_path')
+var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path')
 
 // Specify collection for saving monitoring results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-2_by_path_monitoring/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -242,7 +242,7 @@ var addScore = function(image) {
 for(var experiment = 0; experiment < num_experiments; experiment++){
   
   var experiment_name = experiments.get(experiment)
-  print('Experiment:', experiment_name)
+  // print('Experiment:', experiment_name)
   
   var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('name', 'equals', experiment_name))
@@ -291,10 +291,10 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
       .first()
       // .divide(10000)
     baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
-    print(baseline.projection().crs())
+    // print(baseline.projection().crs())
 
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
-    print('Monitoring dates within Path:', monitor_subset)
+    // print('Monitoring dates within Path:', monitor_subset)
   
     // Add constant, time, and coefficients to monitoring collection.
     var harmonicLandsat = monitor_subset.select(DEPENDENT)
@@ -331,10 +331,10 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
         .clip(clip_bound)
         .setMulti(outputProperties))
-    print('Assessment:', assessment)
+    // print('Assessment:', assessment)
     
-    var layer_name = 'Path ' + path
-    Map.addLayer(assessment.select('score_mean'), viz, layer_name)
+    // var layer_name = 'Path ' + path
+    // Map.addLayer(assessment.select('score_mean'), viz, layer_name)
     
     Export.image.toAsset({
       image: assessment,

@@ -27,16 +27,6 @@ var gfc_mask = gfc.select('treecover2000')
   .reproject('EPSG:5070', null, 30)
 
 
-// Get baselines
-var experiments = BASELINES_COLLECTION.aggregate_array('name').distinct()
-var num_experiments = experiments.size().getInfo()
-
-// Get WRS2 paths
-var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
-var num_paths = paths.size().getInfo()
-
-
-
 var weightScore = function(image) {
  var score = image.select('score_mean')
  var nobs = image.select('score_count')

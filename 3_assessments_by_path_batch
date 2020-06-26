@@ -43,7 +43,7 @@ var num_experiments = experiments.size().getInfo()
 for(var experiment = 0; experiment < num_experiments; experiment++){
   
   var experiment_name = experiments.get(experiment)
-  // print('Experiment:', experiment_name)
+  print('Experiment:', experiment_name)
   
   var result = ee.ImageCollection(RESULTS_COLLECTION
     .filterMetadata('name', 'equals', experiment_name))

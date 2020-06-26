@@ -1,12 +1,20 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE"),
-    imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v6-2_by_path_monitoring");
+    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-3_by_path_monitoring");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var RESULTS_COLLECTION = imageCollection2
+var RESULTS_COLLECTION = imageCollection
 
 var OUTPUT_CRS = 'EPSG:5070'
 var GFC_TCC = 75;
+
+// Palette for mapped results
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+
 
 var weightScore = function(image) {
  var score = image.select('score_mean')
@@ -67,14 +75,6 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
 
 
   
-
-
-
-// Palette for mapped results
-var min = -4;
-var max = 0;
-var palette = ['red', 'orange', 'yellow', 'blue']
-var viz = {min: min, max: max, palette: palette};
 
 
 

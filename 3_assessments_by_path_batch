@@ -27,7 +27,7 @@ var gfc_mask = gfc.select('treecover2000')
 
 
 // Get baselines
-var experiments = MONITORING_RESULT.aggregate_array('name').distinct()
+var experiments = RESULTS_COLLECTION.aggregate_array('name').distinct()
 var num_experiments = experiments.size().getInfo()
 
 
@@ -51,8 +51,18 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   var resultFinal = resultWts.select('score_weighted')
     .reduce('sum')
     .divide(totalObs)
+    
+  Map.addLayer(resultFinal, viz)
   
-  
+  // Export.image.toAsset({
+  //   image: resultFinal,
+  //   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
+  //   assetId: OUTPUT_NAME,
+  //   region: clip_bound,
+  //   crs: baseline.projection().crs(),
+  //   scale: 30,
+  //   maxPixels: 1e13,
+  // })
 }
 
 

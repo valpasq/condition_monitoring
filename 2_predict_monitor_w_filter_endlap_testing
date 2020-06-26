@@ -25,7 +25,7 @@ var DAY_START = '05-01' // Date to start monitoring
 var DAY_END = '09-30'   // Date to end monitoring
 
 var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND 
-var OBS_MIN = 75;       // exclude baseline models fit with less than minimum nobs
+var OBS_MIN = 50;       // exclude baseline models fit with less than minimum nobs
 
 
 // -------------------------------- Monitoring Setup -------------------------------- 
@@ -239,8 +239,8 @@ var addScore = function(image) {
 // --------------------------------- PREDICT ---------------------------------- 
 
 // Loop over experiments in baselines collection
-for(var experiment = 0; experiment < num_experiments; experiment++){
-  
+// for(var experiment = 0; experiment < num_experiments; experiment++){
+for(var experiment = 0; experiment < 2; experiment++){
   var experiment_name = experiments.get(experiment)
   // print('Experiment:', experiment_name)
   
@@ -334,8 +334,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
         .setMulti(outputProperties))
     // print('Assessment:', assessment)
     
-    // var layer_name = 'Path ' + path
-    // Map.addLayer(assessment.select('score_mean'), viz, layer_name)
+    var layer_name = 'Path ' + path
+    Map.addLayer(assessment.select('score_mean'), viz, layer_name)
     
     Export.image.toAsset({
       image: assessment,

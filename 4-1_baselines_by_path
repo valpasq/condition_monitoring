@@ -9,10 +9,10 @@ var imageCollection_old = ee.ImageCollection("projects/sites-project/baselines_v
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-72.12530176269965, 42.43823758706704],
-          [-72.12530176269965, 42.38170972038549],
-          [-72.0291713916059, 42.38170972038549],
-          [-72.0291713916059, 42.43823758706704]]], null, false);
+        [[[-72.16856042969184, 42.42810180883516],
+          [-72.16856042969184, 42.371564804535105],
+          [-72.07243005859809, 42.371564804535105],
+          [-72.07243005859809, 42.42810180883516]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var PATH_MIN = 11;
@@ -26,16 +26,16 @@ var COLLECTION = imageCollection
 
 // Get results
 var experiments = COLLECTION.aggregate_array('name').distinct()
-print(experiments.get(0))
-print(COLLECTION
-    .filterMetadata('name', 'equals', experiments.get(0)))
+// print(experiments.get(0))
+// print(COLLECTION
+//     .filterMetadata('name', 'equals', experiments.get(0)))
 
 for(var path = PATH_MIN; path <= PATH_MAX; path++){
   var baseline_prev = COLLECTION
     .filterMetadata('name', 'equals', experiments.get(0))
     .filterMetadata('WRS_PATH', 'equals', path-1)
     .first()
-  print(baseline_prev)
+  // print(baseline_prev)
   baseline_prev = baseline_prev.updateMask(baseline_prev.select('nobs').gte(OBS_MIN))
   
   var baseline = COLLECTION
@@ -63,10 +63,26 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
 var test = COLLECTION
   .filterMetadata('name', 'equals', experiments.get(0))
   .filterBounds(geometry)
-
+print(test)
 // test = test.updateMask(test.select('nobs').gte(OBS_MIN))
 
-print(ui.Chart.image.histogram(test.select('constant'), geometry, 40, 128, 0.0078));
+// function to convert image collection to multiband image
+function collectionToImage(collection){
+  var stack = ee.Image(collection.iterate(function(img, prev) {
+    
+    return ee.Image(prev).addBands(img.select('constant'));
+  }, ee.Image(1)));
+
+  stack = stack.select(ee.List.sequence(1, stack.bandNames().size().subtract(1)));
+  return stack;
+}
+
+// convert collection results to image
+var test_as_bands = collectionToImage(test);
+print(test_as_bands)
+
+Map.addLayer(test_as_bands)
+print(ui.Chart.image.histogram(test_as_bands.select(['constant_2', 'constant_3']), geometry));
 
 
 var style = {

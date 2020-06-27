@@ -4,7 +4,7 @@ var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_des
 
 var VERSION = 'v3-0'
 
-var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment/'
+var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment'
 var EXPERIMENTS = ee.ImageCollection(RESULTS_FN)
 
 var WHICH_SAMPLE = 1;
@@ -31,6 +31,8 @@ if (WHICH_SAMPLE == 1) {
 // Get results for selected year
 var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', YEAR)
 var crs = selectedExperiments.first().projection().crs()
+print(EXPERIMENTS)
+print(selectedExperiments)
 
 var reanalysis_cn = 'm_reanalysis'
 if (YEAR >= 2015 & YEAR <= 2018) {
@@ -67,7 +69,7 @@ scoreImage = scoreImage.addBands(reanalysis)
 var result = scoreImage.reduceRegions({
         reducer: ee.Reducer.min(),
         collection: SAMPLE,
-        scale: 1,
+        scale: 30,
         crs: crs
       });
 

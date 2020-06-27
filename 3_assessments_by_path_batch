@@ -47,13 +47,14 @@ print(years)
 for(var experiment = 0; experiment < num_experiments; experiment++){
   
   var experiment_name = experiments.get(experiment)
-  // print('Experiment:', experiment_name)
   
   for(var year = 0; year < num_years; year++){
     
+    var year_value = years.get(year)
+    
     var result = ee.ImageCollection(RESULTS_COLLECTION
       .filterMetadata('name', 'equals', experiment_name)
-      .filterMetadata('monitor_year', 'equals', year))
+      .filterMetadata('monitor_year', 'equals', year_value))
     
     // Get total number of observations per pixel
     var totalObs = result.select('score_count').reduce('sum')
@@ -66,8 +67,9 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var resultFinal = resultWts.select('score_weighted')
       .reduce('sum')
       .divide(totalObs)
-      
-    Map.addLayer(resultFinal, viz, experiment_name.getInfo(), false)
+    
+    var layer_name = experiment_name.getInfo() + ' ' + year
+    Map.addLayer(resultFinal, viz, layer_name, false)
     
     // Export.image.toAsset({
     //   image: resultFinal,

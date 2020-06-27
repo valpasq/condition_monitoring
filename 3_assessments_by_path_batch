@@ -5,6 +5,7 @@ var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified
 
 var RESULTS_COLLECTION = imageCollection
 print(RESULTS_COLLECTION)
+var bounds = RESULTS_COLLECTION.geometry().bounds()
 
 var OUTPUT_CRS = 'EPSG:5070'
 var GFC_TCC = 75;
@@ -32,7 +33,6 @@ var gfc = ee.Image("UMD/hansen/global_forest_change_2018_v1_6")
 var gfc_mask = gfc.select('treecover2000')
   .gte(GFC_TCC)
   .reproject(OUTPUT_CRS, null, 30)
-
 
 
 // Get results
@@ -67,13 +67,13 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
       .reduce('sum')
       .divide(totalObs)
       
-    // Map.addLayer(resultFinal, viz)
+    Map.addLayer(resultFinal, viz, experiment_name.getInfo(), false)
     
     // Export.image.toAsset({
     //   image: resultFinal,
     //   description: 'result_' + experiment_name,
     //   assetId: experiment_name,
-    //   region: clip_bound,
+    //   region: bounds,
     //   crs: OUTPUT_CRS,
     //   scale: 30,
     //   maxPixels: 1e13,

@@ -85,6 +85,7 @@ Map.addLayer(test_as_bands)
 print(ui.Chart.image.histogram(test_as_bands.select(['constant_2', 'constant_3']), geometry));
 
 
+
 var style = {
   'Figure': [{
       featureType: 'all',

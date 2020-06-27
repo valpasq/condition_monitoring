@@ -48,10 +48,13 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   // Map.addLayer(baseline.select('nobs'), {min:0, max:250}, 'Path ' + path)
   Map.addLayer(baseline.select('constant'), {min:0, max:0.5}, 'Path ' + path)
   
+  print(ui.Chart.image.histogram(baseline.select('constant'), geometry, 40, 128, 0.0078));
+
+  
   if (path > PATH_MIN){
     var diff_name = 'Path ' + path + '_minus_prev'
     var diff = baseline.subtract(baseline_prev).reproject('EPSG:32619', null, 30)
-    
+
       // Map.addLayer(diff.select('rmse'), {min:0, max:0.01}, 'Path ' + path)
       // Map.addLayer(diff.select('constant'), {min:0, max:0.1}, 'Path ' + path)
   //   Map.addLayer(diff.select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
@@ -59,7 +62,6 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   }
 }
   
-print(imageCollection_old.first().projection())
 
 var style = {
   'Figure': [{

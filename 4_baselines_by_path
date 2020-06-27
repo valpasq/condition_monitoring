@@ -7,6 +7,9 @@ var PATH_MIN = 11;
 var PATH_MAX = 14;
 var OBS_MIN = 50;
 
+var show = 'rmse'
+
+
 var COLLECTION = imageCollection
 
 // Get results
@@ -31,14 +34,17 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
   
   // Map.addLayer(baseline.select('nobs'), {min:0, max:250}, 'Path ' + path)
-  Map.addLayer(baseline.select('rmse'), {min:0, max:0.1}, 'Path ' + path)
+  Map.addLayer(baseline.select('constant'), {min:0, max:0.5}, 'Path ' + path)
   
-  // if (path > PATH_MIN){
-  //   var diff_name = 'Path ' + path + '_minus_prev'
-  //   var diff = baseline.subtract(baseline_prev)
+  if (path > PATH_MIN){
+    var diff_name = 'Path ' + path + '_minus_prev'
+    var diff = baseline.subtract(baseline_prev).reproject('EPSG:32619', null, 30)
+    
+      // Map.addLayer(diff.select('rmse'), {min:0, max:0.01}, 'Path ' + path)
+      Map.addLayer(diff.select('constant'), {min:0, max:0.1}, 'Path ' + path)
   //   Map.addLayer(diff.select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
 
-  // }
+  }
 }
   
 print(imageCollection_old.first().projection())

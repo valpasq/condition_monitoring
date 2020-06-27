@@ -41,6 +41,7 @@ var num_experiments = experiments.size().getInfo()
 
 var years = RESULTS_COLLECTION.aggregate_array('monitor_year').distinct()
 var num_years = years.size().getInfo()
+print(years)
 
 // Loop over experiments in baselines collection
 for(var experiment = 0; experiment < num_experiments; experiment++){
@@ -66,7 +67,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
       .reduce('sum')
       .divide(totalObs)
       
-    Map.addLayer(resultFinal, viz)
+    // Map.addLayer(resultFinal, viz)
     
     // Export.image.toAsset({
     //   image: resultFinal,

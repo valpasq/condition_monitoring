@@ -48,8 +48,6 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   // Map.addLayer(baseline.select('nobs'), {min:0, max:250}, 'Path ' + path)
   Map.addLayer(baseline.select('constant'), {min:0, max:0.5}, 'Path ' + path)
   
-  print(ui.Chart.image.histogram(baseline.select('constant'), geometry, 40, 128, 0.0078));
-
   
   if (path > PATH_MIN){
     var diff_name = 'Path ' + path + '_minus_prev'
@@ -62,6 +60,14 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
   }
 }
   
+var test = COLLECTION
+  .filterMetadata('name', 'equals', experiments.get(0))
+  .filterBounds(geometry)
+
+// test = test.updateMask(test.select('nobs').gte(OBS_MIN))
+
+print(ui.Chart.image.histogram(test.select('constant'), geometry, 40, 128, 0.0078));
+
 
 var style = {
   'Figure': [{

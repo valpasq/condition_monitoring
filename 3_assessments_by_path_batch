@@ -55,6 +55,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var result = ee.ImageCollection(RESULTS_COLLECTION
       .filterMetadata('name', 'equals', experiment_name)
       .filterMetadata('monitor_year', 'equals', year_value))
+    print(result)
     
     // Get total number of observations per pixel
     var totalObs = result.select('score_count').reduce('sum')

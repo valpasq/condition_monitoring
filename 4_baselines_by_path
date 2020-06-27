@@ -1,6 +1,18 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var imageCollection_old = ee.ImageCollection("projects/sites-project/baselines_v5-3_by_path"),
-    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-3_by_path");
+    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-3_by_path"),
+    geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-72.12530176269965, 42.43823758706704],
+          [-72.12530176269965, 42.38170972038549],
+          [-72.0291713916059, 42.38170972038549],
+          [-72.0291713916059, 42.43823758706704]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var PATH_MIN = 11;
@@ -41,7 +53,7 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
     var diff = baseline.subtract(baseline_prev).reproject('EPSG:32619', null, 30)
     
       // Map.addLayer(diff.select('rmse'), {min:0, max:0.01}, 'Path ' + path)
-      Map.addLayer(diff.select('constant'), {min:0, max:0.1}, 'Path ' + path)
+      // Map.addLayer(diff.select('constant'), {min:0, max:0.1}, 'Path ' + path)
   //   Map.addLayer(diff.select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
 
   }

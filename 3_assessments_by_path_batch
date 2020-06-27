@@ -68,7 +68,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
       .reduce('sum')
       .divide(totalObs)
     
-    var layer_name = experiment_name.getInfo() + ' ' + year
+    var layer_name = experiment_name.getInfo() + ' ' + year_value.getInfo()
     Map.addLayer(resultFinal, viz, layer_name, false)
     
     // Export.image.toAsset({

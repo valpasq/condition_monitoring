@@ -4,6 +4,7 @@ var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var RESULTS_COLLECTION = imageCollection
+print(RESULTS_COLLECTION)
 
 var OUTPUT_CRS = 'EPSG:5070'
 var GFC_TCC = 75;
@@ -43,7 +44,7 @@ var num_experiments = experiments.size().getInfo()
 for(var experiment = 0; experiment < num_experiments; experiment++){
   
   var experiment_name = experiments.get(experiment)
-  print('Experiment:', experiment_name)
+  // print('Experiment:', experiment_name)
   
   var result = ee.ImageCollection(RESULTS_COLLECTION
     .filterMetadata('name', 'equals', experiment_name))
@@ -64,10 +65,10 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   
   // Export.image.toAsset({
   //   image: resultFinal,
-  //   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
-  //   assetId: OUTPUT_NAME,
+  //   description: 'result_' + experiment_name,
+  //   assetId: experiment_name,
   //   region: clip_bound,
-  //   crs: baseline.projection().crs(),
+  //   crs: OUTPUT_CRS,
   //   scale: 30,
   //   maxPixels: 1e13,
   // })

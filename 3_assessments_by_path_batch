@@ -72,15 +72,15 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var layer_name = experiment_name.getInfo() + ' ' + year_value.getInfo()
     Map.addLayer(resultFinal, viz, layer_name, false)
     
-    // Export.image.toAsset({
-    //   image: resultFinal,
-    //   description: 'result_' + experiment_name,
-    //   assetId: experiment_name,
-    //   region: bounds,
-    //   crs: OUTPUT_CRS,
-    //   scale: 30,
-    //   maxPixels: 1e13,
-    // })
+    Export.image.toAsset({
+      image: resultFinal,
+      description: 'result_' + experiment_name,
+      assetId: experiment_name,
+      region: bounds,
+      crs: OUTPUT_CRS,
+      scale: 30,
+      maxPixels: 1e13,
+    })
   }
 }
 

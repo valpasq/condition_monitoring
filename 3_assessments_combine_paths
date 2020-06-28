@@ -2,6 +2,14 @@
 var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE"),
     imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-3_by_path_monitoring");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Combined Assessment Results
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script reads a a collection of condition assessment scores 
+// | by experiment/WRS2 Path and combines them into a final wall-to-wall
+// | assessment product
 
 var RESULTS_COLLECTION = imageCollection
 print(RESULTS_COLLECTION)

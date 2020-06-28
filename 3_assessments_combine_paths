@@ -63,11 +63,9 @@ print(years)
 
 // Loop over experiments in baselines collection
 for(var experiment = 0; experiment < num_experiments; experiment++){
-  
   var experiment_name = experiments.get(experiment)
   
   for(var year = 0; year < num_years; year++){
-    
     var year_value = years.get(year)
     
     var result = ee.ImageCollection(RESULTS_COLLECTION

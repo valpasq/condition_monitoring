@@ -6,7 +6,9 @@ var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_des
 // | [valpasq@bu.edu], 2020
 // |
 // |
-// | This script reads a 
+// | This script reads a collection of assessment results and samples
+// | plot locations to generate a data table where rows = n plots, 
+// | and columns = m "experiments"/baseline configurations.
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 

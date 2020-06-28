@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
+var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
+    table = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Assessment -- Harmonic Baseline Generator
@@ -17,9 +18,11 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// Specify study area polygon(s)
-var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
-var roi = ee.FeatureCollection(ROI_FN).geometry()
+// // Specify study area polygon(s)
+// var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
+// var roi = ee.FeatureCollection(ROI_FN).geometry()
+
+var roi = ee.FeatureCollection(table).filterMetadata('STUSPS', 'equals', 'PA')
 
 // Specify output collection (empty collection created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path/'

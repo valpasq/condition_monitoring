@@ -106,6 +106,8 @@ Export.table.toDrive({
 
 // ---------------------------------- Map result ---------------------------------- 
 
+print('Showing results for:', ee.String(scoreImage.select(map_result).bandNames().get(0)))
+
 var min = -4;
 var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
@@ -114,10 +116,8 @@ var viz = {min: min, max: max, palette: palette};
 Map.addLayer(scoreImage.select(map_result), viz, 'result')
 Map.addLayer(SAMPLE, {color: 'white'}, 'sample points');
 
-print('Showing results for:', ee.String(scoreImage.select(map_result).bandNames().get(0)))
 
 
-// Map styling
 var style = {
   'Figure': [{
       featureType: 'all',
@@ -125,5 +125,4 @@ var style = {
   }]
 };
 
-// Set map options.
 Map.setOptions(null, style);

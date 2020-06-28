@@ -109,7 +109,7 @@ var spectralTransforms = function(img){
       print('The index you provided is not supported');
   }
 
-  return indexImg//.reproject(baseline_crs, null, output_resolution)
+  return indexImg
     .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
 }
 

@@ -2,7 +2,7 @@
 var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
-// | Landsat Time Series Harmonic Baseline Generator
+// | Landsat Time Series Assessment -- Harmonic Baseline Generator
 // | [valpasq@bu.edu], 2020
 // |
 // |

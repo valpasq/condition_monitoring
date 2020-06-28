@@ -22,19 +22,21 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 // var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
 // var roi = ee.FeatureCollection(ROI_FN).geometry()
 
-var roi = ee.FeatureCollection(table).filterMetadata('STUSPS', 'equals', 'PA')
+var STATE = 'PA';
+var roi = ee.FeatureCollection(table).filterMetadata('STUSPS', 'equals', STATE)
+  .geometry().dissolve()//.simplify(1000).buffer(5000)
 
 // Specify output collection (empty collection created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state/'
 
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var DEPENDENT = 'ndvi';  // Select spectral transform   
-var HARMONICS = 'h12';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
+var DEPENDENT = 'tcg';  // Select spectral transform   
+var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2005;  // Starts 01-01
-var END_YEAR = 2015;    // Ends 12-31
+var START_YEAR = 2000;  // Starts 01-01
+var END_YEAR = 2004;    // Ends 12-31
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
@@ -55,7 +57,8 @@ var outputProperties = ee.Dictionary({
     'version': VERSION,
     'harmonics': HARMONICS,
     'time_series': TS,
-    'name': experiment_name
+    'name': experiment_name,
+    'state': STATE
 });
 
 // ---------------------------------- Functions ---------------------------------- 
@@ -330,7 +333,7 @@ for(var path = path_start; path <= path_stop; path++){
   Export.image.toAsset({
     image: outputMosaic,
     description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '-' + path,
-    assetId: output_name + '_p' + path,
+    assetId: output_name + '_p' + path + '_' + STATE,
     region: roi.bounds(),
     crs: path_proj,
     scale: 30,

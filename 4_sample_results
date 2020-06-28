@@ -75,6 +75,8 @@ function collectionToImage(collection){
   return stack;
 }
 
+// ---------------------------------- Sample results ---------------------------------- 
+
 // convert collection results to image
 var scoreImage = collectionToImage(selectedExperiments);
 

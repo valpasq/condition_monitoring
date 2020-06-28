@@ -7,7 +7,7 @@ var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified
 // | [valpasq@bu.edu], 2020
 // |
 // |
-// | This script reads a a collection of condition assessment scores 
+// | This script reads a collection of condition assessment scores 
 // | by experiment/WRS2 Path and combines them into a final wall-to-wall
 // | assessment product
 

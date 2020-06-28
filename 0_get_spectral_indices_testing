@@ -1,0 +1,276 @@
+// |
+// | Get spectral data for points
+// | [valpasq@bu.edu], 2020
+// |
+
+
+// Extract period
+var YEAR = 2017
+var MONITOR_START = YEAR + '-01-01';
+var MONITOR_END = YEAR + '-12-31';
+
+var WHICH_SAMPLE = 1;
+
+var VERSION = 'SPECTRAL'; // for export naming
+var NODATA = 99;
+var OUTPUT_CRS = 'EPSG:5070'
+
+
+if (WHICH_SAMPLE == 1) {
+  // Harvard Forest / Quabbin hotspots
+  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
+  var fileName = 'plots_ma_quabbin_' + YEAR + '_' + VERSION 
+}
+
+if (WHICH_SAMPLE == 2) {
+  // UConn / Burlap plots
+  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
+  var fileName = 'plots_ct_burlap_' + YEAR + '_' + VERSION 
+}
+
+// ---------------------------------- PREPROCESS ---------------------------------- 
+
+// Band mapping for legacy re-naming
+var L8_BANDS = ['B2', 'B3', 'B4', 'B5',  'B6',  'B7', 'B10']; // Landsat OLI bands
+var L457_BANDS = ['B1', 'B2', 'B3', 'B4',  'B5',  'B7', 'B6'] // Landsat TM/ETM+ bands
+var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp']; // Common names
+
+
+// Function to reprocess L4 / L5 / L7 (mask and rename)
+var preprocess457 = function(image) {
+  var mask1 = image.select(['pixel_qa']).eq(66) // Clear land
+              .or(image.select(['pixel_qa']).eq(68)) // Clear water
+  var mask2 = image.mask().reduce('min')
+  var mask3 = image.select(['B1', 'B2', 'B3', 'B4',  'B5',  'B7']).gt(0).and(
+            image.select(['B1', 'B2', 'B3', 'B4',  'B5',  'B7']).lt(10000)).reduce('min')
+  
+  return image.updateMask(mask1.and(mask2).and(mask3))
+    .select(L457_BANDS).rename(LTS_NAMES)
+    .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
+}
+
+// Function to preprocess L8 (mask and rename)
+var preprocess8 = function(image) {
+  var mask1 = image.select(['pixel_qa']).eq(322) // Clear land
+              .or(image.select(['pixel_qa']).eq(324)) // Clear water
+  var mask2 = image.mask().reduce('min')
+  var mask3 = image.select(['B2', 'B3', 'B4', 'B5',  'B6',  'B7']).gt(0).and(
+            image.select(['B2', 'B3', 'B4', 'B5',  'B6',  'B7']).lt(10000)).reduce('min')
+               
+  return image.updateMask(mask1.and(mask2).and(mask3))
+      .select(L8_BANDS).rename(LTS_NAMES) // Map legacy band names
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
+};
+
+
+// Functions to mask using a simple image-based cloud score 
+var cloudScore = function(image) {
+  // A helper to apply an expression and linearly rescale the output.
+  var rescale = function(image, exp, thresholds) {
+    return image.expression(exp, {image: image})
+        .divide(10000) // need to divide by 10000 (SR)
+        .subtract(thresholds[0]).divide(thresholds[1] - thresholds[0]);
+  };
+
+  // Compute several indicators of cloudyness and take the minimum of them.
+  var score = ee.Image(1.0);
+  
+  // Clouds are reasonably bright in the blue band.
+  score = score.min(rescale(image, 'image.blue', [0.1, 0.3]));
+
+  // Clouds are reasonably bright in all visible bands.
+  score = score.min(rescale(image, 'image.red + image.green + image.blue', [0.2, 0.8]));
+
+  // Clouds are reasonably bright in all infrared bands.
+  score = score.min(
+      rescale(image, 'image.nir + image.swir1 + image.swir2', [0.3, 0.8]));
+
+  // Clouds are reasonably cool in temperature.
+  score = score.min(rescale(image, 'image.temp', [300, 290]));
+
+  // However, clouds are not snow.
+  var ndsi = image.normalizedDifference(['green', 'swir1']);
+  return score.min(rescale(ndsi, 'image', [0.8, 0.6]));
+
+}; 
+
+// Function to add cloudscore band
+function addCloudScore(image) {
+      // Invert the cloudscore so 1 is least cloudy, and rename the band.
+      var score = cloudScore(image.select(LTS_NAMES));
+      score = ee.Image(1).subtract(score).select([0], ['cloudscore']);
+      return image.addBands(score);
+// REF: https://gis.stackexchange.com/questions/280400/
+// cloud-cover-percentage-in-google-earth-engine 
+}
+
+// Function to mask based on cloudscore
+function maskCloudScore(image) {
+  var qa = image.select('cloudscore');
+
+  var mask = qa.gte(0.8)
+  return image.updateMask(mask)
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
+}
+// SOURCE: https://gis.stackexchange.com/questions/280400/
+// cloud-cover-percentage-in-google-earth-engine  
+
+
+// Function to apply spectral transforms
+function spectralTransforms(image) {
+  
+  var scaled = image.divide(10000)
+  
+  // Set up dictionary using band name keys.
+  var dict = {
+    blue: scaled.select("blue"),
+    green: scaled.select("green"),
+    red: scaled.select("red"),
+    nir: scaled.select("nir"),
+    swir1: scaled.select("swir1"),
+    swir2: scaled.select("swir2"),
+  }
+
+  // Normalized Difference Vegetation Index (NDVI)
+  var ndvi = scaled.normalizedDifference(['nir', 'red'])
+    .rename("ndvi").unmask(NODATA)
+
+  // Tasseled Cap Transform -- Crist (1985) / TM surface reflectance
+  var tcg = scaled.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
+    .rename("tcg").unmask(NODATA)
+
+  var evi = scaled.expression(
+    '2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))', dict)
+    .rename("evi").unmask(NODATA)
+  
+  var sr = image.select('nir').divide(image.select('red'))
+    .rename('sr').unmask(NODATA)
+  
+  // Transform stack
+  return scaled.unmask(NODATA)
+      .addBands(ndvi).addBands(tcg).addBands(evi).addBands(sr)
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
+   
+}
+
+
+// Function to build monitoring collection
+var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
+  
+// Get Landsat 5 imagery
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterDate(MONITOR_START, MONITOR_END)  
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .map(preprocess457) 
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+      
+  // Get Landsat 7 imagery
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+      .filterDate(MONITOR_START, MONITOR_END) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .map(preprocess457) 
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+  
+  // Get  Landsat 8 imagery
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+      .filterDate(MONITOR_START, MONITOR_END) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", 80)
+      .map(preprocess8)  
+      .map(function(image) {return image.set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0))})
+  
+  // FINAL LTS COLLECTION
+  var monitorC = collection5.merge(collection7).merge(collection8)
+      .sort('system:time_start') 
+      .map(addCloudScore)
+      .map(maskCloudScore) // mask based on simple cloud score
+      .map(spectralTransforms) // calculate spectral transforms
+      
+  // Return TC images for monitoring period
+  return monitorC;
+  
+  };
+  
+
+// Function to extract predictions at point samples
+function samplePredictions(collection, point) {
+   /* Reduce an image collection to a series of points at a sample location */
+   
+   var tsCol = ee.ImageCollection(collection).map(function(i) {
+      var imageMean = ee.Image(i).reduceRegion({
+        reducer: ee.Reducer.mean(),
+        geometry: point.geometry(),
+        scale: 30,
+        crs: 'EPSG:4326'
+      });
+
+      var outPoint = ee.Feature(point.geometry(), {
+          'date': i.get('SENSING_TIME'),
+          'image': i.get('system:index'),
+          'mask': imageMean.get('mask'),
+          'path': i.get('WRS_PATH'),
+          'row': i.get('WRS_ROW'),
+          'satellite': i.get('SATELLITE'),
+          'ndvi': imageMean.get('ndvi'),
+          'evi': imageMean.get('evi'),
+          'tcg': imageMean.get('tcg'),
+          'sr': imageMean.get('sr'),
+          'blue': imageMean.get('blue'),
+          'green': imageMean.get('green'),
+          'red': imageMean.get('red'),
+          'nir': imageMean.get('nir'),
+          'swir1': imageMean.get('swir1'),
+          'swir2': imageMean.get('swir2')
+  
+      });
+      
+      return outPoint.copyProperties(point);
+  });
+  return tsCol;
+}
+
+// Main function to map over for every sample
+var getData = function(point) {
+  var inputs = ee.ImageCollection(collectPredictions)
+      .filterBounds(point.geometry());
+
+  var inputFC = ee.FeatureCollection(samplePredictions(inputs, point));
+
+  return inputFC;
+};
+
+
+// Get study area boundary
+var clip_bound = SAMPLE.geometry().bounds()
+
+// Get monitoring period imagery
+var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
+print(monitor)
+// Map.addLayer(monitor.first().select('ndvi'), {min:0, max:1})
+
+// Add mask band
+var collectPredictions = monitor.map(function(i) {
+      var iMask = i.select('ndvi').lt(NODATA).rename('mask')
+      return i.addBands(iMask)
+     })
+     
+  
+// Map over the sample and flatten to a single feature collection
+var samplesData = SAMPLE.map(getData).flatten();
+print('export - size:', samplesData.size());
+print('export - first 10', samplesData.limit(10))
+
+
+// Export
+Export.table.toDrive({
+  collection: samplesData,
+  description: 'exportTable_' + VERSION + '_' + WHICH_SAMPLE,
+  folder: 'ee-conditionassessment',
+  fileNamePrefix: fileName,
+});
+
+
+
+

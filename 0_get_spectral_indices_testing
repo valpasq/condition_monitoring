@@ -4,6 +4,9 @@
 // |
 
 
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
+
+
 // Extract period
 var YEAR = 2017
 var MONITOR_START = YEAR + '-01-01';

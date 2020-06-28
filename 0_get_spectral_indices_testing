@@ -258,7 +258,8 @@ var collectPredictions = monitor.map(function(i) {
      })
      
 
-Map.addLayer(collectPredictions.mean())
+// var mask - collectPredictions.gte(x99)
+// Map.addLayer(collectPredictions.select('ndvi'))
 
 
 // Map over the sample and flatten to a single feature collection

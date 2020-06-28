@@ -1,6 +1,14 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Assessment -- Sample plot locations
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script reads a 
+
+// ---------------------------------- Imports & Outputs ---------------------------------- 
 
 var VERSION = 'v3-0'
 

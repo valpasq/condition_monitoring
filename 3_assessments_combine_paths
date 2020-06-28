@@ -16,6 +16,8 @@ var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified
 var RESULTS_COLLECTION = imageCollection
 var bounds = RESULTS_COLLECTION.geometry().bounds()
 
+// -------------------------------- Assessment Parameters --------------------------------- 
+
 var OUTPUT_CRS = 'EPSG:5070'
 var GFC_TCC = 75;
 

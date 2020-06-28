@@ -188,8 +188,8 @@ var monitorTS = function(clipBound, MONITOR_START, MONITOR_END) {
   // FINAL LTS COLLECTION
   var monitorC = collection5.merge(collection7).merge(collection8)
       .sort('system:time_start') 
-      .map(addCloudScore)
-      .map(maskCloudScore) // mask based on simple cloud score
+      .map(utils.addCloudScore)
+      .map(utils.maskCloudScore) 
       .map(spectralTransforms) // calculate spectral transforms
       
   // Return TC images for monitoring period

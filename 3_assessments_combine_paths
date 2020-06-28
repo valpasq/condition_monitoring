@@ -3,7 +3,7 @@ var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified
     imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-3_by_path_monitoring");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
-// | Landsat Time Series Combined Assessment Products
+// | Landsat Time Series Assessment -- Combined Products
 // | [valpasq@bu.edu], 2020
 // |
 // |

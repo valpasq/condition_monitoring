@@ -22,7 +22,8 @@ var YEAR = 2017
 
 var map_result = 8
 
-// Get plot locations
+// ---------------------------------- Get plot dataset ---------------------------------- 
+
 if (WHICH_SAMPLE == 1) {
   // Massachusetts
   var SAMPLE_NAME = 'ma_quabbin';
@@ -38,11 +39,15 @@ if (WHICH_SAMPLE == 1) {
     
 }
 
+// ---------------------------------- Get experiments ---------------------------------- 
+
 // Get results for selected year
 var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', YEAR)
 var crs = selectedExperiments.first().projection().crs()
 print(EXPERIMENTS)
 print(selectedExperiments)
+
+// ---------------------------------- Get reanalysis product ---------------------------------- 
 
 var reanalysis_cn = 'm_reanalysis'
 if (YEAR >= 2015 & YEAR <= 2018) {
@@ -53,7 +58,8 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 }
 // print(reanalysis)
 
-// function to convert image collection to multiband image
+// ---------------------------------- Functions ---------------------------------- 
+
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
     var score = img.select('score_weighted_sum')
@@ -83,12 +89,21 @@ var result = scoreImage.reduceRegions({
         crs: crs
       });
 
-
 // check results
 print(scoreImage)
 print(result)
 
-// Palette
+// Export
+Export.table.toDrive({
+  collection: result,
+  description: 'exportTable_' + SAMPLE_NAME + '_' + YEAR ,
+  folder: 'ee-conditionassessment',
+  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION ,
+});
+
+
+// ---------------------------------- Map result ---------------------------------- 
+
 var min = -4;
 var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
@@ -99,13 +114,6 @@ Map.addLayer(SAMPLE, {color: 'white'}, 'sample points');
 
 print('Showing results for:', ee.String(scoreImage.select(map_result).bandNames().get(0)))
 
-// Export
-Export.table.toDrive({
-  collection: result,
-  description: 'exportTable_' + SAMPLE_NAME + '_' + YEAR ,
-  folder: 'ee-conditionassessment',
-  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION ,
-});
 
 // Map styling
 var style = {

@@ -69,10 +69,10 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var resultWts = result.map(weightScore)
     
     // Compute weighted mean
-    var resultFinal = resultWts.select('score_weighted')
+    var resultFinal = ee.Image(resultWts.select('score_weighted')
       .reduce('sum')
       .divide(totalObs)
-      // .copyProperties(result)
+      .copyProperties(result.first(), null, ['WRS_PATH']))
     print(resultFinal)
     
     var layer_name = experiment_name.getInfo() + '_' + year_value.getInfo()

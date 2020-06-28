@@ -9,10 +9,10 @@ var imageCollection_old = ee.ImageCollection("projects/sites-project/baselines_v
       }
     ] */
     ee.Geometry.Polygon(
-        [[[-72.16856042969184, 42.42810180883516],
-          [-72.16856042969184, 42.371564804535105],
-          [-72.07243005859809, 42.371564804535105],
-          [-72.07243005859809, 42.42810180883516]]], null, false);
+        [[[-71.98591272461371, 42.278916746466344],
+          [-71.98591272461371, 42.222245453775095],
+          [-71.88978235351996, 42.222245453775095],
+          [-71.88978235351996, 42.278916746466344]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var PATH_MIN = 11;
@@ -82,7 +82,7 @@ var test_as_bands = collectionToImage(test);
 print(test_as_bands)
 
 Map.addLayer(test_as_bands)
-print(ui.Chart.image.histogram(test_as_bands.select(['constant_2', 'constant_3']), geometry));
+print(ui.Chart.image.histogram(test_as_bands.select(['constant_2', 'constant_3']), geometry, 30, 100, 0.1));
 
 
 

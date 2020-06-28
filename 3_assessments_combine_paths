@@ -11,6 +11,8 @@ var roi = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified
 // | by experiment/WRS2 Path and combines them into a final wall-to-wall
 // | assessment product
 
+// ---------------------------------- Imports & Outputs ---------------------------------- 
+
 var RESULTS_COLLECTION = imageCollection
 var bounds = RESULTS_COLLECTION.geometry().bounds()
 

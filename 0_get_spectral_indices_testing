@@ -13,7 +13,7 @@ var WHICH_SAMPLE = 1;
 
 var VERSION = 'SPECTRAL'; // for export naming
 var NODATA = 99;
-var OUTPUT_CRS = 'EPSG:5070'
+var OUTPUT_CRS = 'EPSG:4326'
 
 
 if (WHICH_SAMPLE == 1) {
@@ -149,6 +149,7 @@ function spectralTransforms(image) {
   // Transform stack
   return scaled.unmask(NODATA)
       .addBands(ndvi).addBands(tcg).addBands(evi).addBands(sr)
+      .reproject(OUTPUT_CRS, null, 30)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME", "SATELLITE"])
    
 }
@@ -203,7 +204,7 @@ function samplePredictions(collection, point) {
         reducer: ee.Reducer.mean(),
         geometry: point.geometry(),
         scale: 30,
-        crs: 'EPSG:4326'
+        crs: OUTPUT_CRS
       });
 
       var outPoint = ee.Feature(point.geometry(), {

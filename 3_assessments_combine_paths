@@ -92,6 +92,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var layer_name = experiment_name.getInfo() + '_' + year_value.getInfo()
     Map.addLayer(resultFinal, viz, layer_name, false)
     
+    // Export final product for full study area
     Export.image.toAsset({
       image: resultFinal,
       description: 'result_' + layer_name,

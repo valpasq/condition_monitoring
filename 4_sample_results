@@ -46,7 +46,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 // function to convert image collection to multiband image
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
-    var score = img.select('score_mean')
+    var score = img.select('score_weighted_sum')
     var index = ee.String('m_')
       .cat(ee.String(img.get('system:index'))
       .split('_' + YEAR).get(0))

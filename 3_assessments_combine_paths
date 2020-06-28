@@ -105,7 +105,6 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
 
 
 
-
 var style = {
   'Figure': [{
       featureType: 'all',

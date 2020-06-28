@@ -28,7 +28,6 @@ var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
 
-
 var weightScore = function(image) {
  var score = image.select('score_mean')
  var nobs = image.select('score_count')

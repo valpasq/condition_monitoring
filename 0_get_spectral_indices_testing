@@ -257,7 +257,10 @@ var collectPredictions = monitor.map(function(i) {
       return i.addBands(iMask)
      })
      
-  
+
+Map.addLayer(collectPredictions.mean())
+
+
 // Map over the sample and flatten to a single feature collection
 var samplesData = SAMPLE.map(getData).flatten();
 print('export - size:', samplesData.size());

@@ -20,7 +20,7 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitorin
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2018         // Monitoring year
+var YEAR = 2017         // Monitoring year
 var DAY_START = '05-01' // Date to start monitoring
 var DAY_END = '09-30'   // Date to end monitoring
 

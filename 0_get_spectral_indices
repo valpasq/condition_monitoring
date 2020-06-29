@@ -5,7 +5,8 @@
 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// Extract period
+// ---------------------------------- Configure ---------------------------------- 
+
 var YEAR = 2017
 var MONITOR_START = YEAR + '-01-01';
 var MONITOR_END = YEAR + '-12-31';
@@ -31,7 +32,6 @@ if (WHICH_SAMPLE == 2) {
 }
 
 // ---------------------------------- Functions ---------------------------------- 
-
 
 // Function to apply spectral transforms
 function spectralTransforms(image) {
@@ -161,6 +161,7 @@ var getData = function(point) {
   return inputFC;
 };
 
+// ---------------------------------- Get values ---------------------------------- 
 
 // Get study area boundary
 var clip_bound = SAMPLE.geometry().bounds()
@@ -183,7 +184,8 @@ print('export - size:', samplesData.size());
 print('export - first 10', samplesData.limit(10))
 
 
-// Export
+// ---------------------------------- Export table ---------------------------------- 
+
 Export.table.toDrive({
   collection: samplesData,
   description: 'exportTable_' + VERSION + '_' + WHICH_SAMPLE,

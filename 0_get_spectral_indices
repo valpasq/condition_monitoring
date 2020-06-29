@@ -1,7 +1,13 @@
 // |
-// | Get spectral values for plot points
+// | Get spectral indices for plot points
 // | [valpasq@bu.edu], 2020
 // |
+// | This script generates a table with original band values as well as
+// | key vegetation indices (TCG, NDVI, EVI and Simple Ratio) for a collection
+// | of plot points.
+// |
+
+
 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 

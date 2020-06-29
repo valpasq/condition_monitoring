@@ -143,7 +143,7 @@ function makeLegend(palette) {
     }
   });
 }
-Map.add(makeLegend(viz))
+Map.add(makeLegend(palette))
 
 
 

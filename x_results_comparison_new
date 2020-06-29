@@ -5,7 +5,6 @@ var ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-G
     study_area = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-
 var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_assessment')
 
 var YEAR = 2017
@@ -44,7 +43,7 @@ print(reanalysis)
 var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
 var NUM_RESULTS = selectedResults.size().getInfo()
 
-  // Generate tasks for annual feature set exports
+// Add results to map
 for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
 
   var assessment = ee.Image(selectedResults.toList(selectedResults.size()).get(RESULT))
@@ -56,7 +55,7 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
     
 }
 
-
+// Bounding boxes
 var ct_bounds = ee.Image().byte().paint({
   featureCollection: ct_burlap.geometry().bounds(),
   color: 1,
@@ -70,11 +69,14 @@ var ma_bounds = ee.Image().byte().paint({
 });
 
 
+// Add WRS2
 Map.addLayer(wrs2,{}, 'WRS2', false)
 
+// Add bounding boxes
 Map.addLayer(ct_bounds, {}, 'CT plots - bounds')
 Map.addLayer(ma_bounds, {}, 'MA plots - bounds')
 
+// Add plot points
 Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots')
 Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots')
 

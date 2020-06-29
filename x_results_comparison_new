@@ -21,6 +21,7 @@ var gfc = ee.Image("UMD/hansen/global_forest_change_2018_v1_6")
 var gfc_tcc = 75;
 
 var gfc_mask = gfc.select('treecover2000')
+  .clip(study_area)
   .gte(gfc_tcc)
   .reproject('EPSG:5070', null, 30)
 

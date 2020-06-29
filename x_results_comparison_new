@@ -1,15 +1,14 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords"),
-    ma_quabbin = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
-    wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending"),
-    study_area = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/simplified_southernNE");
+var wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_assessment')
+var ma_quabbin = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
+var ct_burlap = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
+var study_area = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/simplified_southernNE')
 
 var YEAR = 2017
 var MIN_TCC = 75;
-
 
 // Colorbar
 var min = -4;

@@ -1,22 +1,35 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Assessment -- Compare mapped results
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script loads mapped results for a specified year for comparison.
+
+
+// ------------------------------------- Imports  ------------------------------------- 
 
 var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_assessment')
 var ma_quabbin = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
 var ct_burlap = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
 var study_area = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/simplified_southernNE')
 
+// ------------------------------------- Config ------------------------------------- 
+
 var YEAR = 2017
 var MIN_TCC = 75;
 
-// Colorbar
+// ---------------------------------- Visualization  ---------------------------------- 
+
 var min = -4;
 var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
-// Mask
+// ------------------------------------- Masking ------------------------------------- 
+
 var NLCD = ee.Image('USGS/NLCD/NLCD2011')
 
 var tcc_mask = NLCD.select('percent_tree_cover')
@@ -24,7 +37,8 @@ var tcc_mask = NLCD.select('percent_tree_cover')
   .gte(MIN_TCC)
   .reproject('EPSG:5070', null, 30)
 
-// Add reanalysis product
+// ---------------------------------- Legacy results  ---------------------------------- 
+
 var reanalysis_cn = 'reanalysis_score'
 if (YEAR >= 2015 & YEAR <= 2018) {
   var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
@@ -37,8 +51,8 @@ if (YEAR >= 2015 & YEAR <= 2018) {
   Map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
 } 
 
+// ------------------------------------- Processing  ------------------------------------- 
 
-// Get results for selected year
 var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
 var NUM_RESULTS = selectedResults.size().getInfo()
 
@@ -53,6 +67,8 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
   Map.addLayer(assessment_masked.select('score_weighted_sum'), viz, layer_name, false)
     
 }
+
+// -------------------------------- Add plot locations  -------------------------------- 
 
 // Bounding boxes
 var ct_bounds = ee.Image().byte().paint({
@@ -80,6 +96,8 @@ Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots')
 Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots')
 
 
+// ------------------------------------- Map styling  ------------------------------------- 
+
 var style = {
   'Figure': [{
       featureType: 'all',
@@ -87,7 +105,6 @@ var style = {
   }]
 };
 
-// Set map options.
 Map.setOptions(null, style);
 Map.setOptions('SATELLITE')
 

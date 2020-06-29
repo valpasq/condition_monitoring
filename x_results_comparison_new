@@ -73,13 +73,13 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
 // Bounding boxes
 var ct_bounds = ee.Image().byte().paint({
   featureCollection: ct_burlap.geometry().bounds(),
-  color: 1,
+  color: 'red',
   width: 3
 });
 
 var ma_bounds = ee.Image().byte().paint({
   featureCollection: ma_quabbin.geometry().bounds(),
-  color: 1,
+  color: 'red',
   width: 3
 });
 

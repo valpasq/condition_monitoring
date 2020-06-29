@@ -49,7 +49,7 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
   var result_name = assessment.get('system:index')
   var layer_name = ee.String(result_name).split('_' + YEAR).get(0).getInfo()
 
-  Map.addLayer(assessment_masked.select('score_mean'), viz, layer_name, false)
+  Map.addLayer(assessment_masked.select('score_weighted_sum'), viz, layer_name, false)
     
 }
 

@@ -30,7 +30,7 @@ var reanalysis_cn = 'reanalysis_score'
 if (YEAR >= 2015 & YEAR <= 2018) {
   var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
   var reanalysis = ee.Image(reanalysis_fn)
-    .reproject('EPSG:5070')
+    // .reproject('EPSG:5070')
     .clip(study_area)
     .updateMask(gfc_mask)
     .rename(reanalysis_cn)

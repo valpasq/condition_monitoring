@@ -8,6 +8,8 @@ var ct_burlap = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/CT-G
 var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_assessment')
 
 var YEAR = 2017
+var MIN_TCC = 75;
+
 
 // Colorbar
 var min = -4;
@@ -16,12 +18,11 @@ var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
 // Mask
-var gfc = ee.Image("UMD/hansen/global_forest_change_2018_v1_6")
-var gfc_tcc = 75;
+var NLCD = ee.Image('USGS/NLCD/NLCD2011')
 
-var gfc_mask = gfc.select('treecover2000')
+var tcc_mask = NLCD.select('percent_tree_cover')
   .clip(study_area)
-  .gte(gfc_tcc)
+  .gte(MIN_TCC)
   .reproject('EPSG:5070', null, 30)
 
 // Add reanalysis product
@@ -31,7 +32,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
   var reanalysis = ee.Image(reanalysis_fn)
     // .reproject('EPSG:5070')
     .clip(study_area)
-    .updateMask(gfc_mask)
+    .updateMask(tcc_mask)
     .rename(reanalysis_cn)
 
   Map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
@@ -46,7 +47,7 @@ var NUM_RESULTS = selectedResults.size().getInfo()
 for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
 
   var assessment = ee.Image(selectedResults.toList(selectedResults.size()).get(RESULT))
-  var assessment_masked = assessment//.updateMask(gfc_mask)
+  var assessment_masked = assessment.updateMask(tcc_mask)
   var result_name = assessment.get('system:index')
   var layer_name = ee.String(result_name).split('_' + YEAR).get(0).getInfo()
 

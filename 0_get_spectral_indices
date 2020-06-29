@@ -1,8 +1,7 @@
 // |
-// | Get spectral data for points
+// | Get spectral values for plot points
 // | [valpasq@bu.edu], 2020
 // |
-
 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 

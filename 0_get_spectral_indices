@@ -29,7 +29,7 @@ if (WHICH_SAMPLE == 2) {
   var fileName = 'plots_ct_burlap_' + YEAR + '_' + VERSION 
 }
 
-// ---------------------------------- PREPROCESS ---------------------------------- 
+// ---------------------------------- Preprocess ---------------------------------- 
 
 
 // Function to apply spectral transforms

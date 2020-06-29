@@ -4,8 +4,8 @@
 // |
 // | This script generates a table with original band values as well as
 // | key vegetation indices (TCG, NDVI, EVI and Simple Ratio) for a collection
-// | of plot points.
-// |
+// | of plot points. Data will be extracted based on native Landsat UTM unless 
+// | reproject is added/enabled in transforms function.
 
 
 

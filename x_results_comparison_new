@@ -37,7 +37,6 @@ if (YEAR >= 2015 & YEAR <= 2018) {
   Map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
 } 
 
-print(reanalysis)
 
 // Get results for selected year
 var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)

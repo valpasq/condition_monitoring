@@ -8,7 +8,6 @@
 // | reproject is added/enabled in transforms function.
 
 
-
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // ---------------------------------- Configure ---------------------------------- 

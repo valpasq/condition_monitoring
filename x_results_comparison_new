@@ -1,5 +1,10 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending");
+var wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending"),
+    geometry = /* color: #d63000 */ee.Geometry.MultiPoint(
+        [[-72.23501892402889, 41.807357153800126],
+         [-72.32660683603468, 41.887064648114055],
+         [-72.24467500916975, 42.428951297130176],
+         [-72.25194911282166, 42.43278961115788]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Assessment -- Compare mapped results
@@ -30,7 +35,7 @@ var viz = {min: min, max: max, palette: palette};
 
 // ------------------------------------- Masking ------------------------------------- 
 
-var NLCD = ee.Image('USGS/NLCD/NLCD2011')
+var NLCD = ee.Image('USGS/NLCD/NLCD2016')
 
 var tcc_mask = NLCD.select('percent_tree_cover')
   .clip(study_area)
@@ -61,6 +66,7 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
 
   var assessment = ee.Image(selectedResults.toList(selectedResults.size()).get(RESULT))
   var assessment_masked = assessment.updateMask(tcc_mask)
+    // .updateMask(assessment.lte(-1))
   var result_name = assessment.get('system:index')
   var layer_name = ee.String(result_name).split('_' + YEAR).get(0).getInfo()
 

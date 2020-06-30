@@ -22,7 +22,7 @@ var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
 var roi = ee.FeatureCollection(ROI_FN).geometry()
 
 // Specify output collection (empty collection created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path/'
 
 
 // ---------------------------------- Model Parameters ---------------------------------- 
@@ -52,8 +52,7 @@ var outputProperties = ee.Dictionary({
     'version': VERSION,
     'harmonics': HARMONICS,
     'time_series': TS,
-    'name': experiment_name,
-    'state': STATE
+    'name': experiment_name
 });
 
 // ---------------------------------- Functions ---------------------------------- 
@@ -328,7 +327,7 @@ for(var path = path_start; path <= path_stop; path++){
   Export.image.toAsset({
     image: outputMosaic,
     description: DEPENDENT + '_' + START_YEAR + '-' + END_YEAR + '-' + path,
-    assetId: output_name + '_p' + path + '_' + STATE,
+    assetId: output_name + '_p' + path,
     region: roi.bounds(),
     crs: path_proj,
     scale: 30,

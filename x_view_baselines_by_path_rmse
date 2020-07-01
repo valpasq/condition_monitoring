@@ -23,42 +23,38 @@ var show = 'rmse'
 
 
 var COLLECTION = imageCollection
+print(COLLECTION)
 
 // Get results
 var experiments = COLLECTION.aggregate_array('name').distinct()
-// print(experiments.get(0))
+print(experiments)
 // print(COLLECTION
 //     .filterMetadata('name', 'equals', experiments.get(0)))
 
+var experiment_1 = 'tcg_2000-2010_h13_full'
+var experiment_2 = 'tcg_2005-2015_h13_full'
+
 for(var path = PATH_MIN; path <= PATH_MAX; path++){
-  var baseline_prev = COLLECTION
-    .filterMetadata('name', 'equals', experiments.get(0))
-    .filterMetadata('WRS_PATH', 'equals', path-1)
-    .first()
-  // print(baseline_prev)
-  baseline_prev = baseline_prev.updateMask(baseline_prev.select('nobs').gte(OBS_MIN))
-  
-  var baseline = COLLECTION
-    .filterMetadata('name', 'equals', experiments.get(0))
+
+  var baseline_1 = COLLECTION
+    .filterMetadata('name', 'equals', experiment_1)
     .filterMetadata('WRS_PATH', 'equals', path)
     .first()
 
-  baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
+  baseline_1 = baseline_1.updateMask(baseline_1.select('nobs').gte(OBS_MIN))
   
-  Map.addLayer(baseline.select('rmse'), {min:0, max:0.1}, 'Path ' + path)
-  // Map.addLayer(baseline.select('nobs'), {min:0, max:250}, 'Path ' + path)
-  // Map.addLayer(baseline.select('constant'), {min:0, max:0.5}, 'Path ' + path)
-  
-  
-  if (path > PATH_MIN){
-    var diff_name = 'Path ' + path + '_minus_prev'
-    var diff = baseline.subtract(baseline_prev).reproject('EPSG:32619', null, 30)
+    var baseline_2 = COLLECTION
+    .filterMetadata('name', 'equals', experiment_2)
+    .filterMetadata('WRS_PATH', 'equals', path)
+    .first()
 
-      // Map.addLayer(diff.select('rmse'), {min:0, max:0.01}, 'Path ' + path)
-      // Map.addLayer(diff.select('constant'), {min:0, max:0.1}, 'Path ' + path)
-  //   Map.addLayer(diff.select(['constant','nobs', 'rmse']), {min:-0.01, max:0.01}, diff_name)
-
-  }
+  baseline_2 = baseline_2.updateMask(baseline_2.select('nobs').gte(OBS_MIN))
+  
+  // Map.addLayer(baseline_1.select('rmse'), {min:0, max:0.1}, 'Path ' + path + ' ' + experiment_1)
+  // Map.addLayer(baseline_2.select('rmse'), {min:0, max:0.1}, 'Path ' + path + ' ' + experiment_2)
+  Map.addLayer(baseline_2.select('rmse').subtract(baseline_1.select('rmse')), {min:-0.01, max:0.01}, 'Path ' + path + ' diff')
+  
+  
 }
   
 var test = COLLECTION

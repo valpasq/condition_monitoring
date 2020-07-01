@@ -58,7 +58,7 @@ for(var path = PATH_MIN; path <= PATH_MAX; path++){
 }
   
 var test = COLLECTION
-  .filterMetadata('name', 'equals', experiments.get(0))
+  .filterMetadata('name', 'equals', experiment_1)
   .filterBounds(geometry)
 print(test)
 // test = test.updateMask(test.select('nobs').gte(OBS_MIN))
@@ -67,7 +67,7 @@ print(test)
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
     
-    return ee.Image(prev).addBands(img.select('constant'));
+    return ee.Image(prev).addBands(img.select('rmse'));
   }, ee.Image(1)));
 
   stack = stack.select(ee.List.sequence(1, stack.bandNames().size().subtract(1)));
@@ -79,7 +79,7 @@ var test_as_bands = collectionToImage(test);
 print(test_as_bands)
 
 Map.addLayer(test_as_bands)
-print(ui.Chart.image.histogram(test_as_bands.select(['constant_2', 'constant_3']), geometry, 30, 100, 0.1));
+print(ui.Chart.image.histogram(test_as_bands.select(['rmse_1', 'rmse_2']), geometry, 30, 100, 0.01));
 
 
 

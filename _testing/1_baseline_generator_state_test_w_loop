@@ -18,10 +18,6 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// // Specify study area polygon(s)
-// var ROI_FN = 'projects/ee-valeriepasquarella/assets/simplified_southernNE'
-// var roi = ee.FeatureCollection(ROI_FN).geometry()
-
 var STATE = 'MA';
 var roi = ee.FeatureCollection(table).filterMetadata('STUSPS', 'equals', STATE)
   .geometry().dissolve()
@@ -35,7 +31,7 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state/'
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2010;  // Starts 01-01
+var START_YEAR = 2000;  // Starts 01-01
 // var END_YEAR = 2019;    // Ends 12-31
 var CURR_YEAR = 2019;
 
@@ -333,25 +329,23 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
       // Quality mosaic based on number of observations per pixel
     var outputMosaic = ee.Image(images
       .qualityMosaic('nobs')
-      // .multiply(OUTPUT_MULTIPLIER)
-      // .int() 
-      .clip(roi))
-      // .setMulti(outputProperties))
-      // .set('WRS_PATH', path);
+      .clip(roi)
+      .setMulti(outputProperties))
+      .set('WRS_PATH', path);
   
     print('Mosaic product:', outputMosaic);
     
     // Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
       
-    // Export.image.toAsset({
-    //   image: outputMosaic,
-    //   description: DEPENDENT + '_' + start + '-' + end + '-' + path,
-    //   assetId: output_name + '_p' + path + '_' + STATE,
-    //   region: roi.bounds(),
-    //   crs: path_proj,
-    //   scale: 30,
-    //   maxPixels: 1e13,
-    // })
+    Export.image.toAsset({
+      image: outputMosaic,
+      description: DEPENDENT + '_' + start + '-' + end + '-' + path,
+      assetId: output_name + '_p' + path + '_' + STATE,
+      region: roi.bounds(),
+      crs: path_proj,
+      scale: 30,
+      maxPixels: 1e13,
+    })
   }
 
 }

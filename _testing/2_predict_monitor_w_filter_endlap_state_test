@@ -20,12 +20,12 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state_monitori
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2018         // Monitoring year
+var YEAR = 2017         // Monitoring year
 var DAY_START = '05-01' // Date to start monitoring
 var DAY_END = '09-30'   // Date to end monitoring
 
 var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND 
-var OBS_MIN = 50;       // exclude baseline models fit with less than minimum nobs
+var OBS_MIN = 30;       // exclude baseline models fit with less than minimum nobs
 
 
 // -------------------------------- Monitoring Setup -------------------------------- 
@@ -255,6 +255,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   var YEAR_START = experiment_baselines.first().get('year_start').getInfo()
   var YEAR_END = experiment_baselines.first().get('year_end').getInfo()
   var REF_PERIOD = YEAR_START + '-' + YEAR_END
+  var STATE = experiment_baselines.first().get('state').getInfo()
   
   var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + monitor_start + '_' + monitor_end
 
@@ -325,7 +326,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
           'time_series': TS,
           'ref_period': REF_PERIOD,
           'name': experiment_name,
-          'WRS_PATH': path
+          'WRS_PATH': path,
+          'state': STATE
       });
     
     // Average over monitoring period
@@ -340,7 +342,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     Export.image.toAsset({
       image: assessment,
       description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
-      assetId: OUTPUT_NAME + '_p' + path,
+      assetId: OUTPUT_NAME + '_p' + path + '_' + STATE,
       region: clip_bound,
       crs: baseline.projection().crs(),
       scale: 30,

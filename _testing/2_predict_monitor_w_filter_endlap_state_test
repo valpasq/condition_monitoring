@@ -20,9 +20,11 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state_monitori
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2017         // Monitoring year
-var DAY_START = '05-01' // Date to start monitoring
-var DAY_END = '09-30'   // Date to end monitoring
+var STATE = 'MA';
+
+var YEAR = 2017;         // Monitoring year
+var DAY_START = '05-01'; // Date to start monitoring
+var DAY_END = '09-30';   // Date to end monitoring
 
 var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND 
 var OBS_MIN = 30;       // exclude baseline models fit with less than minimum nobs
@@ -245,7 +247,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   // print('Experiment:', experiment_name)
   
   var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
-    .filterMetadata('name', 'equals', experiment_name))
+    .filterMetadata('name', 'equals', experiment_name)
+    .filterMetadata('state', 'equals', STATE))
   // print('Baseline collection:', experiment_baselines)
 
   var VERSION = experiment_baselines.first().get('version').getInfo()

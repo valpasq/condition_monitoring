@@ -32,8 +32,8 @@ var DEPENDENT = 'tcg';  // Select spectral transform
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 2000;  // Starts 01-01
-// var END_YEAR = 2019;    // Ends 12-31
-var CURR_YEAR = 2019;
+var WINDOW = 5;
+var CURR_YEAR = 2019;   // Year to stop
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
@@ -206,15 +206,12 @@ var independents = ee.List(['constant', 't'])
 
 
 for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
-  // ---------------------------------- Output Setup ---------------------------------- 
 
-  var end = start + 4;
+  var end = start + (WINDOW - 1);
   
   var experiment_name = DEPENDENT + '_' + start + '-' + end + '_' + HARMONICS + '_' + TS;
   var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + experiment_name;
   
-  print('start year:', start)
-  print('end year', end)
   
   // Dictionary for asset properties
   var outputProperties = ee.Dictionary({
@@ -310,21 +307,21 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   
   // Map over scene collections
   var outputFull = ee.ImageCollection(collections.map(getCoeffs));
-  print('Full collection:', outputFull);
+  // print('Full collection:', outputFull);
   
   var paths = outputFull.aggregate_array('WRS_PATH').distinct().sort()
   
   var num_paths = paths.size().getInfo()
-  print(paths)
+  // print(paths)
   var path_start = paths.get(0).getInfo()
   var path_stop = paths.get(num_paths-1).getInfo()
   
   for(var path = path_start; path <= path_stop; path++){
-    print(path)
+    // print(path)
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path)
-    print(images)
+    // print(images)
     var path_proj = images.first().projection()
-    print(path_proj)
+    // print(path_proj)
     
       // Quality mosaic based on number of observations per pixel
     var outputMosaic = ee.Image(images
@@ -335,7 +332,7 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   
     print('Mosaic product:', outputMosaic);
     
-    // Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
+    Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
       
     Export.image.toAsset({
       image: outputMosaic,

@@ -27,6 +27,7 @@ var DAY_END = '09-30'   // Date to end monitoring
 var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND 
 var OBS_MIN = 50;       // exclude baseline models fit with less than minimum nobs
 
+var NODATA = 99
 
 var WHICH_SAMPLE = 1;
 if (WHICH_SAMPLE == 1) {
@@ -214,6 +215,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end) {
     
     return collection.filterDate(date, date2).mean()
       .set({
+        'SENSING_TIME': date.format("yyyy-MM-dd"),
         'system:time_start': date.millis(), 
         'WRS_PATH': path
       })
@@ -245,7 +247,7 @@ var addScore = function(image) {
   var score = observed.subtract(prediction)
       .divide(image.select('rmse'))
       
-  return image.addBands(score.rename('score'));
+  return image.addBands(score.rename('score').copyProperties(image));
 }
 
 
@@ -254,10 +256,10 @@ function samplePredictions(collection, point) {
    /* Reduce an image collection to a series of points at a sample location */
    
    var tsCol = ee.ImageCollection(collection).map(function(i) {
-      var imageMean = ee.Image(i).reduceRegion({
+      var imageMean = ee.Image(i.unmask(NODATA)).reduceRegion({
         reducer: ee.Reducer.mean(),
         geometry: point.geometry(),
-        scale: 1,
+        scale: 30,
         crs: baseline.projection().crs()
       });
 
@@ -347,7 +349,8 @@ for(var experiment = 0; experiment < 2; experiment++){
   // print('Full monitoring collection:', monitor)
   
   
-  for(var i = 0; i < num_paths; i++){
+  // for(var i = 0; i < num_paths; i++){
+  for(var i = 1; i <= 2; i++){
     var path = paths.get(i).getInfo()
     // print('Path:', path)
     
@@ -415,11 +418,13 @@ for(var experiment = 0; experiment < 2; experiment++){
     // })
 
   }
+
   print(COLLECT_PREDICTIONS)
+  
   var samplesData = SAMPLE.map(getData).flatten();
-  print('export - first result:', samplesData.first());
+  // print('export - first result:', samplesData.limit(10));
   print('export - size:', samplesData.size());
-  // print(samplesData)
+  print(samplesData.limit(100))
 }
 
 

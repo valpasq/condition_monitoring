@@ -16,6 +16,7 @@ var bounds = RESULTS_COLLECTION.geometry().bounds()
 // Specify collection for saving combined results (created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state_monitoring_assessment/'
 var OUTPUT_CRS = 'EPSG:5070'
+var STATE = 'PA'
 
 
 // -------------------------------- Visualization --------------------------------- 
@@ -55,9 +56,10 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var year_value = years.get(year)
     
     var result = ee.ImageCollection(RESULTS_COLLECTION
+      .filterMetadata('state', 'equals', STATE)
       .filterMetadata('name', 'equals', experiment_name)
       .filterMetadata('monitor_year', 'equals', year_value))
-    // print(result)
+    print(result)
     
     // Get total number of observations per pixel
     var totalObs = result.select('score_count').reduce('sum')
@@ -70,17 +72,19 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var resultFinal = ee.Image(resultWts.select('score_weighted')
       .reduce('sum')
       .divide(totalObs)
+      .addBands(totalObs)
+      .rename(['score_weighted_mean', 'total_nobs'])
       .copyProperties(result.first(), null, ['WRS_PATH']))
     print(resultFinal)
     
     var layer_name = experiment_name.getInfo() + '_' + year_value.getInfo()
-    Map.addLayer(resultFinal, viz, layer_name, false)
+    Map.addLayer(resultFinal.select('score_weighted_mean'), viz, layer_name, false)
     
     // Export final product for full study area
     Export.image.toAsset({
       image: resultFinal,
-      description: 'result_' + layer_name,
-      assetId: OUTPUT_COLLECTION + layer_name,
+      description: 'result_' + layer_name + '_' + STATE,
+      assetId: OUTPUT_COLLECTION + layer_name + '_' + STATE,
       region: bounds,
       crs: OUTPUT_CRS,
       scale: 30,

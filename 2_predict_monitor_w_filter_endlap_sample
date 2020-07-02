@@ -33,13 +33,13 @@ var WHICH_SAMPLE = 1;
 if (WHICH_SAMPLE == 1) {
   // Harvard Forest / 2017 Quabbin hotspots
   var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
-  var fileName = 'plots_hf_quabbin_' + YEAR + '_v' + VERSION + '_' + DEPENDENT + '_' + TS + '_' + REF_PERIOD + '_' + FREQ
+  var fileName = 'plots_ma_quabbin'
 }
 
 if (WHICH_SAMPLE == 2) {
   // UConn / Burlap plots
   var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
-  var fileName = 'plots_ct_burlap_' + YEAR + '_v' + VERSION + '_' + DEPENDENT + '_' + TS + '_' + REF_PERIOD + '_' + FREQ
+  var fileName = 'plots_ct_burlap'
 }
 
 // -------------------------------- Monitoring Setup -------------------------------- 
@@ -417,23 +417,23 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     //   maxPixels: 1e13,
     // })
 
-    print(COLLECT_PREDICTIONS)
-  
-    var samplesData = SAMPLE.map(getData).flatten();
-    // print('export - first result:', samplesData.limit(10));
-    print('export - size:', samplesData.size());
-    print(samplesData.limit(100))
-    
-    var experiment_name_info = experiment_name.getInfo()
-    // Export
-    Export.table.toDrive({
-      collection: samplesData,
-      description: 'exportTable_' + experiment_name_info + '_' + WHICH_SAMPLE + '_p' + path,
-      folder: 'ee-conditionassessment',
-      fileNamePrefix: experiment_name_info + '_' + WHICH_SAMPLE + '_p' + path,
-    });
   }
+  
+  print(COLLECT_PREDICTIONS)
 
+  var samplesData = SAMPLE.map(getData).flatten();
+  // print('export - first result:', samplesData.limit(10));
+  print('export - size:', samplesData.size());
+  print(samplesData.limit(100))
+  
+  var experiment_name_info = experiment_name.getInfo()
+  // Export
+  Export.table.toDrive({
+    collection: samplesData,
+    description: 'exportTable_' + fileName + '_' + experiment_name_info,
+    folder: 'ee-conditionassessment',
+    fileNamePrefix: fileName + '_' + experiment_name_info,
+  });
 
 
 }

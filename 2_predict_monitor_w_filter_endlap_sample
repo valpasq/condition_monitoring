@@ -250,7 +250,7 @@ function samplePredictions(collection, point) {
 
       var outPoint = ee.Feature(point.geometry(), {
           'date': i.get('SENSING_TIME'),
-          'image': i.get('system:index'),
+          // 'image': i.get('system:index'),
           'mask': imageMean.get('mask'),
           'path': i.get('WRS_PATH'),
           'row': i.get('WRS_ROW'),
@@ -261,8 +261,8 @@ function samplePredictions(collection, point) {
           'trend': imageMean.get('trend'),
           'nobs': imageMean.get('nobs'),
           'score': imageMean.get('score'),
-          'paper': imageMean.get(paper_cn),
-          'reanalysis': imageMean.get(reanalysis_cn),
+          // 'paper': imageMean.get(paper_cn),
+          // 'reanalysis': imageMean.get(reanalysis_cn),
           'harmonics': FREQ,
           'dependent': DEPENDENT,
           'reference_period': REF_PERIOD,
@@ -358,6 +358,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
       .map(addScore);
     // print('Collection of results for Path', collectPredictions)
     
+
     var mean = collectPredictions.select('score').reduce('mean');
     var stddev = collectPredictions.select('score').reduce('stdDev');
     var nobs = collectPredictions.select('score').reduce('count');

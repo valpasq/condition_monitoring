@@ -304,8 +304,8 @@ var getData = function(point) {
 
 
 // Loop over experiments in baselines collection
-// for(var experiment = 0; experiment < num_experiments; experiment++){
-for(var experiment = 0; experiment < 2; experiment++){
+for(var experiment = 0; experiment < num_experiments; experiment++){
+// for(var experiment = 0; experiment < 2; experiment++){
   var COLLECT_PREDICTIONS = []
   var experiment_name = experiments.get(experiment)
   // print('Experiment:', experiment_name)
@@ -417,14 +417,25 @@ for(var experiment = 0; experiment < 2; experiment++){
     //   maxPixels: 1e13,
     // })
 
+    print(COLLECT_PREDICTIONS)
+  
+    var samplesData = SAMPLE.map(getData).flatten();
+    // print('export - first result:', samplesData.limit(10));
+    print('export - size:', samplesData.size());
+    print(samplesData.limit(100))
+    
+    var experiment_name_info = experiment_name.getInfo()
+    // Export
+    Export.table.toDrive({
+      collection: samplesData,
+      description: 'exportTable_' + experiment_name_info + '_' + WHICH_SAMPLE + '_p' + path,
+      folder: 'ee-conditionassessment',
+      fileNamePrefix: experiment_name_info + '_' + WHICH_SAMPLE + '_p' + path,
+    });
   }
 
-  print(COLLECT_PREDICTIONS)
-  
-  var samplesData = SAMPLE.map(getData).flatten();
-  // print('export - first result:', samplesData.limit(10));
-  print('export - size:', samplesData.size());
-  print(samplesData.limit(100))
+
+
 }
 
 

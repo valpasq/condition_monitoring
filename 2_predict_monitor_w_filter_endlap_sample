@@ -287,6 +287,7 @@ var getData = function(point) {
 
 // --------------------------------- PREDICT ---------------------------------- 
 
+var COLLECT_PREDICTIONS = []
 // Loop over experiments in baselines collection
 for(var experiment = 0; experiment < num_experiments; experiment++){
 // for(var experiment = 0; experiment < 2; experiment++){
@@ -358,6 +359,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
       .map(addScore);
     // print('Collection of results for Path', collectPredictions)
     
+    COLLECT_PREDICTIONS = ee.ImageCollection(COLLECT_PREDICTIONS).merge(collectPredictions)
 
     var mean = collectPredictions.select('score').reduce('mean');
     var stddev = collectPredictions.select('score').reduce('stdDev');
@@ -387,19 +389,19 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     // var layer_name = 'Path ' + path
     // Map.addLayer(assessment.select('score_mean'), viz, layer_name)
     
-    Export.image.toAsset({
-      image: assessment,
-      description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
-      assetId: OUTPUT_NAME + '_p' + path,
-      region: clip_bound,
-      crs: baseline.projection().crs(),
-      scale: 30,
-      maxPixels: 1e13,
-    })
+    // Export.image.toAsset({
+    //   image: assessment,
+    //   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
+    //   assetId: OUTPUT_NAME + '_p' + path,
+    //   region: clip_bound,
+    //   crs: baseline.projection().crs(),
+    //   scale: 30,
+    //   maxPixels: 1e13,
+    // })
 
   }
   
 }
 
-
+print(COLLECT_PREDICTIONS.limit(10))
   

@@ -29,7 +29,7 @@ var OBS_MIN = 50;       // exclude baseline models fit with less than minimum no
 
 var NODATA = 99
 
-var WHICH_SAMPLE = 1;
+var WHICH_SAMPLE = 2;
 if (WHICH_SAMPLE == 1) {
   // Harvard Forest / 2017 Quabbin hotspots
   var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')

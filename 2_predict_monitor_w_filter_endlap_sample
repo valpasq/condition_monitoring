@@ -28,6 +28,19 @@ var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND
 var OBS_MIN = 50;       // exclude baseline models fit with less than minimum nobs
 
 
+var WHICH_SAMPLE = 1;
+if (WHICH_SAMPLE == 1) {
+  // Harvard Forest / 2017 Quabbin hotspots
+  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
+  var fileName = 'plots_hf_quabbin_' + YEAR + '_v' + VERSION + '_' + DEPENDENT + '_' + TS + '_' + REF_PERIOD + '_' + FREQ
+}
+
+if (WHICH_SAMPLE == 2) {
+  // UConn / Burlap plots
+  var SAMPLE = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
+  var fileName = 'plots_ct_burlap_' + YEAR + '_v' + VERSION + '_' + DEPENDENT + '_' + TS + '_' + REF_PERIOD + '_' + FREQ
+}
+
 // -------------------------------- Monitoring Setup -------------------------------- 
 
 var monitor_start = YEAR + '-' + DAY_START;
@@ -245,13 +258,13 @@ function samplePredictions(collection, point) {
         reducer: ee.Reducer.mean(),
         geometry: point.geometry(),
         scale: 1,
-        crs: baseline_crs
+        crs: baseline.projection().crs()
       });
 
       var outPoint = ee.Feature(point.geometry(), {
           'date': i.get('SENSING_TIME'),
           // 'image': i.get('system:index'),
-          'mask': imageMean.get('mask'),
+          // 'mask': imageMean.get('mask'),
           'path': i.get('WRS_PATH'),
           'row': i.get('WRS_ROW'),
           'satellite': i.get('SATELLITE'),
@@ -277,7 +290,7 @@ function samplePredictions(collection, point) {
 
 // Main function to map over for every sample
 var getData = function(point) {
-  var inputs = ee.ImageCollection(collectPredictions)
+  var inputs = ee.ImageCollection(COLLECT_PREDICTIONS)
       .filterBounds(point.geometry());
 
   var inputFC = ee.FeatureCollection(samplePredictions(inputs, point));
@@ -287,10 +300,11 @@ var getData = function(point) {
 
 // --------------------------------- PREDICT ---------------------------------- 
 
-var COLLECT_PREDICTIONS = []
+
 // Loop over experiments in baselines collection
-for(var experiment = 0; experiment < num_experiments; experiment++){
-// for(var experiment = 0; experiment < 2; experiment++){
+// for(var experiment = 0; experiment < num_experiments; experiment++){
+for(var experiment = 0; experiment < 2; experiment++){
+  var COLLECT_PREDICTIONS = []
   var experiment_name = experiments.get(experiment)
   // print('Experiment:', experiment_name)
   
@@ -360,7 +374,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     // print('Collection of results for Path', collectPredictions)
     
     COLLECT_PREDICTIONS = ee.ImageCollection(COLLECT_PREDICTIONS).merge(collectPredictions)
-
+    // print(COLLECT_PREDICTIONS)
+    
     var mean = collectPredictions.select('score').reduce('mean');
     var stddev = collectPredictions.select('score').reduce('stdDev');
     var nobs = collectPredictions.select('score').reduce('count');
@@ -400,8 +415,12 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     // })
 
   }
-  
+  print(COLLECT_PREDICTIONS)
+  var samplesData = SAMPLE.map(getData).flatten();
+  print('export - first result:', samplesData.first());
+  print('export - size:', samplesData.size());
+  // print(samplesData)
 }
 
-print(COLLECT_PREDICTIONS.limit(10))
+
   

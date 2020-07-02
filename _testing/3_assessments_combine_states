@@ -10,11 +10,11 @@
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 
 // Specify collection with saved results by path
-var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring')
+var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_state_monitoring')
 var bounds = RESULTS_COLLECTION.geometry().bounds()
 
 // Specify collection for saving combined results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state_monitoring_assessment/'
 var OUTPUT_CRS = 'EPSG:5070'
 
 

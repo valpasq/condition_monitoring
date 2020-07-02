@@ -133,7 +133,7 @@ var addTime = function(image) {
   var years = date.difference(ee.Date('1970-01-01'), 'year');
   var timeRadians = ee.Image(years.multiply(2 * Math.PI));
   return image.addBands(timeRadians.rename('t').float())
-    // .setDefaultProjection(baseline_crs);
+    .setDefaultProjection(baseline.projection().crs());
 };
 
 

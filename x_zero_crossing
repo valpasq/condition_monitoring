@@ -1,0 +1,32 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v6-3_by_state_monitoring_assessment");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+// Map.addLayer(imageCollection.select('score_weighted_mean'), {min:-4, max:0})
+
+var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_assessment')
+var selectedResults = RESULTS_COLLECTION
+  .filterMetadata('monitor_year', 'equals', 2017)
+  .filterMetadata('name', 'equals', 'tcg_2005-2015_h13_full')
+  .first()
+  .select('score_weighted_sum')
+  
+  
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+
+print(selectedResults)
+Map.addLayer(selectedResults, viz)
+
+var zero_thresh = 1
+var zero_crossing = selectedResults.add(zero_thresh).zeroCrossing().selfMask()
+Map.addLayer(zero_crossing, {palette: 'black'})
+var zero_crossing_2 = selectedResults.add(2).zeroCrossing().selfMask()
+Map.addLayer(zero_crossing_2, {palette: 'black'})
+
+
+// var hillshade = ee.Terrain.hillshade(selectedResults.updateMask(selectedResults.lt(0)).multiply(100))
+// Map.addLayer(hillshade, {palette: ['white', 'black']})

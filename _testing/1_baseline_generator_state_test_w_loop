@@ -18,7 +18,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var STATE = 'MA';
+var STATE = 'PA';
 var roi = ee.FeatureCollection(table).filterMetadata('STUSPS', 'equals', STATE)
   .geometry().dissolve()
 
@@ -28,14 +28,14 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state/'
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var DEPENDENT = 'tcg';  // Select spectral transform   
+var DEPENDENT = 'sr';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 2000;  // Starts 01-01
 var WINDOW = 5;
 var CURR_YEAR = 2019;   // Year to stop
 
-var TS = 'full';        // 'full' or '16d' (limits L7 use)
+var TS = '16d';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 
@@ -332,7 +332,7 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   
     print('Mosaic product:', outputMosaic);
     
-    Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
+    // Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
       
     Export.image.toAsset({
       image: outputMosaic,

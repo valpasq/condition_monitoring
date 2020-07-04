@@ -10,7 +10,7 @@ var selectedResults = RESULTS_COLLECTION
   .filterMetadata('monitor_year', 'equals', 2017)
   // .filterMetadata('time_series', 'equals', '16d')
   .select('score_weighted_mean')
-  .mean()
+  .median()
 
 // selectedResults = selectedResults.updateMask(selectedResults.lt(-1)).unmask()
   
@@ -24,7 +24,7 @@ var viz = {min: min, max: max, palette: palette};
 print(selectedResults)
 Map.addLayer(selectedResults, viz)
 
-var zero_thresh = 2
+var zero_thresh = 1
 var zero_crossing = selectedResults.add(zero_thresh).zeroCrossing().selfMask()
 Map.addLayer(zero_crossing, {palette: 'black'})
 // var zero_crossing_2 = selectedResults.add(2).zeroCrossing().selfMask()

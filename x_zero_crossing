@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var geometry = /* color: #d63000 */ee.Geometry.Point([-77.06803237766287, 41.66106699613644]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_state_monitoring_assessment')
 // var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_assessment')
@@ -11,8 +14,9 @@ var selectedResults = RESULTS_COLLECTION
   // .filterMetadata('time_series', 'equals', '16d')
   .select('score_weighted_mean')
   .median()
+  .focal_min(90, 'circle', 'meters', 1)
 
-// selectedResults = selectedResults.updateMask(selectedResults.lt(-1)).unmask()
+selectedResults = selectedResults.updateMask(selectedResults.lt(-1)).unmask()
   
   
 var min = -4;

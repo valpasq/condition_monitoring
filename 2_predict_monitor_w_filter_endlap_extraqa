@@ -16,7 +16,7 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path')
 
 // Specify collection for saving monitoring results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_qa/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -339,6 +339,7 @@ for(var experiment = 0; experiment < 2; experiment++){
     
     var layer_name = 'Path ' + path
     Map.addLayer(assessment.select('score_mean'), viz, layer_name)
+    Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
     
     Export.image.toAsset({
       image: assessment,

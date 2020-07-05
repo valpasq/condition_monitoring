@@ -20,7 +20,7 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitorin
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2017         // Monitoring year
+var YEAR = 2018         // Monitoring year
 var DAY_START = '05-01' // Date to start monitoring
 var DAY_END = '09-30'   // Date to end monitoring
 
@@ -239,8 +239,8 @@ var addScore = function(image) {
 // --------------------------------- PREDICT ---------------------------------- 
 
 // Loop over experiments in baselines collection
-// for(var experiment = 0; experiment < num_experiments; experiment++){
-for(var experiment = 0; experiment < 2; experiment++){
+for(var experiment = 0; experiment < num_experiments; experiment++){
+// for(var experiment = 0; experiment < 2; experiment++){
   var experiment_name = experiments.get(experiment)
   // print('Experiment:', experiment_name)
   
@@ -335,11 +335,12 @@ for(var experiment = 0; experiment < 2; experiment++){
         .addBands(baseline.select('t').rename('baseline_t'))
         .clip(clip_bound)
         .setMulti(outputProperties))
-    print('Assessment:', assessment)
+    // print('Assessment:', assessment)
     
-    var layer_name = 'Path ' + path
-    Map.addLayer(assessment.select('score_mean'), viz, layer_name)
-    Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
+    // var layer_name = 'Path ' + path
+    // Map.addLayer(assessment.select('score_mean'), viz, layer_name)
+    // Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
+    // Map.addLayer(assessment.select('baseline_rmse'), {min:-0.1, max:0.1}, layer_name)
     
     Export.image.toAsset({
       image: assessment,

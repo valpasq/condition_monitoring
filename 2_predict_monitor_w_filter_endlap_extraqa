@@ -240,7 +240,7 @@ var addScore = function(image) {
 
 // Loop over experiments in baselines collection
 for(var experiment = 0; experiment < num_experiments; experiment++){
-// for(var experiment = 0; experiment < 2; experiment++){
+// for(var experiment = 0; experiment < 1; experiment++){
   var experiment_name = experiments.get(experiment)
   // print('Experiment:', experiment_name)
   

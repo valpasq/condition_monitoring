@@ -11,7 +11,7 @@ Map.addLayer(RESULTS_COLLECTION.select('score_weighted_mean'), viz)
 
 var selectedResults = RESULTS_COLLECTION
   .filterMetadata('monitor_year', 'equals', 2017)
-  // .filterMetadata('time_series', 'equals', '16d')
+  .filterMetadata('time_series', 'equals', 'full')
   .select('score_weighted_mean')
   .median()
   .focal_min(90, 'circle', 'meters', 1)

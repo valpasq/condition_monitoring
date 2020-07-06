@@ -1,0 +1,103 @@
+// |
+// | Landsat Time Series Assessment -- Combined Products
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script reads a collection of condition assessment scores 
+// | by experiment/WRS2 Path and combines them into a final wall-to-wall
+// | assessment product
+
+// ---------------------------------- Imports & Outputs ---------------------------------- 
+
+// Specify collection with saved results by path
+var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_qa')
+var bounds = RESULTS_COLLECTION.geometry().bounds()
+
+// Specify collection for saving combined results (created using Assets Manager)
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment/'
+var OUTPUT_CRS = 'EPSG:5070'
+
+
+// -------------------------------- Visualization --------------------------------- 
+
+// Palette for mapped results
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+// -------------------------------- Functions --------------------------------- 
+
+var weightScore = function(image) {
+ var score = image.select('score_mean')
+ var nobs = image.select('score_count')
+ var weighted = score.multiply(nobs).rename('score_weighted')
+ 
+ return image.addBands(weighted).reproject(OUTPUT_CRS, null, 30)
+}
+
+
+// -------------------------------- Assessment --------------------------------- 
+
+// Get results
+var experiments = RESULTS_COLLECTION.aggregate_array('name').distinct()
+var num_experiments = experiments.size().getInfo()
+
+var years = RESULTS_COLLECTION.aggregate_array('monitor_year').distinct()
+var num_years = years.size().getInfo()
+print(years)
+
+// Loop over experiments in baselines collection
+for(var experiment = 0; experiment < num_experiments; experiment++){
+  var experiment_name = experiments.get(experiment)
+  
+  for(var year = 0; year < num_years; year++){
+    var year_value = years.get(year)
+    
+    var result = ee.ImageCollection(RESULTS_COLLECTION
+      .filterMetadata('name', 'equals', experiment_name)
+      .filterMetadata('monitor_year', 'equals', year_value))
+    // print(result)
+    
+    // Get total number of observations per pixel
+    var totalObs = result.select('score_count').reduce('sum')
+      .reproject(OUTPUT_CRS, null, 30)
+    
+    // Weight mean scores by nobs per Path
+    var resultWts = result.map(weightScore)
+    
+    // Compute weighted mean
+    var resultFinal = ee.Image(resultWts.select('score_weighted')
+      .reduce('sum')
+      .divide(totalObs)
+      .copyProperties(result.first(), null, ['WRS_PATH']))
+    print(resultFinal)
+    
+    var layer_name = experiment_name.getInfo() + '_' + year_value.getInfo()
+    Map.addLayer(resultFinal, viz, layer_name, false)
+    
+    // Export final product for full study area
+    Export.image.toAsset({
+      image: resultFinal,
+      description: 'result_' + layer_name,
+      assetId: OUTPUT_COLLECTION + layer_name,
+      region: bounds,
+      crs: OUTPUT_CRS,
+      scale: 30,
+      maxPixels: 1e13,
+    })
+  }
+}
+
+
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+Map.setOptions(null, style);
+Map.setOptions('SATELLITE')
+

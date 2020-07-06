@@ -68,9 +68,7 @@ for(var experiment = 0; experiment < 1; experiment++){
       .filterMetadata('name', 'equals', experiment_name)
       .filterMetadata('monitor_year', 'equals', year_value))
       .map(qaMask)
-    Map.addLayer(result.select('score_count'))
-    print(result)
-    
+      
     // Get total number of observations per pixel
     var totalObs = result.select('score_count').reduce('sum')
       .reproject(OUTPUT_CRS, null, 30)
@@ -88,7 +86,8 @@ for(var experiment = 0; experiment < 1; experiment++){
     print(resultFinal)
     
     var layer_name = experiment_name.getInfo() + '_' + year_value.getInfo()
-    Map.addLayer(resultFinal, {}, layer_name, false)
+    Map.addLayer(resultFinal.select('score_weighted_mean'), viz, layer_name, false)
+    Map.addLayer(resultFinal.select('monitor_nobs'), {min: 0, max: 10}, layer_name, false)
     
     // Export final product for full study area
     Export.image.toAsset({

@@ -29,8 +29,14 @@ print(selectedResults)
 Map.addLayer(selectedResults, viz)
 
 var zero_thresh = 1
-var zero_crossing = selectedResults.add(zero_thresh).zeroCrossing().selfMask()
-// Map.addLayer(zero_crossing, {palette: 'black'})
+
+var zero_crossing = selectedResults.add(zero_thresh)
+  .zeroCrossing()
+  .selfMask()
+  
+Map.addLayer(zero_crossing, {palette: 'black'})
+
+
 // var zero_crossing_2 = selectedResults.add(2).zeroCrossing().selfMask()
 // Map.addLayer(zero_crossing_2, {palette: 'black'})
 

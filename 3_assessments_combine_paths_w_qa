@@ -17,7 +17,7 @@ var bounds = RESULTS_COLLECTION.geometry().bounds()
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment/'
 var OUTPUT_CRS = 'EPSG:5070'
 
-var MIN_NOBS = 100
+var MIN_NOBS = 50
 
 // -------------------------------- Visualization --------------------------------- 
 

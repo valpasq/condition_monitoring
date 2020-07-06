@@ -19,7 +19,8 @@ var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var STATE = 'MA';
-var roi = ee.FeatureCollection(table).filterMetadata('STUSPS', 'equals', STATE)
+var roi = ee.FeatureCollection(table)
+  .filterMetadata('STUSPS', 'equals', STATE)
   .geometry().dissolve()
 
 // Specify output collection (empty collection created using Assets Manager)

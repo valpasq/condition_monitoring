@@ -82,7 +82,8 @@ for(var experiment = 0; experiment < 1; experiment++){
     var resultFinal = ee.Image(resultWts.select('score_weighted')
       .reduce('sum')
       .divide(totalObs)
-      .addBands(totalObs.rename('monitor_nobs'))
+      .addBands(totalObs)
+      .rename(['score_weighted_mean', 'monitor_nobs'])
       .copyProperties(result.first(), null, ['WRS_PATH']))
     print(resultFinal)
     

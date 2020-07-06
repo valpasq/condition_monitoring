@@ -40,6 +40,7 @@ var weightScore = function(image) {
 
 var qaMask = function(image) {
  var mask = image.select('baseline_nobs').gte(MIN_NOBS)
+ 
  return image.updateMask(mask).reproject(OUTPUT_CRS, null, 30)
 }
 

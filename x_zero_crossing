@@ -14,7 +14,7 @@ var selectedResults = RESULTS_COLLECTION
   .filterMetadata('time_series', 'equals', 'full')
   .select('score_weighted_mean')
   .median()
-  .focal_min(90, 'circle', 'meters', 1)
+  .focal_min(60, 'circle', 'meters', 1)
 
 // selectedResults = selectedResults.updateMask(selectedResults.lt(-1))//.unmask()
   

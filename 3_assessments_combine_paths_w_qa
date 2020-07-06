@@ -57,7 +57,7 @@ print(RESULTS_COLLECTION)
 
 // Loop over experiments in baselines collection
 // for(var experiment = 0; experiment < num_experiments; experiment++){
-for(var experiment = 0; experiment < 2; experiment++){
+for(var experiment = 0; experiment < 1; experiment++){
   var experiment_name = experiments.get(experiment)
   
   for(var year = 0; year < num_years; year++){
@@ -67,7 +67,8 @@ for(var experiment = 0; experiment < 2; experiment++){
       .filterMetadata('name', 'equals', experiment_name)
       .filterMetadata('monitor_year', 'equals', year_value))
       .map(qaMask)
-    // print(result)
+    Map.addLayer(result.select('score_count'))
+    print(result)
     
     // Get total number of observations per pixel
     var totalObs = result.select('score_count').reduce('sum')
@@ -80,11 +81,12 @@ for(var experiment = 0; experiment < 2; experiment++){
     var resultFinal = ee.Image(resultWts.select('score_weighted')
       .reduce('sum')
       .divide(totalObs)
+      .addBands(totalObs.rename('monitor_nobs'))
       .copyProperties(result.first(), null, ['WRS_PATH']))
     print(resultFinal)
     
     var layer_name = experiment_name.getInfo() + '_' + year_value.getInfo()
-    Map.addLayer(resultFinal, viz, layer_name, false)
+    Map.addLayer(resultFinal, {}, layer_name, false)
     
     // Export final product for full study area
     Export.image.toAsset({

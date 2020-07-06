@@ -17,6 +17,7 @@ var bounds = RESULTS_COLLECTION.geometry().bounds()
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment/'
 var OUTPUT_CRS = 'EPSG:5070'
 
+var MIN_NOBS = 100
 
 // -------------------------------- Visualization --------------------------------- 
 
@@ -36,6 +37,11 @@ var weightScore = function(image) {
  return image.addBands(weighted).reproject(OUTPUT_CRS, null, 30)
 }
 
+
+var qaMask = function(image) {
+ var mask = image.select('baseline_nobs').gte(MIN_NOBS)
+ return image.updateMask(mask).reproject(OUTPUT_CRS, null, 30)
+}
 
 // -------------------------------- Assessment --------------------------------- 
 
@@ -60,6 +66,7 @@ for(var experiment = 0; experiment < 2; experiment++){
     var result = ee.ImageCollection(RESULTS_COLLECTION
       .filterMetadata('name', 'equals', experiment_name)
       .filterMetadata('monitor_year', 'equals', year_value))
+      .map(qaMask)
     // print(result)
     
     // Get total number of observations per pixel

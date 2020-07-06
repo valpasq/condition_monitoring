@@ -8,13 +8,14 @@ var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6
 print(RESULTS_COLLECTION)
 Map.addLayer(RESULTS_COLLECTION.select('score_weighted_mean'), viz)
 
+var focal_kernal = 60;
 
 var selectedResults = RESULTS_COLLECTION
   .filterMetadata('monitor_year', 'equals', 2017)
   .filterMetadata('time_series', 'equals', 'full')
   .select('score_weighted_mean')
   .median()
-  .focal_min(60, 'circle', 'meters', 1)
+  .focal_min(focal_kernel, 'circle', 'meters', 1)
 
 // selectedResults = selectedResults.updateMask(selectedResults.lt(-1))//.unmask()
   

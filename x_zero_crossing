@@ -16,7 +16,7 @@ var selectedResults = RESULTS_COLLECTION
   .median()
   .focal_min(90, 'circle', 'meters', 1)
 
-selectedResults = selectedResults.updateMask(selectedResults.lt(-1)).unmask()
+// selectedResults = selectedResults.updateMask(selectedResults.lt(-1))//.unmask()
   
   
 var min = -4;
@@ -30,7 +30,7 @@ Map.addLayer(selectedResults, viz)
 
 var zero_thresh = 1
 var zero_crossing = selectedResults.add(zero_thresh).zeroCrossing().selfMask()
-Map.addLayer(zero_crossing, {palette: 'black'})
+// Map.addLayer(zero_crossing, {palette: 'black'})
 // var zero_crossing_2 = selectedResults.add(2).zeroCrossing().selfMask()
 // Map.addLayer(zero_crossing_2, {palette: 'black'})
 

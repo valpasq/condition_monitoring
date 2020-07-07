@@ -14,7 +14,7 @@ var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2019         // Monitoring year
+var YEAR = 2017         // Monitoring year
 var DAY_START = '05-01' // Date to start monitoring
 var DAY_END = '09-30'   // Date to end monitoring
 
@@ -33,6 +33,14 @@ var min = -4;
 var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
+
+
+var MIN_TCC = 75;
+var NLCD = ee.Image('USGS/NLCD/NLCD2016')
+
+var tcc_mask = NLCD.select('percent_tree_cover')
+  .gte(MIN_TCC)
+  
 
 // ---------------------------------- Functions ---------------------------------- 
 
@@ -259,8 +267,10 @@ var headerPanel = ui.Panel([toolLabel, instruct])
 
 var DEPENDENT = 'tcg'
 var TS = 'full'
-var STATES = ee.List(['PA', 'MA'])
+var STATES = ee.List(['PA', 'MA', 'RI', 'CT'])
 var MIN_OBS = 30;
+
+// var OUTPUT_CRS = 'EPSG:4326'
 
 var REDUCER = 'median'
 
@@ -293,7 +303,7 @@ var independents = ee.List(['constant', 't'])
 var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
 
 var baseline = []
-var final = []
+var final_scores = []
 
 var assess = function(img){
   baseline = img.updateMask(img.select('nobs').gte(MIN_OBS))
@@ -309,9 +319,9 @@ var assess = function(img){
     .map(addPrediction)
     .map(addScore);
 
+  var score = collectPredictions.select('score').reduce('mean').rename('score')
   
-  // return img
-  return ee.Image(collectPredictions.select('score').reduce('mean'));
+  return ee.Image(score);
 
 }
 
@@ -321,21 +331,27 @@ for(var i = 0; i < num_paths; i++){
   var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
   var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
   
-  // Assessment for path
+  // Assessment for each path
   var results = baselines.map(assess)
-  var assessment = results.reduce(REDUCER).rename('score').clip(clip_bound)
+  print(results)
+  
+  // Combine all model results 
+  var assessment = results.select('score')
+    .reduce(REDUCER).rename('score').clip(clip_bound)
+    .updateMask(tcc_mask)
+    
 
   var layer_name = 'Path ' + path
   Map.addLayer(assessment.select('score'), viz, layer_name, false)
-
   
-  final = ee.Image(final).addBands(assessment)
+  // Image where each band is a Path-level assessment
+  final_scores = ee.Image(final_scores).addBands(assessment)
 
 }
 
 // Combine across Paths
-print(final)
-Map.addLayer(final.reduce('mean'), viz)
+print(final_scores)
+Map.addLayer(final_scores.reduce('mean'), viz)
   
 // }
 

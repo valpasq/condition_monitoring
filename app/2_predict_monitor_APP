@@ -1,11 +1,7 @@
 // |
-// | Landsat Time Series Assessment -- Prediction & Monitoring
+// | Forest Condition Monitoring v3.0
 // | [valpasq@bu.edu], 2020
 // |
-// |
-// | This script reads a collection of baseline "experiments" and generates
-// | a collection of condition assessment scores by experiment/WRS2 Path for
-// | a user-specified monitoring period.
 
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
@@ -348,20 +344,6 @@ for(var i = 0; i < num_paths; i++){
   var stddev = collectPredictions.select('score').reduce('stdDev');
   var nobs = collectPredictions.select('score').reduce('count');
   
-  // // Dictionary for asset properties
-  // var outputProperties = ee.Dictionary({
-  //       'system:time_start': ee.Date(monitor_start).millis(),
-  //       'spectral_band': DEPENDENT,
-  //       'monitor_year': YEAR,
-  //       'monitor_start': monitor_start,
-  //       'monitor_end': monitor_end,
-  //       'run_version': VERSION,
-  //       'harmonics': FREQ,
-  //       'time_series': TS,
-  //       'ref_period': REF_PERIOD,
-  //       'name': experiment_name,
-  //       'WRS_PATH': path
-  //   });
   
   // Average over monitoring period
   var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
@@ -373,7 +355,9 @@ for(var i = 0; i < num_paths; i++){
   // print('Assessment:', assessment)
   
   var layer_name = 'Path ' + path
-  Map.addLayer(assessment.select('score_mean').updateMask(baseline.select('nobs').gte(50)), viz, layer_name)
+  Map.addLayer(assessment.select('score_mean').updateMask(baseline.select('nobs').gte(30)), viz, layer_name)
+  // Map.addLayer(assessment.select('score_mean'), viz, layer_name)
+ 
   // Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
   // Map.addLayer(assessment.select('baseline_rmse'), {min:-0.1, max:0.1}, layer_name)
   

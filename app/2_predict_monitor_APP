@@ -25,21 +25,12 @@ var DAY_START = '05-01' // Date to start monitoring
 var DAY_END = '09-30'   // Date to end monitoring
 
 var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND 
-// var OBS_MIN = 50;       // exclude baseline models fit with less than minimum nobs
-
 
 // -------------------------------- Monitoring Setup -------------------------------- 
 
 var monitor_start = YEAR + '-' + DAY_START;
 var monitor_end = YEAR + '-' + DAY_END;
 
-// Get baselines
-var experiments = BASELINES_COLLECTION.aggregate_array('name').distinct()
-var num_experiments = experiments.size().getInfo()
-
-// Get WRS2 paths
-var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
-var num_paths = paths.size().getInfo()
 
 // -------------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
@@ -235,126 +226,170 @@ var addScore = function(image) {
   return image.addBands(score.rename('score'));
 }
 
+// END FUNCTIONS
+
+// ---------------------------------- MAIN PANELS ---------------------------------- 
+
+// Set up Control Panel 
+var controlPanel = ui.Panel({
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {width: '340px',
+  backgroundColor: 'white'}
+});
+
+// Set up Chart Panel
+var chartPanel = ui.Panel({
+    style: {
+      height: '230px',
+      width: '300px',
+      position: 'bottom-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+  
+// Set up Map 
+var map = ui.Map();
+
+
+// ---------------------------------- SECONDARY PANELS ---------------------------------- 
+
+// Style "heading" labels
+var visLabels = {
+  fontWeight: 'bold', 
+  fontSize: '14px', 
+  width: '325px',
+  padding: '4px 4px 4px 4px',
+  color: 'rgba(0, 0, 0, 0.5)', 
+  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  textAlign: 'left'
+  
+};
+
+// --- TITLE PANEL with Instructions
+var toolLabel = ui.Label('Forest Condition Assessment', {
+    fontWeight: 'bold', 
+    fontSize: '20px', 
+    padding: '4px 4px 4px 4px',
+    width: '325px',
+    color: 'white',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)'
+})
+var toolDesc = ui.Label('')
+
+var instruct = ui.Label('This tool uses a harmonic NDVI baseline to assess changes in vegetation condition during the specified monitoring period.')
+var headerPanel = ui.Panel([toolLabel, instruct])
+
+
+
+
 
 // --------------------------------- PREDICT ---------------------------------- 
 
-// Loop over experiments in baselines collection
-for(var experiment = 0; experiment < num_experiments; experiment++){
-// for(var experiment = 0; experiment < 1; experiment++){
-  var experiment_name = experiments.get(experiment)
-  // print('Experiment:', experiment_name)
-  
-  var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
-    .filterMetadata('name', 'equals', experiment_name))
-  // print('Baseline collection:', experiment_baselines)
+var DEPENDENT = 'tcg'
+var STATES = ee.List(['PA', 'MA'])
+var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
+  .filterMetadata('spectral_band', 'equals', DEPENDENT)
+  .filter(ee.Filter.inList('state', STATES)) 
+  .filterMetadata('harmonics', 'equals', 'h13')
+  .filterMetadata('time_series', 'equals', 'full'))
+print(experiment_baselines)
 
-  var VERSION = experiment_baselines.first().get('version').getInfo()
-  var DEPENDENT = experiment_baselines.first().get('spectral_band').getInfo()
-  var TS = experiment_baselines.first().get('time_series').getInfo()
-  var FREQ = experiment_baselines.first().get('harmonics').getInfo()
-  var YEAR_START = experiment_baselines.first().get('year_start').getInfo()
-  var YEAR_END = experiment_baselines.first().get('year_end').getInfo()
-  var REF_PERIOD = YEAR_START + '-' + YEAR_END
-  
-  var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + monitor_start + '_' + monitor_end
+  // Get WRS2 paths
+var paths = experiment_baselines.aggregate_array('WRS_PATH').distinct()
+var num_paths = paths.size().getInfo()
 
-  // Get study area boundary
-  var clip_bound = experiment_baselines.geometry().bounds()
-  // Map.addLayer(clip_bound)
-  
-  // get frequencies
-  if (FREQ == 'h13') {
-    var harmonicFrequencies = ee.List([1,3]);
-    
-  } else if (FREQ == 'h12') {
-    var harmonicFrequencies = ee.List([1,2]);
-  }
-  
-  // Construct lists of names for the harmonic terms.
-  var cosNames = getNames('cos_', harmonicFrequencies);
-  var sinNames = getNames('sin_', harmonicFrequencies);
-  
-  // Independent variables.
-  var independents = ee.List(['constant', 't'])
-    .cat(cosNames).cat(sinNames);
-  
-  // Get monitoring period imagery
-  var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
-  // print('Full monitoring collection:', monitor)
-  
-  
-  for(var i = 0; i < num_paths; i++){
-    var path = paths.get(i).getInfo()
-    // print('Path:', path)
-    
-    var baseline = experiment_baselines
-      .filterMetadata('WRS_PATH', 'equals', path)
-      .first()
-      // .divide(10000)
-    // baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
-    // print(baseline.projection().crs())
+// Get study area boundary
+var clip_bound = experiment_baselines.geometry().bounds()
+// Map.addLayer(clip_bound)
 
-    var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
-    // print('Monitoring dates within Path:', monitor_subset)
-  
-    // Add constant, time, and coefficients to monitoring collection.
-    var harmonicLandsat = monitor_subset.select(DEPENDENT)
-      .map(addConstant)
-      .map(addTime)
-      .map(addHarmonics(harmonicFrequencies));
-    
-    // Add predictions and scores
-    var collectPredictions = harmonicLandsat
-      .map(addPrediction)
-      .map(addScore);
-    // print('Collection of results for Path', collectPredictions)
-    
-    var mean = collectPredictions.select('score').reduce('mean');
-    var stddev = collectPredictions.select('score').reduce('stdDev');
-    var nobs = collectPredictions.select('score').reduce('count');
-    
-    // Dictionary for asset properties
-    var outputProperties = ee.Dictionary({
-          'system:time_start': ee.Date(monitor_start).millis(),
-          'spectral_band': DEPENDENT,
-          'monitor_year': YEAR,
-          'monitor_start': monitor_start,
-          'monitor_end': monitor_end,
-          'run_version': VERSION,
-          'harmonics': FREQ,
-          'time_series': TS,
-          'ref_period': REF_PERIOD,
-          'name': experiment_name,
-          'WRS_PATH': path
-      });
-    
-    // Average over monitoring period
-    var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
-        .addBands(baseline.select('nobs').rename('baseline_nobs'))
-        .addBands(baseline.select('rmse').rename('baseline_rmse'))
-        .addBands(baseline.select('t').rename('baseline_t'))
-        .clip(clip_bound)
-        .setMulti(outputProperties))
-    // print('Assessment:', assessment)
-    
-    // var layer_name = 'Path ' + path
-    // Map.addLayer(assessment.select('score_mean').updateMask(baseline.select('nobs').gte(50)), viz, layer_name)
-    // Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
-    // Map.addLayer(assessment.select('baseline_rmse'), {min:-0.1, max:0.1}, layer_name)
-    
-    // Export.image.toAsset({
-    //   image: assessment,
-    //   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
-    //   assetId: OUTPUT_NAME + '_p' + path,
-    //   region: clip_bound,
-    //   crs: baseline.projection().crs(),
-    //   scale: 30,
-    //   maxPixels: 1e13,
-    // })
 
-  }
+var harmonicFrequencies = ee.List([1,3]);
   
+// Construct lists of names for the harmonic terms.
+var cosNames = getNames('cos_', harmonicFrequencies);
+var sinNames = getNames('sin_', harmonicFrequencies);
+
+// Independent variables.
+var independents = ee.List(['constant', 't'])
+  .cat(cosNames).cat(sinNames);
+
+// Get monitoring period imagery
+var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
+// print('Full monitoring collection:', monitor)
+
+
+for(var i = 0; i < num_paths; i++){
+  var path = paths.get(i).getInfo()
+  // print('Path:', path)
+  
+  var baseline = experiment_baselines
+    .filterMetadata('WRS_PATH', 'equals', path)
+    .first()
+    // .divide(10000)
+  // baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
+  // print(baseline.projection().crs())
+
+  var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
+  // print('Monitoring dates within Path:', monitor_subset)
+
+  // Add constant, time, and coefficients to monitoring collection.
+  var harmonicLandsat = monitor_subset.select(DEPENDENT)
+    .map(addConstant)
+    .map(addTime)
+    .map(addHarmonics(harmonicFrequencies));
+  
+  // Add predictions and scores
+  var collectPredictions = harmonicLandsat
+    .map(addPrediction)
+    .map(addScore);
+  // print('Collection of results for Path', collectPredictions)
+  
+  var mean = collectPredictions.select('score').reduce('mean');
+  var stddev = collectPredictions.select('score').reduce('stdDev');
+  var nobs = collectPredictions.select('score').reduce('count');
+  
+  // // Dictionary for asset properties
+  // var outputProperties = ee.Dictionary({
+  //       'system:time_start': ee.Date(monitor_start).millis(),
+  //       'spectral_band': DEPENDENT,
+  //       'monitor_year': YEAR,
+  //       'monitor_start': monitor_start,
+  //       'monitor_end': monitor_end,
+  //       'run_version': VERSION,
+  //       'harmonics': FREQ,
+  //       'time_series': TS,
+  //       'ref_period': REF_PERIOD,
+  //       'name': experiment_name,
+  //       'WRS_PATH': path
+  //   });
+  
+  // Average over monitoring period
+  var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
+      .addBands(baseline.select('nobs').rename('baseline_nobs'))
+      .addBands(baseline.select('rmse').rename('baseline_rmse'))
+      .addBands(baseline.select('t').rename('baseline_t'))
+      .clip(clip_bound))
+      // .setMulti(outputProperties))
+  // print('Assessment:', assessment)
+  
+  var layer_name = 'Path ' + path
+  Map.addLayer(assessment.select('score_mean').updateMask(baseline.select('nobs').gte(50)), viz, layer_name)
+  // Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
+  // Map.addLayer(assessment.select('baseline_rmse'), {min:-0.1, max:0.1}, layer_name)
+  
+  // Export.image.toAsset({
+  //   image: assessment,
+  //   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
+  //   assetId: OUTPUT_NAME + '_p' + path,
+  //   region: clip_bound,
+  //   crs: baseline.projection().crs(),
+  //   scale: 30,
+  //   maxPixels: 1e13,
+  // })
+
 }
+  
+// }
 
 
   

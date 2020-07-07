@@ -20,7 +20,7 @@ var BASELINES = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_sta
 
 
 var WHICH_SAMPLE = 1;
-var YEAR = 2017
+// var YEAR = 2017
 
 var FEAT = 'rmse';
 
@@ -39,7 +39,7 @@ if (WHICH_SAMPLE == 1) {
   var SAMPLE_NAME = 'ct_burlap'
   var SAMPLE_FN = 'projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords';
   var SAMPLE = ee.FeatureCollection(SAMPLE_FN)
-    .filterMetadata('Year', 'equals', YEAR);
+    .filterMetadata('Year', 'equals', 2017);
     
 }
 
@@ -52,16 +52,6 @@ var crs = selectedExperiments.first().projection().crs()
 print(BASELINES)
 print(selectedExperiments)
 
-// ---------------------------------- Get reanalysis product ---------------------------------- 
-
-var reanalysis_cn = 'm_reanalysis'
-if (YEAR >= 2015 & YEAR <= 2018) {
-  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
-  var reanalysis = ee.Image(reanalysis_fn).reproject('EPSG:5070').rename(reanalysis_cn)
-} else {
-  var reanalysis = ee.Image.constant(99).rename(reanalysis_cn)
-}
-// print(reanalysis)
 
 // ---------------------------------- Functions ---------------------------------- 
 
@@ -85,8 +75,6 @@ function collectionToImage(collection){
 // convert collection results to image
 var scoreImage = collectionToImage(selectedExperiments);
 
-// add reanalysis result
-scoreImage = scoreImage.addBands(reanalysis)
 
 // sample plot locations
 var result = scoreImage.reduceRegions({
@@ -103,9 +91,9 @@ print(result)
 // Export
 Export.table.toDrive({
   collection: result,
-  description: 'exportTable_' + SAMPLE_NAME + '_' + YEAR + '_' + FEAT,
+  description: 'exportTable_' + SAMPLE_NAME  + '_' + FEAT,
   folder: 'ee-conditionassessment',
-  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION + '_' + FEAT,
+  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + VERSION + '_' + FEAT,
 });
 
 

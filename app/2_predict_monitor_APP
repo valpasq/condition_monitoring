@@ -11,8 +11,6 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 // Specify collection with experiments from 1_baseline_generator
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_state')
 
-// // Specify collection for saving monitoring results (created using Assets Manager)
-// var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_qa/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -55,37 +53,17 @@ var spectralTransforms = function(img){
   
   var indexImg;
   switch (index){
-    case 'NBR':
-      indexImg = scaled.normalizedDifference(['nir', 'swir2'])
-        .rename("nbr");
-      break;
-    case 'NDMI':
-      indexImg = scaled.normalizedDifference(['nir', 'swir1'])
-        .rename("ndmi");
-      break;
     case 'NDVI':
       indexImg = scaled.normalizedDifference(['nir', 'red'])
         .rename("ndvi");
-      break;
-    case 'NDSI':
-      indexImg = scaled.normalizedDifference(['green', 'swir1'])
-        .rename("ndsi");
       break;
     case 'EVI':
       indexImg = scaled.expression("2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))", dict)
         .rename("evi");
       break;
-    case 'TCB':
-      indexImg = scaled.expression("0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)
-        .rename("tcb");
-      break;
     case 'TCG':
       indexImg = scaled.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
         .rename("tcg");
-      break;
-    case 'TCW':
-      indexImg = scaled.expression("0.0315*blue + 0.2021*green + 0.3102*red + 0.1594*nir - 0.6806*swir1 - 0.6109*swir2", dict)
-        .rename("tcw");
       break;
     case 'SR':
       indexImg = scaled.select('nir').divide(scaled.select('red'))
@@ -277,17 +255,20 @@ var headerPanel = ui.Panel([toolLabel, instruct])
 
 
 
-
-
 // --------------------------------- PREDICT ---------------------------------- 
 
 var DEPENDENT = 'tcg'
+var TS = 'full'
 var STATES = ee.List(['PA', 'MA'])
+var MIN_OBS = 30;
+
+var REDUCER = 'median'
+
 var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
   .filterMetadata('spectral_band', 'equals', DEPENDENT)
   .filter(ee.Filter.inList('state', STATES)) 
   .filterMetadata('harmonics', 'equals', 'h13')
-  .filterMetadata('time_series', 'equals', 'full'))
+  .filterMetadata('time_series', 'equals', TS))
 print(experiment_baselines)
 
   // Get WRS2 paths
@@ -296,9 +277,8 @@ var num_paths = paths.size().getInfo()
 
 // Get study area boundary
 var clip_bound = experiment_baselines.geometry().bounds()
-// Map.addLayer(clip_bound)
 
-
+// Harmonic frequences - use 12-month/4-month (h13)
 var harmonicFrequencies = ee.List([1,3]);
   
 // Construct lists of names for the harmonic terms.
@@ -311,23 +291,13 @@ var independents = ee.List(['constant', 't'])
 
 // Get monitoring period imagery
 var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
-// print('Full monitoring collection:', monitor)
 
+var baseline = []
+var final = []
 
-for(var i = 0; i < num_paths; i++){
-  var path = paths.get(i).getInfo()
-  // print('Path:', path)
+var assess = function(img){
+  baseline = img.updateMask(img.select('nobs').gte(MIN_OBS))
   
-  var baseline = experiment_baselines
-    .filterMetadata('WRS_PATH', 'equals', path)
-    .first()
-    // .divide(10000)
-  // baseline = baseline.updateMask(baseline.select('nobs').gte(OBS_MIN))
-  // print(baseline.projection().crs())
-
-  var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
-  // print('Monitoring dates within Path:', monitor_subset)
-
   // Add constant, time, and coefficients to monitoring collection.
   var harmonicLandsat = monitor_subset.select(DEPENDENT)
     .map(addConstant)
@@ -338,40 +308,34 @@ for(var i = 0; i < num_paths; i++){
   var collectPredictions = harmonicLandsat
     .map(addPrediction)
     .map(addScore);
-  // print('Collection of results for Path', collectPredictions)
+
   
-  var mean = collectPredictions.select('score').reduce('mean');
-  var stddev = collectPredictions.select('score').reduce('stdDev');
-  var nobs = collectPredictions.select('score').reduce('count');
-  
-  
-  // Average over monitoring period
-  var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
-      .addBands(baseline.select('nobs').rename('baseline_nobs'))
-      .addBands(baseline.select('rmse').rename('baseline_rmse'))
-      .addBands(baseline.select('t').rename('baseline_t'))
-      .clip(clip_bound))
-      // .setMulti(outputProperties))
-  // print('Assessment:', assessment)
-  
-  var layer_name = 'Path ' + path
-  Map.addLayer(assessment.select('score_mean').updateMask(baseline.select('nobs').gte(30)), viz, layer_name)
-  // Map.addLayer(assessment.select('score_mean'), viz, layer_name)
- 
-  // Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
-  // Map.addLayer(assessment.select('baseline_rmse'), {min:-0.1, max:0.1}, layer_name)
-  
-  // Export.image.toAsset({
-  //   image: assessment,
-  //   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
-  //   assetId: OUTPUT_NAME + '_p' + path,
-  //   region: clip_bound,
-  //   crs: baseline.projection().crs(),
-  //   scale: 30,
-  //   maxPixels: 1e13,
-  // })
+  // return img
+  return ee.Image(collectPredictions.select('score').reduce('mean'));
 
 }
+
+for(var i = 0; i < num_paths; i++){
+  var path = paths.get(i).getInfo()
+  
+  var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
+  var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
+  
+  // Assessment for path
+  var results = baselines.map(assess)
+  var assessment = results.reduce(REDUCER).rename('score').clip(clip_bound)
+
+  var layer_name = 'Path ' + path
+  Map.addLayer(assessment.select('score'), viz, layer_name, false)
+
+  
+  final = ee.Image(final).addBands(assessment)
+
+}
+
+// Combine across Paths
+print(final)
+Map.addLayer(final.reduce('mean'), viz)
   
 // }
 

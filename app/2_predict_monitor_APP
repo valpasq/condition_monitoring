@@ -219,15 +219,15 @@ var controlPanel = ui.Panel({
   backgroundColor: 'white'}
 });
 
-// Set up Chart Panel
-var chartPanel = ui.Panel({
-    style: {
-      height: '230px',
-      width: '300px',
-      position: 'bottom-left',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)'
-    }
-  });
+// // Set up Chart Panel
+// var chartPanel = ui.Panel({
+//     style: {
+//       height: '230px',
+//       width: '300px',
+//       position: 'bottom-left',
+//       backgroundColor: 'rgba(255, 255, 255, 0.5)'
+//     }
+//   });
   
 // Set up Map 
 var map = ui.Map();
@@ -258,10 +258,12 @@ var toolLabel = ui.Label('Forest Condition Assessment', {
 })
 var toolDesc = ui.Label('')
 
-var instruct = ui.Label('This tool uses a harmonic NDVI baseline to assess changes in vegetation condition during the specified monitoring period.')
+var instruct = ui.Label('This tool uses harmonic baseline models to assess changes in vegetation condition during the specified monitoring period.')
 var headerPanel = ui.Panel([toolLabel, instruct])
 
 
+// Add secondary panels
+controlPanel.add(headerPanel)
 
 // --------------------------------- PREDICT ---------------------------------- 
 
@@ -342,7 +344,7 @@ for(var i = 0; i < num_paths; i++){
     
 
   var layer_name = 'Path ' + path
-  Map.addLayer(assessment.select('score'), viz, layer_name, false)
+  map.addLayer(assessment.select('score'), viz, layer_name, false)
   
   // Image where each band is a Path-level assessment
   final_scores = ee.Image(final_scores).addBands(assessment)
@@ -351,9 +353,13 @@ for(var i = 0; i < num_paths; i++){
 
 // Combine across Paths
 print(final_scores)
-Map.addLayer(final_scores.reduce('mean'), viz)
+map.addLayer(final_scores.reduce('mean'), viz)
   
 // }
 
+
+ui.root.clear();
+ui.root.add(controlPanel);
+ui.root.add(map);
 
   

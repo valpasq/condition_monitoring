@@ -339,7 +339,8 @@ for(var i = 0; i < num_paths; i++){
   
   // Combine all model results 
   var assessment = results.select('score')
-    .reduce(REDUCER).rename('score').clip(clip_bound)
+    .reduce(REDUCER).rename('score')
+    .clip(clip_bound)
     .updateMask(tcc_mask)
     
 
@@ -356,6 +357,17 @@ print(final_scores)
 map.addLayer(final_scores.reduce('mean'), viz)
   
 // }
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+map.setOptions(null, style);
+map.setOptions('SATELLITE')
+map.centerObject(final_scores)
 
 
 ui.root.clear();

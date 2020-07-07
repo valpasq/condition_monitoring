@@ -12,12 +12,14 @@ var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_des
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 
-var VERSION = 'v3-0'
+var VERSION = 'v3-1'
 
-var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment'
+var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_qa'
 var EXPERIMENTS = ee.ImageCollection(RESULTS_FN)
 
-var WHICH_SAMPLE = 2;
+var RESULT_BAND = 'score_weighted_mean'
+
+var WHICH_SAMPLE = 1;
 var YEAR = 2017
 
 var map_result = 8
@@ -62,7 +64,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
-    var score = img.select('score_weighted_sum')
+    var score = img.select('score_weighted_mean')
     var index = ee.String('m_')
       .cat(ee.String(img.get('system:index'))
       .split('_' + YEAR).get(0))

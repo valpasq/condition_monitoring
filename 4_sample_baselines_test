@@ -14,10 +14,12 @@ var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_des
 
 var VERSION = 'v3-0'
 
-var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment'
-var EXPERIMENTS = ee.ImageCollection(RESULTS_FN)
+// var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_assessment'
+// var EXPERIMENTS = ee.ImageCollection(RESULTS_FN)
+var BASELINES = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_state')
 
-var WHICH_SAMPLE = 2;
+
+var WHICH_SAMPLE = 1;
 var YEAR = 2017
 
 var map_result = 8
@@ -42,9 +44,9 @@ if (WHICH_SAMPLE == 1) {
 // ---------------------------------- Get experiments ---------------------------------- 
 
 // Get results for selected year
-var selectedExperiments = EXPERIMENTS.filterMetadata('monitor_year', 'equals', YEAR)
+var selectedExperiments = BASELINES.filterMetadata('state', 'equals', 'MA')
 var crs = selectedExperiments.first().projection().crs()
-print(EXPERIMENTS)
+print(BASELINES)
 print(selectedExperiments)
 
 // ---------------------------------- Get reanalysis product ---------------------------------- 
@@ -62,10 +64,10 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
-    var score = img.select('score_weighted_sum')
-    var index = ee.String('m_')
+    var score = img.select('nobs')
+    var index = ee.String('m')
       .cat(ee.String(img.get('system:index'))
-      .split('_' + YEAR).get(0))
+      .split(img.get('version')).get(1))
       .replace('-', '_', 'g')
     score = score.rename(index)
     return ee.Image(prev).addBands(score);

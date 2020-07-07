@@ -16,7 +16,7 @@ var wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_desc
 
 // ------------------------------------- Imports  ------------------------------------- 
 
-var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_assessment')
+var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_qa_final')
 var ma_quabbin = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
 var ct_burlap = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
 var study_area = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/simplified_southernNE')
@@ -70,7 +70,7 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
   var result_name = assessment.get('system:index')
   var layer_name = ee.String(result_name).split('_' + YEAR).get(0).getInfo()
 
-  Map.addLayer(assessment_masked.select('score_weighted_sum'), viz, layer_name, false)
+  Map.addLayer(assessment_masked.select('score_weighted_mean'), viz, layer_name, false)
     
 }
 

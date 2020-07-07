@@ -8,7 +8,7 @@ var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6
 print(RESULTS_COLLECTION)
 Map.addLayer(RESULTS_COLLECTION.select('score_weighted_mean'), viz)
 
-var focal_kernal = 60;
+var focal_kernel = 60;
 
 var selectedResults = RESULTS_COLLECTION
   .filterMetadata('monitor_year', 'equals', 2017)

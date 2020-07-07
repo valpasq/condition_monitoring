@@ -45,6 +45,7 @@ if (WHICH_SAMPLE == 1) {
 
 // Get results for selected year
 var selectedExperiments = BASELINES.filterMetadata('state', 'equals', 'MA')
+  .filterMetadata('time_series', 'equals', 'full')
 var crs = selectedExperiments.first().projection().crs()
 print(BASELINES)
 print(selectedExperiments)

@@ -15,8 +15,8 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 // Specify collection with experiments from 1_baseline_generator
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_state')
 
-// Specify collection for saving monitoring results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_qa/'
+// // Specify collection for saving monitoring results (created using Assets Manager)
+// var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_path_monitoring_qa/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -342,15 +342,15 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     // Map.addLayer(assessment.select('baseline_nobs'), {min:0, max:200}, layer_name)
     // Map.addLayer(assessment.select('baseline_rmse'), {min:-0.1, max:0.1}, layer_name)
     
-    Export.image.toAsset({
-      image: assessment,
-      description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
-      assetId: OUTPUT_NAME + '_p' + path,
-      region: clip_bound,
-      crs: baseline.projection().crs(),
-      scale: 30,
-      maxPixels: 1e13,
-    })
+    // Export.image.toAsset({
+    //   image: assessment,
+    //   description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
+    //   assetId: OUTPUT_NAME + '_p' + path,
+    //   region: clip_bound,
+    //   crs: baseline.projection().crs(),
+    //   scale: 30,
+    //   maxPixels: 1e13,
+    // })
 
   }
   

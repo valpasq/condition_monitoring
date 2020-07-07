@@ -14,7 +14,7 @@ var table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_des
 
 var VERSION = 'v3-1'
 
-var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_qa'
+var RESULTS_FN = 'projects/sites-project/baselines_v6-3_by_path_monitoring_qa_final'
 var EXPERIMENTS = ee.ImageCollection(RESULTS_FN)
 
 var RESULT_BAND = 'score_weighted_mean'

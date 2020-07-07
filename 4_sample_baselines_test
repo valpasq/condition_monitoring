@@ -22,6 +22,8 @@ var BASELINES = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_sta
 var WHICH_SAMPLE = 1;
 var YEAR = 2017
 
+var FEAT = 'rmse';
+
 var map_result = 8
  
 // ---------------------------------- Get plot dataset ---------------------------------- 
@@ -65,7 +67,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 
 function collectionToImage(collection){
   var stack = ee.Image(collection.iterate(function(img, prev) {
-    var score = img.select('nobs')
+    var score = img.select(FEAT)
     var index = ee.String('m')
       .cat(ee.String(img.get('system:index'))
       .split(img.get('version')).get(1))
@@ -101,9 +103,9 @@ print(result)
 // Export
 Export.table.toDrive({
   collection: result,
-  description: 'exportTable_' + SAMPLE_NAME + '_' + YEAR ,
+  description: 'exportTable_' + SAMPLE_NAME + '_' + YEAR + '_' + FEAT,
   folder: 'ee-conditionassessment',
-  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION ,
+  fileNamePrefix: 'plots_' + SAMPLE_NAME + '_' + YEAR + '_' + VERSION + '_' + FEAT,
 });
 
 

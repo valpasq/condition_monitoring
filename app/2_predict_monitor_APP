@@ -62,7 +62,7 @@ function makeLegend(palette) {
     });
   var labelPanel = ui.Panel({
       widgets: [
-        ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
+        ui.Label('Low', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
         ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
         ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'})
       ],

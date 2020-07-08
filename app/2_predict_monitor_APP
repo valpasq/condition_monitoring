@@ -305,26 +305,6 @@ var monitoringPanel = ui.Panel(
   ]
 );
 
-var regions = {
-  'TCG': 'tcg',
-  // 'NDVI': 'ndvi',
-  };
-
-// Index Panel
-var regionLabel = ui.Label('VEGETATION INDEX', visLabels)
-var regionPulldown = ui.Select({
-  items: Object.keys(regions),
-  value: 'TCG',
-  onChange: function(key) {
-    REGION = regions[key]
-  }
-});
-// regionPulldown.setPlaceholder('Select region...')
-
-var indexPanel = ui.Panel([regionLabel,regionPulldown], 
-  ui.Panel.Layout.Flow('vertical'), {stretch: 'horizontal'})
-
-
 // Tree canopy mask
 var tccLabel = ui.Label('Min % tree cover:')
 var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
@@ -349,7 +329,6 @@ controlPanel.add(headerPanel)
 controlPanel.add(statePanelLabel)
 controlPanel.add(statePanel)
 controlPanel.add(monitoringPanel);
-controlPanel.add(indexPanel)
 controlPanel.add(tccPanel)
 controlPanel.add(submitButton)
 

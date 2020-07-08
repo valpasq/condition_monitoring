@@ -341,14 +341,15 @@ var monitoringPanel = ui.Panel(
   [
     dateSectionLabel,
     ui.Panel(
-      [sliderLabel, startYearslider], 
-      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
-    ui.Panel(
       [startDayLabel, startDayBox],
       ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
     ),
     ui.Panel(
       [endDayLabel, endDayBox],
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
+    ),
+    ui.Panel(
+      [sliderLabel, startYearslider], 
       ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
     ),
   // ui.Label('Predictions generated from baseline models are compared with images acquired during the monitoring period to assess potential changes in condition.', {fontSize: '12px'}),

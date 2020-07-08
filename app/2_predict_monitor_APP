@@ -458,6 +458,7 @@ submitButton.onClick(function(){
     
     // Assessment for each path
     var results = baselines.map(assess)
+    // print(results)
     
     // Average across baselines
     var assessment = results.select('score')

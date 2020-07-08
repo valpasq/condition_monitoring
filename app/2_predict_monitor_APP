@@ -31,6 +31,52 @@ var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
 
+// Create colorbar for legend.
+function ColorBar(palette) {
+  return ui.Thumbnail({
+    image: ee.Image.pixelLonLat().select(0),
+    params: {
+      bbox: [0, 0, 1, 0.1],
+      dimensions: '100x10',
+      format: 'png',
+      min: 1,
+      max: 0,
+      palette: palette,
+    },
+    style: {stretch: 'horizontal', margin: '2px 2px'},
+  });
+}
+
+// Build legend.
+function makeLegend(palette) {
+  var legendTitle = ui.Label({
+    value: 'Average Change in Forest Condition',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '12px',
+      fontFamily: 'fantasy',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+  var labelPanel = ui.Panel({
+      widgets: [
+        ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
+        ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
+        ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'})
+      ],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
+  
+  return ui.Panel({
+    widgets: [legendTitle, ColorBar(palette), labelPanel],
+    style: {position: 'bottom-right',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+}
+
 // Figure-style for map
 var style = {
   'Figure': [{
@@ -446,9 +492,9 @@ submitButton.onClick(function(){
   
   map.setOptions(null, style);
   map.setOptions('SATELLITE')
+  map.add(makeLegend(palette))
   
 })
-
 
 map.setOptions('SATELLITE')
 

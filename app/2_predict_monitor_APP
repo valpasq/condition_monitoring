@@ -225,7 +225,7 @@ var visLabels = {
   fontSize: '16px', 
   fontFamily: 'fantasy',
   width: '325px',
-  padding: '0px 0px 0px 0px',
+  padding: '20px 0px 0px 0px',
   color: 'rgba(0, 0, 0, 0.5)', 
   backgroundColor: 'rgba(0, 0, 0, 0)',
   textAlign: 'left'
@@ -407,6 +407,7 @@ submitButton.onClick(function(){
     
     var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
+    print(monitor_subset)
     
     // Assessment for each path
     var results = baselines.map(assess)

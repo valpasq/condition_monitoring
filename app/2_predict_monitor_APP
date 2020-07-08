@@ -458,7 +458,7 @@ submitButton.onClick(function(){
     // Assessment for each path
     var results = baselines.map(assess)
     
-    // Reduce all model results 
+    // Average across baselines
     var assessment = results.select('score')
       .reduce('mean')
       .clip(clip_bound)
@@ -474,7 +474,7 @@ submitButton.onClick(function(){
   
   }
   
-  // Reduce across Paths (wall-to-wall result)
+  // Average across Paths
   var display_map = final_scores
     .reduce('mean')
     .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)

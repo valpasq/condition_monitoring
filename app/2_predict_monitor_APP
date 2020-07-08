@@ -207,7 +207,7 @@ var addScore = function(image) {
 // Set up Control Panel 
 var controlPanel = ui.Panel({
   layout: ui.Panel.Layout.flow('vertical'),
-  style: {width: '340px',
+  style: {width: '275px',
   backgroundColor: 'white'}
 });
 
@@ -222,9 +222,9 @@ var map = ui.Map();
 // Style "heading" labels
 var visLabels = {
   fontWeight: 'bold', 
-  fontSize: '16px', 
+  fontSize: '14px', 
   fontFamily: 'fantasy',
-  width: '325px',
+  width: '275px',
   padding: '20px 0px 0px 0px',
   color: 'rgba(0, 0, 0, 0.5)', 
   backgroundColor: 'rgba(0, 0, 0, 0)',
@@ -235,10 +235,10 @@ var visLabels = {
 // --- TITLE PANEL with Instructions
 var toolLabel = ui.Label('Forest Condition Assessment', {
   fontWeight: 'bold', 
-  fontSize: '22px', 
+  fontSize: '18px', 
   fontFamily: 'fantasy',
   padding: '10px 0px 0px 10px',
-  width: '325px',
+  width: '275px',
   color: 'white',
   backgroundColor: 'rgba(0, 0, 0, 0.5)'
 })
@@ -428,7 +428,7 @@ submitButton.onClick(function(){
   }
   
   // Combine across Paths
-  map.addLayer(final_scores.reduce('mean'), viz)
+  map.addLayer(final_scores.reduce('mean').focal_min(60, 'circle', 'meters', 1), viz)
   map.centerObject(final_scores)
   
   final_scores = []

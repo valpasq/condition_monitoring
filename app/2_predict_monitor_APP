@@ -248,7 +248,7 @@ var toolLabel = ui.Label('Forest Condition Assessment', {
 })
 var toolDesc = ui.Label('')
 
-var instruct = ui.Label('This tool uses harmonic baseline models to assess changes in vegetation condition during the specified monitoring period.', {
+var instruct = ui.Label('This tool uses a set of 5-year harmonic baseline models (2000-2019) to assess changes in vegetation condition during the specified monitoring period.', {
   fontSize: '12px', 
   fontFamily: 'Helvetica',
   padding: '10px 10px 0px 10px',
@@ -307,7 +307,7 @@ var monitoringPanel = ui.Panel(
 
 
 // Tree canopy mask
-var tccLabel = ui.Label('Percent Tree Cover:')
+var tccLabel = ui.Label('Min % Tree Cover:')
 var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
 tccInput.style().set('stretch', 'horizontal');
 
@@ -315,7 +315,7 @@ var tccPanel = ui.Panel(
   [
   ui.Label('NON-FOREST MASK', visLabels),
   ui.Panel([tccLabel,tccInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
-  // ui.Label('Pixels with less than the specified Tree Canopy Cover (TCC) will be masked using NLCD 2016.', {fontSize: '12px'}),
+  ui.Label(''),
    ]
 );
 

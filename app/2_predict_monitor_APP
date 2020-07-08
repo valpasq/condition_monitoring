@@ -252,7 +252,6 @@ var addScore = function(image) {
 }
 
 
-
 // ---------------------------------- MAIN PANELS ---------------------------------- 
 
 // Set up Control Panel 
@@ -267,6 +266,7 @@ var controlPanel = ui.Panel({
 var map = ui.Map();
 
 var font = 'Verdana'
+
 // ---------------------------------- SECONDARY PANELS ---------------------------------- 
 
 // Style "heading" labels

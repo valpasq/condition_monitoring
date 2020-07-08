@@ -56,6 +56,7 @@ function makeLegend(palette) {
       backgroundColor: 'rgba(255, 255, 255, 0)'
     }
     });
+    
   var labelPanel = ui.Panel({
       widgets: [
         ui.Label('Low', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
@@ -191,7 +192,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end) {
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(utils.preprocess8)  
 
-  // FINAL LTS COLLECTION
+  // Merge collections
   var collection = collection5.merge(collection7).merge(collection8)
       .map(function(image) {return image.set({
           'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
@@ -202,7 +203,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end) {
       .map(spectralTransforms)
       .sort('system:time_start') 
       
-  // ENDLAP FILTERING
+  // Filter endlaps (within-Path)
   var acquisitions = collection.aggregate_array('SENSING_TIME').distinct()
   
   // Take mean for each acquisition date (Path)

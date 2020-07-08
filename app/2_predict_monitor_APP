@@ -262,9 +262,9 @@ var controlPanel = ui.Panel({
 // Set up Map 
 var map = ui.Map();
 
-var font = 'Verdana'
-
 // ---------------------------------- SECONDARY PANELS ---------------------------------- 
+
+var font = 'Verdana'
 
 // Style "heading" labels
 var visLabels = {
@@ -396,11 +396,11 @@ var independents = ee.List(['constant', 't'])
 submitButton.onClick(function(){
   map.clear()
   
-  var MIN_TCC = tccInput.getValue();
-  var tcc_mask = NLCD.select('percent_tree_cover').gte(MIN_TCC)
+  var min_tcc = tccInput.getValue();
+  var tcc_mask = NLCD.select('percent_tree_cover').gte(min_tcc)
   
-  var MONITOR_START = startDayBox.getValue();
-  var MONITOR_END = endDayBox.getValue();
+  var monitor_start = startDayBox.getValue();
+  var monitor_end = endDayBox.getValue();
   
   var STATES = [];
   stateBox.forEach(function(name, state) {
@@ -424,7 +424,7 @@ submitButton.onClick(function(){
   var clip_bound = experiment_baselines.geometry().bounds()
   
   // Get monitoring period imagery
-  var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
+  var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
   
   var assess = function(img){
     baseline = img.updateMask(img.select('nobs').gte(MIN_OBS))
@@ -471,7 +471,7 @@ submitButton.onClick(function(){
   
   }
   
-    // Combine across Paths
+  // Combine across Paths
   var display_map = final_scores
     .reduce('mean')
     .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)

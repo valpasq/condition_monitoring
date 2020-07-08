@@ -14,7 +14,6 @@ var NLCD = ee.Image('USGS/NLCD/NLCD2016')
 var CC_THRESH = 50;     
 var DEPENDENT = 'tcg'
 var MIN_OBS = 30;
-var REDUCER = 'mean'
 var TS = 'full'
 var FOCAL_KERNEL = 45
 var ZERO_THRESH = 1
@@ -456,13 +455,14 @@ submitButton.onClick(function(){
     // Assessment for each path
     var results = baselines.map(assess)
     
-    // Combine all model results 
+    // Reduce all model results 
     var assessment = results.select('score')
-      .reduce(REDUCER).rename('score')
+      .reduce('mean').rename('score')
       .clip(clip_bound)
       .updateMask(tcc_mask)
       
-  
+    
+    // Add reduced result to map
     var layer_name = 'Path ' + path
     map.addLayer(assessment.select('score'), viz, layer_name, false)
     
@@ -471,7 +471,7 @@ submitButton.onClick(function(){
   
   }
   
-  // Combine across Paths
+  // Reduce across Paths (wall-to-wall result)
   var display_map = final_scores
     .reduce('mean')
     .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)

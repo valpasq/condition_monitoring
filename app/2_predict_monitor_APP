@@ -445,7 +445,6 @@ submitButton.onClick(function(){
       .rename('score')
     
     return ee.Image(score);
-  
   }
   
   for(var i = 0; i < num_paths; i++){
@@ -463,7 +462,6 @@ submitButton.onClick(function(){
       .reduce('mean')
       .clip(clip_bound)
       .updateMask(tcc_mask)
-      
     
     // Add reduced result to map
     var layer_name = 'Path ' + path

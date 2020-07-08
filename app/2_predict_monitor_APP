@@ -54,7 +54,7 @@ function makeLegend(palette) {
     style: {
       fontWeight: 'bold',
       fontSize: '12px',
-      fontFamily: 'fantasy',
+      fontFamily: font,
       margin: '0 0 2px 0',
       padding: '0',
       backgroundColor: 'rgba(255, 255, 255, 0)'
@@ -266,14 +266,14 @@ var controlPanel = ui.Panel({
 // Set up Map 
 var map = ui.Map();
 
-
+var font = 'Verdana'
 // ---------------------------------- SECONDARY PANELS ---------------------------------- 
 
 // Style "heading" labels
 var visLabels = {
   fontWeight: 'bold', 
   fontSize: '14px', 
-  fontFamily: 'fantasy',
+  fontFamily: font,
   width: '275px',
   padding: '20px 0px 0px 0px',
   color: 'rgba(0, 0, 0, 0.5)', 
@@ -286,8 +286,8 @@ var visLabels = {
 var toolLabel = ui.Label('Forest Condition Assessment', {
   fontWeight: 'bold', 
   fontSize: '18px', 
-  fontFamily: 'fantasy',
-  padding: '10px 0px 0px 10px',
+  fontFamily: font,
+  padding: '10px 0px 10px 10px',
   width: '275px',
   color: 'white',
   backgroundColor: 'rgba(0, 0, 0, 0.5)'
@@ -296,7 +296,7 @@ var toolDesc = ui.Label('')
 
 var instruct = ui.Label('This tool uses a set of 5-year harmonic baseline models (2000-2019) to assess changes in vegetation condition during the specified monitoring period.', {
   fontSize: '12px', 
-  fontFamily: 'Helvetica',
+  fontFamily: 'Verdana',
   padding: '10px 10px 0px 10px',
 })
 var headerPanel = ui.Panel([toolLabel, instruct])

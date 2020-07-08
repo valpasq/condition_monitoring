@@ -327,7 +327,7 @@ var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var sliderLabel = ui.Label('Year:');
 var startYearslider = ui.Slider({min:1990, max:2019, value:2016, step:1});
-startYearslider.style().set('stretch', 'horizontal');
+startYearslider.style().set('stretch', 'horizontal')
 
 var startDayLabel = ui.Label('Date 1 (MM-DD):');
 var startDayBox = ui.Textbox({value:'05-01'});

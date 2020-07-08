@@ -50,7 +50,7 @@ function makeLegend(palette) {
     style: {
       fontWeight: 'bold',
       fontSize: '12px',
-      fontFamily: font,
+      fontFamily: FONT,
       margin: '0 0 2px 0',
       padding: '0',
       backgroundColor: 'rgba(255, 255, 255, 0)'
@@ -263,13 +263,13 @@ var map = ui.Map();
 
 // ---------------------------------- SECONDARY PANELS ---------------------------------- 
 
-var font = 'Verdana'
+var FONT = 'Verdana'
 
-// Style "heading" labels
+// Style for heading labels
 var visLabels = {
   fontWeight: 'bold', 
   fontSize: '14px', 
-  fontFamily: font,
+  fontFamily: FONT,
   width: '275px',
   padding: '20px 0px 0px 0px',
   color: 'rgba(0, 0, 0, 0.5)', 
@@ -278,11 +278,11 @@ var visLabels = {
   
 };
 
-// --- TITLE PANEL with Instructions
+// Title panel 
 var toolLabel = ui.Label('Forest Condition Assessment', {
   fontWeight: 'bold', 
   fontSize: '18px', 
-  fontFamily: font,
+  fontFamily: FONT,
   padding: '10px 0px 10px 10px',
   width: '275px',
   color: 'white',
@@ -298,7 +298,7 @@ var instruct = ui.Label('This tool uses a set of 5-year harmonic baseline models
 var headerPanel = ui.Panel([toolLabel, instruct])
 
 
-// States panel
+// Select States panel
 var stateList = [['MA'], ['RI'], ['CT'], ['PA']];
 
 var stateBox = [];
@@ -347,7 +347,8 @@ var monitoringPanel = ui.Panel(
   ]
 );
 
-// Tree canopy mask
+
+// Non-forest Mask panel
 var tccLabel = ui.Label('Min % tree cover:')
 var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
 tccInput.style().set('stretch', 'horizontal');
@@ -390,7 +391,7 @@ var sinNames = getNames('sin_', harmonicFrequencies);
 var independents = ee.List(['constant', 't'])
   .cat(cosNames).cat(sinNames);
   
-
+  
 // Generate map and clicked time series chart
 submitButton.onClick(function(){
   map.clear()

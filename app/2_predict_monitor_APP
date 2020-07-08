@@ -13,6 +13,11 @@ var NLCD = ee.Image('USGS/NLCD/NLCD2016')
 
 var CC_THRESH = 50;     
 
+var DEPENDENT = 'tcg'
+var MIN_OBS = 30;
+
+var REDUCER = 'median'
+var TS = 'full'
 
 // -------------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
@@ -22,6 +27,12 @@ var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
 
 // ---------------------------------- Functions ---------------------------------- 
 
@@ -321,16 +332,6 @@ controlPanel.add(submitButton)
 
 // --------------------------------- PREDICT ---------------------------------- 
 
-var DEPENDENT = 'tcg'
-var TS = 'full'
-
-var MIN_OBS = 30;
-
-
-// var OUTPUT_CRS = 'EPSG:4326'
-
-var REDUCER = 'median'
-
 var baseline = []
 var final_scores = []
 
@@ -435,20 +436,14 @@ submitButton.onClick(function(){
   
   final_scores = []
   
+  map.setOptions(null, style);
+  map.setOptions('SATELLITE')
+  
 })
 
 
-var style = {
-  'Figure': [{
-      featureType: 'all',
-      stylers: [{ color: '#000000'}]
-  }]
-};
 
-map.setOptions(null, style);
 map.setOptions('SATELLITE')
-// map.centerObject(final_scores)
-
 
 ui.root.clear();
 ui.root.add(controlPanel);

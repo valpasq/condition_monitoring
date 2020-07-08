@@ -18,7 +18,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var STATE = 'RI';
+var STATE = 'NY';
 var roi = ee.FeatureCollection(table)
   .filterMetadata('STUSPS', 'equals', STATE)
   .geometry().dissolve()
@@ -29,7 +29,7 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state/'
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var DEPENDENT = 'evi';  // Select spectral transform   
+var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 2000;  // Starts 01-01

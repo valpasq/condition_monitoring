@@ -343,7 +343,7 @@ var monitoringPanel = ui.Panel(
       [endDayLabel, endDayBox],
       ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
     ),
-  // ui.Label('Predictions generated from the baseline model are compared with images acquired during the monitoring period to assess potential changes in condition.', {fontSize: '12px'}),
+  // ui.Label('Predictions generated from baseline models are compared with images acquired during the monitoring period to assess potential changes in condition.', {fontSize: '12px'}),
   ]
 );
 
@@ -439,7 +439,9 @@ submitButton.onClick(function(){
       .map(addPrediction)
       .map(addScore);
   
-    var score = collectPredictions.select('score').reduce('mean').rename('score')
+    var score = collectPredictions.select('score')
+      .reduce('mean')
+      .rename('score')
     
     return ee.Image(score);
   
@@ -457,14 +459,14 @@ submitButton.onClick(function(){
     
     // Reduce all model results 
     var assessment = results.select('score')
-      .reduce('mean').rename('score')
+      .reduce('mean')
       .clip(clip_bound)
       .updateMask(tcc_mask)
       
     
     // Add reduced result to map
     var layer_name = 'Path ' + path
-    map.addLayer(assessment.select('score'), viz, layer_name, false)
+    map.addLayer(assessment.select('score_mean'), viz, layer_name, false)
     
     // Image where each band is a Path-level assessment
     final_scores = ee.Image(final_scores).addBands(assessment)

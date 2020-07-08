@@ -14,16 +14,16 @@ var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2017         // Monitoring year
-var DAY_START = '05-01' // Date to start monitoring
-var DAY_END = '09-30'   // Date to end monitoring
+// var YEAR = 2017         // Monitoring year
+// var DAY_START = '05-01' // Date to start monitoring
+// var DAY_END = '09-30'   // Date to end monitoring
 
 var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND 
 
 // -------------------------------- Monitoring Setup -------------------------------- 
 
-var monitor_start = YEAR + '-' + DAY_START;
-var monitor_end = YEAR + '-' + DAY_END;
+// var monitor_start = YEAR + '-' + DAY_START;
+// var monitor_end = YEAR + '-' + DAY_END;
 
 
 // -------------------------------- Visualization -------------------------------- 
@@ -35,11 +35,8 @@ var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
 
-var MIN_TCC = 75;
+// var MIN_TCC = 75;
 var NLCD = ee.Image('USGS/NLCD/NLCD2016')
-
-var tcc_mask = NLCD.select('percent_tree_cover')
-  .gte(MIN_TCC)
   
 
 // ---------------------------------- Functions ---------------------------------- 
@@ -239,11 +236,11 @@ var map = ui.Map();
 var visLabels = {
   fontWeight: 'bold', 
   fontSize: '14px', 
-  fontFamily: 'Helvetica',
-  width: '300px',
-  padding: '4px 4px 4px 4px',
+  fontFamily: 'fantasy',
+  width: '325px',
+  padding: '0px 0px 0px 0px',
   color: 'rgba(0, 0, 0, 0.5)', 
-  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  backgroundColor: 'rgba(0, 0, 0, 0)',
   textAlign: 'left'
   
 };
@@ -253,7 +250,7 @@ var toolLabel = ui.Label('Forest Condition Assessment', {
   fontWeight: 'bold', 
   fontSize: '22px', 
   fontFamily: 'fantasy',
-  padding: '4px 4px 4px 4px',
+  padding: '10px 0px 0px 10px',
   width: '325px',
   color: 'white',
   backgroundColor: 'rgba(0, 0, 0, 0.5)'
@@ -269,26 +266,68 @@ var headerPanel = ui.Panel([toolLabel, instruct])
 
 ///////////
 // index panel
-var indexList = [['MA'], ['RI'], ['CT'], ['PA']];
+var stateList = [['MA'], ['RI'], ['CT'], ['PA']];
 
-var indexBox = [];
-indexList.forEach(function(name, index) {
+var stateBox = [];
+stateList.forEach(function(name, state) {
   var checkBox = ui.Checkbox(name[0]);
-  indexBox.push(checkBox);
+  stateBox.push(checkBox);
 });
 
-var indexPanelLabel = ui.Label('Select States', {fontWeight : 'bold'});
-var indexPanel = ui.Panel(
+var statePanelLabel = ui.Label('SELECT STATES ', visLabels);
+var statePanel = ui.Panel(
   [
-    ui.Panel([indexBox[0]], null, {stretch: 'horizontal'}),
-    ui.Panel([indexBox[1]], null, {stretch: 'horizontal'}),
-    ui.Panel([indexBox[2]], null, {stretch: 'horizontal'}),
-    ui.Panel([indexBox[3]], null, {stretch: 'horizontal'})
+    ui.Panel([stateBox[0]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[1]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[2]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[3]], null, {stretch: 'horizontal'}),
   ],
   ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
 );
 
-indexBox[0].setValue(1);
+stateBox[0].setValue(1);
+
+
+
+// Monitoring Period panel
+var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
+
+var startDayLabel = ui.Label('Start Date:');
+var startDayBox = ui.Textbox({value:'2019-06-10'});
+startDayBox.style().set('stretch', 'horizontal');
+
+var endDayLabel = ui.Label('End Date:');
+var endDayBox = ui.Textbox({value:'2019-09-20'});
+endDayBox.style().set('stretch', 'horizontal');
+
+var monitoringPanel = ui.Panel(
+  [
+    dateSectionLabel,
+    ui.Panel(
+      [startDayLabel, startDayBox],
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
+    ),
+    ui.Panel(
+      [endDayLabel, endDayBox],
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
+    ),
+  // ui.Label('Predictions generated from the baseline model are compared with images acquired during the monitoring period to assess potential changes in condition.', {fontSize: '12px'}),
+  ]
+);
+
+
+// Tree canopy mask
+var tccLabel = ui.Label('Percent Tree Cover:')
+var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
+tccInput.style().set('stretch', 'horizontal');
+
+var tccPanel = ui.Panel(
+  [
+  ui.Label('NON-FOREST MASK', visLabels),
+  ui.Panel([tccLabel,tccInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
+  // ui.Label('Pixels with less than the specified Tree Canopy Cover (TCC) will be masked using NLCD 2016.', {fontSize: '12px'}),
+   ]
+);
 
 
 // Submit button
@@ -298,8 +337,10 @@ submitButton.style().set('stretch', 'horizontal');
 
 // Add secondary panels
 controlPanel.add(headerPanel)
-controlPanel.add(indexPanelLabel)
-controlPanel.add(indexPanel)
+controlPanel.add(statePanelLabel)
+controlPanel.add(statePanel)
+controlPanel.add(monitoringPanel);
+controlPanel.add(tccPanel)
 controlPanel.add(submitButton)
 
 // --------------------------------- PREDICT ---------------------------------- 
@@ -333,16 +374,20 @@ var independents = ee.List(['constant', 't'])
 submitButton.onClick(function(){
   map.clear()
   
-  // get the indices that are checked
-  var STATES = [];
+  var MIN_TCC = tccInput.getValue();
+  var tcc_mask = NLCD.select('percent_tree_cover').gte(MIN_TCC)
   
-  indexBox.forEach(function(name, index) {
-    var isChecked = indexBox[index].getValue();
+  var MONITOR_START = startDayBox.getValue();
+  var MONITOR_END = endDayBox.getValue();
+  
+  var STATES = [];
+  stateBox.forEach(function(name, state) {
+    var isChecked = stateBox[state].getValue();
     if(isChecked){
-      STATES.push(indexList[index][0]);
+      STATES.push(stateList[state][0]);
     }
   });
-  print(STATES)
+  // print(STATES)
 
   var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('spectral_band', 'equals', DEPENDENT)
@@ -360,7 +405,7 @@ submitButton.onClick(function(){
   
   
   // Get monitoring period imagery
-  var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
+  var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
   
   var assess = function(img){
     baseline = img.updateMask(img.select('nobs').gte(MIN_OBS))

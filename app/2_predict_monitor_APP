@@ -326,11 +326,11 @@ stateBox[0].setValue(1);
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var startDayLabel = ui.Label('Start Date:');
-var startDayBox = ui.Textbox({value:'2016-06-10'});
+var startDayBox = ui.Textbox({value:'2016-05-01'});
 startDayBox.style().set('stretch', 'horizontal');
 
 var endDayLabel = ui.Label('End Date:');
-var endDayBox = ui.Textbox({value:'2016-09-20'});
+var endDayBox = ui.Textbox({value:'2016-09-30'});
 endDayBox.style().set('stretch', 'horizontal');
 
 var monitoringPanel = ui.Panel(

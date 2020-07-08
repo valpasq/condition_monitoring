@@ -426,7 +426,6 @@ submitButton.onClick(function(){
   // Get study area boundary
   var clip_bound = experiment_baselines.geometry().bounds()
   
-  
   // Get monitoring period imagery
   var monitor = monitorTS(clip_bound, MONITOR_START, MONITOR_END);
   

@@ -415,7 +415,7 @@ submitButton.onClick(function(){
     .filterMetadata('harmonics', 'equals', 'h13')
     .filterMetadata('time_series', 'equals', TS))
   
-    // Get WRS2 paths
+  // Get WRS2 paths
   var paths = experiment_baselines.aggregate_array('WRS_PATH').distinct()
   var num_paths = paths.size().getInfo()
   

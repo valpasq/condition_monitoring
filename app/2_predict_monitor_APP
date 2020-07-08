@@ -8,22 +8,10 @@
  
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// Specify collection with experiments from 1_baseline_generator
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_state')
+var NLCD = ee.Image('USGS/NLCD/NLCD2016')
 
-
-// -------------------------------- Monitoring Parameters --------------------------------- 
-
-// var YEAR = 2017         // Monitoring year
-// var DAY_START = '05-01' // Date to start monitoring
-// var DAY_END = '09-30'   // Date to end monitoring
-
-var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND 
-
-// -------------------------------- Monitoring Setup -------------------------------- 
-
-// var monitor_start = YEAR + '-' + DAY_START;
-// var monitor_end = YEAR + '-' + DAY_END;
+var CC_THRESH = 50;     
 
 
 // -------------------------------- Visualization -------------------------------- 
@@ -34,10 +22,6 @@ var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
-
-// var MIN_TCC = 75;
-var NLCD = ee.Image('USGS/NLCD/NLCD2016')
-  
 
 // ---------------------------------- Functions ---------------------------------- 
 
@@ -205,7 +189,7 @@ var addScore = function(image) {
   return image.addBands(score.rename('score'));
 }
 
-// END FUNCTIONS
+
 
 // ---------------------------------- MAIN PANELS ---------------------------------- 
 
@@ -216,15 +200,7 @@ var controlPanel = ui.Panel({
   backgroundColor: 'white'}
 });
 
-// // Set up Chart Panel
-// var chartPanel = ui.Panel({
-//     style: {
-//       height: '230px',
-//       width: '300px',
-//       position: 'bottom-left',
-//       backgroundColor: 'rgba(255, 255, 255, 0.5)'
-//     }
-//   });
+
   
 // Set up Map 
 var map = ui.Map();
@@ -235,7 +211,7 @@ var map = ui.Map();
 // Style "heading" labels
 var visLabels = {
   fontWeight: 'bold', 
-  fontSize: '14px', 
+  fontSize: '16px', 
   fontFamily: 'fantasy',
   width: '325px',
   padding: '0px 0px 0px 0px',

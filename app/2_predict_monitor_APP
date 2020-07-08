@@ -12,15 +12,12 @@ var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_
 var NLCD = ee.Image('USGS/NLCD/NLCD2016')
 
 var CC_THRESH = 50;     
-
 var DEPENDENT = 'tcg'
 var MIN_OBS = 30;
-
 var REDUCER = 'mean'
 var TS = 'full'
-
-var FOCAL_KERNEL = 60
-var zero_thresh = 1
+var FOCAL_KERNEL = 45
+var ZERO_THRESH = 1
 
 // ----------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
@@ -479,7 +476,7 @@ submitButton.onClick(function(){
     .reduce('mean')
     .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
 
-  var zero_crossing = display_map.add(zero_thresh)
+  var zero_crossing = display_map.add(ZERO_THRESH)
     .zeroCrossing()
     .selfMask()
 

@@ -249,6 +249,7 @@ var toolDesc = ui.Label('')
 var instruct = ui.Label('This tool uses harmonic baseline models to assess changes in vegetation condition during the specified monitoring period.', {
   fontSize: '12px', 
   fontFamily: 'Helvetica',
+  padding: '10px 10px 0px 10px',
 })
 var headerPanel = ui.Panel([toolLabel, instruct])
 

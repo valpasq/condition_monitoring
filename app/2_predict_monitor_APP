@@ -325,7 +325,7 @@ stateBox[0].setValue(1);
 // Monitoring Period panel
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
-var sliderLabel = ui.Label('Select year:');
+var sliderLabel = ui.Label('Year:');
 var startYearslider = ui.Slider({min:1990, max:2019, value:2016, step:1});
 startYearslider.style().set('stretch', 'horizontal');
 
@@ -341,9 +341,6 @@ var monitoringPanel = ui.Panel(
   [
     dateSectionLabel,
     ui.Panel(
-      [sliderLabel, startYearslider], 
-      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
-    ui.Panel(
       [startDayLabel, startDayBox],
       ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
     ),
@@ -351,6 +348,9 @@ var monitoringPanel = ui.Panel(
       [endDayLabel, endDayBox],
       ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
     ),
+    ui.Panel(
+      [sliderLabel, startYearslider], 
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
   // ui.Label('Predictions generated from baseline models are compared with images acquired during the monitoring period to assess potential changes in condition.', {fontSize: '12px'}),
   ]
 );

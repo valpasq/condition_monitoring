@@ -325,17 +325,24 @@ stateBox[0].setValue(1);
 // Monitoring Period panel
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
-var startDayLabel = ui.Label('Start Date:');
-var startDayBox = ui.Textbox({value:'2016-05-01'});
+var sliderLabel = ui.Label('Select year:');
+var startYearslider = ui.Slider({min:1990, max:2019, value:2016, step:1});
+startYearslider.style().set('stretch', 'horizontal');
+
+var startDayLabel = ui.Label('Date 1 (MM-DD):');
+var startDayBox = ui.Textbox({value:'05-01'});
 startDayBox.style().set('stretch', 'horizontal');
 
-var endDayLabel = ui.Label('End Date:');
-var endDayBox = ui.Textbox({value:'2016-09-30'});
+var endDayLabel = ui.Label('Date 2 (MM-DD):');
+var endDayBox = ui.Textbox({value:'09-30'});
 endDayBox.style().set('stretch', 'horizontal');
 
 var monitoringPanel = ui.Panel(
   [
     dateSectionLabel,
+    ui.Panel(
+      [sliderLabel, startYearslider], 
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
     ui.Panel(
       [startDayLabel, startDayBox],
       ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
@@ -400,8 +407,10 @@ submitButton.onClick(function(){
   var min_tcc = tccInput.getValue();
   var tcc_mask = NLCD.select('percent_tree_cover').gte(min_tcc)
   
-  var monitor_start = startDayBox.getValue();
-  var monitor_end = endDayBox.getValue();
+  var monitor_year = startYearslider.getValue()
+  var monitor_start = monitor_year + '-' + startDayBox.getValue();
+  var monitor_end = monitor_year + '-' + endDayBox.getValue();
+  print(monitor_end)
   
   var STATES = [];
   stateBox.forEach(function(name, state) {
@@ -454,6 +463,7 @@ submitButton.onClick(function(){
     
     var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
+    // print(monitor_subset.size())
     
     // Assessment for each path
     var results = baselines.map(assess)
@@ -470,7 +480,6 @@ submitButton.onClick(function(){
     
     // Image where each band is a Path-level assessment
     final_scores = ee.Image(final_scores).addBands(assessment)
-  
   }
   
   // Average across Paths

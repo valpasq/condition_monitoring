@@ -20,6 +20,7 @@ var REDUCER = 'median'
 var TS = 'full'
 
 var FOCAL_KERNEL = 60
+var zero_thresh = 1
 
 // -------------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
@@ -433,8 +434,6 @@ submitButton.onClick(function(){
   var display_map = final_scores
     .reduce('mean')
     .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
-    
-  var zero_thresh = 1
 
   var zero_crossing = display_map.add(zero_thresh)
     .zeroCrossing()

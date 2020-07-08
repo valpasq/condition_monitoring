@@ -439,6 +439,7 @@ submitButton.onClick(function(){
       .map(addPrediction)
       .map(addScore);
   
+    // Mean score for monitoring period
     var score = collectPredictions.select('score')
       .reduce('mean')
       .rename('score')

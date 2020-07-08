@@ -454,11 +454,9 @@ submitButton.onClick(function(){
     
     var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
-    // print(monitor_subset)
     
     // Assessment for each path
     var results = baselines.map(assess)
-    // print(results)
     
     // Average across baselines
     var assessment = results.select('score')

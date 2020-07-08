@@ -19,6 +19,8 @@ var MIN_OBS = 30;
 var REDUCER = 'median'
 var TS = 'full'
 
+var FOCAL_KERNEL = 60
+
 // -------------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
 
@@ -280,11 +282,11 @@ stateBox[0].setValue(1);
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var startDayLabel = ui.Label('Start Date:');
-var startDayBox = ui.Textbox({value:'2019-06-10'});
+var startDayBox = ui.Textbox({value:'2016-06-10'});
 startDayBox.style().set('stretch', 'horizontal');
 
 var endDayLabel = ui.Label('End Date:');
-var endDayBox = ui.Textbox({value:'2019-09-20'});
+var endDayBox = ui.Textbox({value:'2016-09-20'});
 endDayBox.style().set('stretch', 'horizontal');
 
 var monitoringPanel = ui.Panel(
@@ -427,8 +429,19 @@ submitButton.onClick(function(){
   
   }
   
-  // Combine across Paths
-  map.addLayer(final_scores.reduce('mean').focal_min(60, 'circle', 'meters', 1), viz)
+    // Combine across Paths
+  var display_map = final_scores
+    .reduce('mean')
+    .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
+    
+  var zero_thresh = 1
+
+  var zero_crossing = display_map.add(zero_thresh)
+    .zeroCrossing()
+    .selfMask()
+
+  map.addLayer(display_map, viz, 'Averaged Assessment')
+  map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
   map.centerObject(final_scores)
   
   final_scores = []

@@ -29,6 +29,8 @@ var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
+
+// Figure-style for map
 var style = {
   'Figure': [{
       featureType: 'all',
@@ -214,7 +216,6 @@ var controlPanel = ui.Panel({
 });
 
 
-  
 // Set up Map 
 var map = ui.Map();
 
@@ -254,8 +255,7 @@ var instruct = ui.Label('This tool uses harmonic baseline models to assess chang
 var headerPanel = ui.Panel([toolLabel, instruct])
 
 
-///////////
-// index panel
+// States panel
 var stateList = [['MA'], ['RI'], ['CT'], ['PA']];
 
 var stateBox = [];
@@ -276,7 +276,6 @@ var statePanel = ui.Panel(
 );
 
 stateBox[0].setValue(1);
-
 
 
 // Monitoring Period panel

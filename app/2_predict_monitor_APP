@@ -33,7 +33,7 @@ function ColorBar(palette) {
     image: ee.Image.pixelLonLat().select(0),
     params: {
       bbox: [0, 0, 1, 0.1],
-      dimensions: '100x10',
+      dimensions: '100x5',
       format: 'png',
       min: 1,
       max: 0,
@@ -49,7 +49,7 @@ function makeLegend(palette) {
     value: 'Average Change in Forest Condition',
     style: {
       fontWeight: 'bold',
-      fontSize: '12px',
+      fontSize: '11px',
       fontFamily: FONT,
       margin: '0 0 2px 0',
       padding: '0',

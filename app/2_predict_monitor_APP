@@ -364,14 +364,12 @@ submitButton.onClick(function(){
       STATES.push(stateList[state][0]);
     }
   });
-  // print(STATES)
 
   var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('spectral_band', 'equals', DEPENDENT)
     .filter(ee.Filter.inList('state', STATES)) 
     .filterMetadata('harmonics', 'equals', 'h13')
     .filterMetadata('time_series', 'equals', TS))
-  // print(experiment_baselines)
   
     // Get WRS2 paths
   var paths = experiment_baselines.aggregate_array('WRS_PATH').distinct()
@@ -412,7 +410,6 @@ submitButton.onClick(function(){
     
     // Assessment for each path
     var results = baselines.map(assess)
-    print(results)
     
     // Combine all model results 
     var assessment = results.select('score')
@@ -430,7 +427,6 @@ submitButton.onClick(function(){
   }
   
   // Combine across Paths
-  print(final_scores)
   map.addLayer(final_scores.reduce('mean'), viz)
   map.centerObject(final_scores)
   
@@ -440,7 +436,6 @@ submitButton.onClick(function(){
   map.setOptions('SATELLITE')
   
 })
-
 
 
 map.setOptions('SATELLITE')

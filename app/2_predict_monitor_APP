@@ -411,7 +411,6 @@ submitButton.onClick(function(){
   var monitor_year = startYearslider.getValue()
   var monitor_start = monitor_year + '-' + startDayBox.getValue();
   var monitor_end = monitor_year + '-' + endDayBox.getValue();
-  print(monitor_end)
   
   var STATES = [];
   stateBox.forEach(function(name, state) {

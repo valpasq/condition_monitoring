@@ -326,7 +326,7 @@ stateBox[0].setValue(1);
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var sliderLabel = ui.Label('Year:');
-var startYearslider = ui.Slider({min:1990, max:2019, value:2016, step:1});
+var startYearslider = ui.Slider({min:1990, max:2020, value:2020, step:1});
 startYearslider.style().set('stretch', 'horizontal')
 
 var startDayLabel = ui.Label('Date 1 (MM-DD):');
@@ -463,44 +463,55 @@ submitButton.onClick(function(){
     
     var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
-    // print(monitor_subset.size())
+    print(monitor_subset)
     
-    // Assessment for each path
-    var results = baselines.map(assess)
-    
-    // Average across baselines
-    var assessment = results.select('score')
-      .reduce('mean')
-      .clip(clip_bound)
-      .updateMask(tcc_mask)
-    
-    // Add reduced result to map
-    var layer_name = 'Path ' + path
-    map.addLayer(assessment.select('score_mean'), viz, layer_name, false)
-    
-    // Image where each band is a Path-level assessment
-    final_scores = ee.Image(final_scores).addBands(assessment)
+    if (monitor_subset.size().getInfo() >= 1){
+      // Assessment for each path
+      var results = baselines.map(assess)
+      
+      // Average across baselines
+      var assessment = results.select('score')
+        .reduce('mean')
+        .clip(clip_bound)
+        .updateMask(tcc_mask)
+      
+      // Add reduced result to map
+      var layer_name = 'Path ' + path
+      map.addLayer(assessment.select('score_mean'), viz, layer_name, false)
+      
+      // Image where each band is a Path-level assessment
+      final_scores = ee.Image(final_scores).addBands(assessment)
+    }
+    else {
+      print('Not enough images!')
+      final_scores = 0;
+    }
   }
   
-  // Average across Paths
-  var display_map = final_scores
-    .reduce('mean')
-    .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
-
-  var zero_crossing = display_map.add(ZERO_THRESH)
-    .zeroCrossing()
-    .selfMask()
-
-  map.addLayer(display_map, viz, 'Averaged Assessment')
-  map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
+  if (final_scores === 0) {
+    final_scores = []
+  }
+  else {
+    // Average across Paths
+    var display_map = final_scores
+      .reduce('mean')
+      .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
   
-  map.centerObject(final_scores)
-  map.setOptions(null, style);
-  map.setOptions('SATELLITE')
+    var zero_crossing = display_map.add(ZERO_THRESH)
+      .zeroCrossing()
+      .selfMask()
   
-  map.add(makeLegend(palette))
-  
-  final_scores = []
+    map.addLayer(display_map, viz, 'Averaged Assessment')
+    map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
+    
+    map.centerObject(final_scores)
+    map.setOptions(null, style);
+    map.setOptions('SATELLITE')
+    
+    map.add(makeLegend(palette))
+    
+    final_scores = []
+  }
   
 })
 

@@ -215,6 +215,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end) {
     return collection.filterDate(date, date2).mean()
       .set({
         'system:time_start': date.millis(), 
+        'date': date,
         'WRS_PATH': path
       })
   }));
@@ -478,6 +479,7 @@ submitButton.onClick(function(){
     
     // Add reduced result to map
     var layer_name = 'Path ' + path
+    // map.addLayer(monitor_subset.reduce('count'), {min:0, max:15})
     map.addLayer(assessment.select('score_mean'), viz, layer_name, false)
     
     // Image where each band is a Path-level assessment

@@ -15,7 +15,7 @@ var CC_THRESH = 50;
 var DEPENDENT = 'tcg'
 var MIN_OBS = 30;
 var TS = 'full'
-var FOCAL_KERNEL = 45
+var FOCAL_KERNEL = 30
 var ZERO_THRESH = 1
 
 // ----------------------------- Visualization -------------------------------- 

@@ -504,7 +504,7 @@ submitButton.onClick(function(){
     map.addLayer(display_map, viz, 'Averaged Assessment')
     map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
     
-    map.centerObject(final_scores)
+    map.centerObject(final_scores, 8)
     map.setOptions(null, style);
     map.setOptions('SATELLITE')
     

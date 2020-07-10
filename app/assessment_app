@@ -378,6 +378,9 @@ var tccPanel = ui.Panel(
 var submitButton = ui.Button({label: 'Generate Assessment'});
 submitButton.style().set('stretch', 'horizontal');
 
+var autoZoom = ui.Checkbox('Auto-zoom');
+autoZoom.setValue(1)
+var submitPanel = ui.Panel([submitButton, autoZoom])
 
 // Add secondary panels
 controlPanel.add(headerPanel)
@@ -385,7 +388,7 @@ controlPanel.add(statePanelLabel)
 controlPanel.add(statePanel)
 controlPanel.add(monitoringPanel);
 controlPanel.add(tccPanel)
-controlPanel.add(submitButton)
+controlPanel.add(submitPanel)
 
 // --------------------------------- PREDICT ---------------------------------- 
 
@@ -485,10 +488,7 @@ submitButton.onClick(function(){
       // Image where each band is a Path-level assessment
       final_scores = ee.Image(final_scores).addBands(assessment)
     }
-    // else {
-    //   // print('Not enough images!')
-    //   // final_scores = 0;
-    // }
+
   }
   
   // Average across Paths
@@ -503,7 +503,10 @@ submitButton.onClick(function(){
   map.addLayer(display_map, viz, 'Averaged Assessment')
   map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
   
-  map.centerObject(final_scores, 8)
+  if (autoZoom.getValue() === true){
+    map.centerObject(final_scores, 8)
+  }
+  
   map.setOptions(null, style);
   map.setOptions('SATELLITE')
   

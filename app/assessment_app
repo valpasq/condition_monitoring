@@ -485,10 +485,10 @@ submitButton.onClick(function(){
       // Image where each band is a Path-level assessment
       final_scores = ee.Image(final_scores).addBands(assessment)
     }
-    else {
-      print('Not enough images!')
-      // final_scores = 0;
-    }
+    // else {
+    //   // print('Not enough images!')
+    //   // final_scores = 0;
+    // }
   }
   
   // Average across Paths

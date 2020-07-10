@@ -484,34 +484,29 @@ submitButton.onClick(function(){
     }
     else {
       print('Not enough images!')
-      final_scores = 0;
+      // final_scores = 0;
     }
   }
   
-  if (final_scores === 0) {
-    final_scores = []
-  }
-  else {
-    // Average across Paths
-    var display_map = final_scores
-      .reduce('mean')
-      .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
+  // Average across Paths
+  var display_map = final_scores
+    .reduce('mean')
+    .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
+
+  var zero_crossing = display_map.add(ZERO_THRESH)
+    .zeroCrossing()
+    .selfMask()
+
+  map.addLayer(display_map, viz, 'Averaged Assessment')
+  map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
   
-    var zero_crossing = display_map.add(ZERO_THRESH)
-      .zeroCrossing()
-      .selfMask()
+  map.centerObject(final_scores, 8)
+  map.setOptions(null, style);
+  map.setOptions('SATELLITE')
   
-    map.addLayer(display_map, viz, 'Averaged Assessment')
-    map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
-    
-    map.centerObject(final_scores, 8)
-    map.setOptions(null, style);
-    map.setOptions('SATELLITE')
-    
-    map.add(makeLegend(palette))
-    
-    final_scores = []
-  }
+  map.add(makeLegend(palette))
+  
+  final_scores = []
   
 })
 

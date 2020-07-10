@@ -301,7 +301,7 @@ var headerPanel = ui.Panel([toolLabel, instruct])
 
 
 // Select States panel
-var stateList = [['MA'], ['RI'], ['CT'], ['PA']];
+var stateList = [['MA'], ['RI'], ['CT'], ['PA'], ['NJ']];
 
 var stateBox = [];
 stateList.forEach(function(name, state) {
@@ -312,7 +312,7 @@ stateList.forEach(function(name, state) {
 var statePanelLabel = ui.Label('SELECT STATES ', visLabels);
 var statePanel = ui.Panel(
   [
-    ui.Panel([stateBox[0]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[0], stateBox[4]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[1]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[2]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[3]], null, {stretch: 'horizontal'}),
@@ -498,7 +498,7 @@ submitButton.onClick(function(){
   map.addLayer(display_map, viz, 'Averaged Assessment')
   map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
   
-  map.centerObject(final_scores)
+  map.centerObject(final_scores, 8)
   map.setOptions(null, style);
   map.setOptions('SATELLITE')
   

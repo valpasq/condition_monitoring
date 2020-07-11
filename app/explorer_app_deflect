@@ -224,7 +224,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end) {
   return monitorC;
   
   };
-  
+
   
 // Function to add predicted value
 var addPrediction = function(image) {
@@ -445,6 +445,7 @@ submitButton.onClick(function(){
     .filter(ee.Filter.inList('state', STATES)) 
     .filterMetadata('harmonics', 'equals', 'h13')
     .filterMetadata('time_series', 'equals', TS))
+  print(experiment_baselines)
   
   // Get WRS2 paths
   var paths = experiment_baselines.aggregate_array('WRS_PATH').distinct()
@@ -468,7 +469,7 @@ submitButton.onClick(function(){
     // Add predictions and scores
     var collectPredictions = harmonicLandsat
       .map(addPrediction)
-      .map(addScore);m
+      .map(addScore);
   
     // Mean score for monitoring period
     var score = collectPredictions.select('score')

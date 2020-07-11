@@ -365,7 +365,7 @@ var monitoringPanel = ui.Panel(
 
 
 // Non-forest Mask panel
-var tccLabel = ui.Label('⚪ Min % tree cover:')
+var tccLabel = ui.Label('⚪ Min. tree cover (%):')
 var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
 tccInput.style().set('stretch', 'horizontal');
 

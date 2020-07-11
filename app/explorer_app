@@ -283,7 +283,7 @@ var visLabels = {
 // Title panel 
 var toolLabel = ui.Label('Forest Condition Assessment', {
   fontWeight: 'bold', 
-  fontSize: '18px', 
+  fontSize: '20px', 
   fontFamily: FONT,
   padding: '10px 0px 10px 10px',
   width: '275px',

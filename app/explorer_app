@@ -293,9 +293,9 @@ var toolLabel = ui.Label('Forest Condition Assessment', {
 var toolDesc = ui.Label('')
 
 var instruct = ui.Label('This tool uses a set of harmonic baseline ' + 
-  'models (2000-2019, 5-year moving window) fit to time series ' + 
-  'of Landsat Tasseled Cap Greenness (TCG) ' +
-  'to assess potential changes in forest condition during the specified ' + 
+  'models (2000-2019, 5-year moving window) fit to Landsat time series ' + 
+  'of Tasseled Cap Greenness (TCG) ' +
+  'to assess potential changes in forest canopy condition during the specified ' + 
   'monitoring period.', {
     fontSize: '12px', 
     fontFamily: 'Verdana',

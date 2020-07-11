@@ -16,7 +16,7 @@ var DEPENDENT = 'tcg'
 var MIN_OBS = 30;
 var TS = 'full'
 var FOCAL_KERNEL = 30
-var ZERO_THRESH = 1
+// var ZERO_THRESH = 1
 
 // ----------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
@@ -369,10 +369,16 @@ var tccLabel = ui.Label('◻️ Min % tree cover:')
 var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
 tccInput.style().set('stretch', 'horizontal');
 
+var threshLabel = ui.Label('◻️ RMSE threshold:')
+var threshInput = ui.Slider({min:0, max:4, value:1, step:1})
+threshInput.style().set('stretch', 'horizontal');
+
+
 var tccPanel = ui.Panel(
   [
-  ui.Label('🔘 NON-FOREST MASK', visLabels),
+  ui.Label('🔘 MAP DISPLAY', visLabels),
   ui.Panel([tccLabel,tccInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
+  ui.Panel([threshLabel,threshInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
   ui.Label(''),
    ]
 );
@@ -418,6 +424,8 @@ submitButton.onClick(function(){
   
   var min_tcc = tccInput.getValue();
   var tcc_mask = NLCD.select('percent_tree_cover').gte(min_tcc)
+  
+  var ZERO_THRESH = threshInput.getValue()
   
   var monitor_year = startYearslider.getValue()
   var monitor_start = monitor_year + '-' + startDayBox.getValue();

@@ -336,11 +336,11 @@ var sliderLabel = ui.Label('⚪ Year:');
 var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
 startYearslider.style().set('stretch', 'horizontal')
 
-var startDayLabel = ui.Label('⚪ Date 1 (MM-DD):');
+var startDayLabel = ui.Label('⚪ Date 1 (mm-dd):');
 var startDayBox = ui.Textbox({value:'05-01'});
 startDayBox.style().set('stretch', 'horizontal');
 
-var endDayLabel = ui.Label('⚪ Date 2 (MM-DD):');
+var endDayLabel = ui.Label('⚪ Date 2 (mm-dd):');
 var endDayBox = ui.Textbox({value:'09-30'});
 endDayBox.style().set('stretch', 'horizontal');
 

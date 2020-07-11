@@ -297,12 +297,12 @@ var instruct = ui.Label('This tool uses a set of harmonic baseline ' +
   'of Tasseled Cap Greenness (TCG) ' +
   'to assess potential changes in forest canopy condition during the specified ' + 
   'monitoring period.', {
-    fontSize: '12px', 
+    fontSize: '10px', 
     fontFamily: 'Verdana',
     padding: '10px 10px 0px 10px',
   })
-var headerPanel = ui.Panel([toolLabel, instruct])
-
+var headerPanel = ui.Panel([toolLabel])
+var instrucPanel = ui.Panel([instruct])
 
 // Select States panel
 var stateList = [['MA'], ['RI'], ['CT'], ['NY'], ['PA'], ['NJ']];
@@ -393,6 +393,7 @@ controlPanel.add(statePanel)
 controlPanel.add(monitoringPanel);
 controlPanel.add(tccPanel)
 controlPanel.add(submitPanel)
+controlPanel.add(instrucPanel)
 
 // --------------------------------- PREDICT ---------------------------------- 
 

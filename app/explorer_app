@@ -265,12 +265,12 @@ var map = ui.Map();
 
 // ---------------------------------- SECONDARY PANELS ---------------------------------- 
 
-var FONT = 'Verdana'
+var FONT = 'Tahoma'
 
 // Style for heading labels
 var visLabels = {
   fontWeight: 'bold', 
-  fontSize: '14px', 
+  fontSize: '12px', 
   fontFamily: FONT,
   width: '275px',
   padding: '5px 0px 5px 10px',
@@ -385,8 +385,9 @@ var tccPanel = ui.Panel(
 
 
 // Submit button
-var submitButton = ui.Button({label: 'Generate Assessment'});
+var submitButton = ui.Button({label: 'GENERATE ASSESSMENT'});
 submitButton.style().set('stretch', 'horizontal');
+
 
 var autoZoom = ui.Checkbox('Auto-zoom');
 autoZoom.setValue(1)

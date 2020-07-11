@@ -273,9 +273,9 @@ var visLabels = {
   fontSize: '14px', 
   fontFamily: FONT,
   width: '275px',
-  padding: '20px 0px 0px 0px',
+  padding: '5px 0px 5px 10px',
   color: 'rgba(0, 0, 0, 0.5)', 
-  backgroundColor: 'rgba(0, 0, 0, 0)',
+  backgroundColor: 'rgba(0, 0, 0, 0.25)',
   textAlign: 'left'
   
 };
@@ -313,7 +313,7 @@ stateList.forEach(function(name, state) {
   stateBox.push(checkBox);
 });
 
-var statePanelLabel = ui.Label('🔘 SELECT STATES ', visLabels);
+var statePanelLabel = ui.Label('SELECT STATES ', visLabels);
 var statePanel = ui.Panel(
   [ 
     ui.Panel([stateBox[0], stateBox[4]], null, {stretch: 'horizontal'}),
@@ -330,7 +330,7 @@ stateBox[2].setValue(1);
 
 
 // Monitoring Period panel
-var dateSectionLabel = ui.Label('🔘 MONITORING PERIOD', visLabels);
+var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var sliderLabel = ui.Label('⚪ Year:');
 var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
@@ -376,7 +376,7 @@ threshInput.style().set('stretch', 'horizontal');
 
 var tccPanel = ui.Panel(
   [
-  ui.Label('🔘 MAP DISPLAY', visLabels),
+  ui.Label('MAP DISPLAY', visLabels),
   ui.Panel([tccLabel,tccInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
   ui.Panel([threshLabel,threshInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
   ui.Label(''),

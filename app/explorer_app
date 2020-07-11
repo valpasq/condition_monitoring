@@ -300,7 +300,7 @@ var instruct = ui.Label('This tool uses a set of 5-year harmonic baseline ' +
     fontFamily: 'Verdana',
     padding: '10px 10px 0px 10px',
   })
-var headerPanel = ui.Panel([toolLabel, instruct, toolDesc])
+var headerPanel = ui.Panel([toolLabel, instruct])
 
 
 // Select States panel
@@ -312,7 +312,7 @@ stateList.forEach(function(name, state) {
   stateBox.push(checkBox);
 });
 
-var statePanelLabel = ui.Label('SELECT STATES ', visLabels);
+var statePanelLabel = ui.Label('⬜ SELECT STATES ', visLabels);
 var statePanel = ui.Panel(
   [ 
     ui.Panel([stateBox[0], stateBox[4]], null, {stretch: 'horizontal'}),
@@ -329,7 +329,7 @@ stateBox[2].setValue(1);
 
 
 // Monitoring Period panel
-var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
+var dateSectionLabel = ui.Label('⬜ MONITORING PERIOD', visLabels);
 
 var sliderLabel = ui.Label('Year:');
 var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
@@ -370,7 +370,7 @@ tccInput.style().set('stretch', 'horizontal');
 
 var tccPanel = ui.Panel(
   [
-  ui.Label('NON-FOREST MASK', visLabels),
+  ui.Label('⬜ NON-FOREST MASK', visLabels),
   ui.Panel([tccLabel,tccInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
   ui.Label(''),
    ]

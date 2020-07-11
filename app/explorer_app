@@ -292,16 +292,19 @@ var toolLabel = ui.Label('Forest Condition Assessment', {
 })
 var toolDesc = ui.Label('')
 
-var instruct = ui.Label('This tool uses a set of 5-year harmonic baseline models (2000-2019) fit to Landsat time series of Tasseled Cap Greenness (TCG) to assess potential changes in forest condition during the specified monitoring period.', {
-  fontSize: '12px', 
-  fontFamily: 'Verdana',
-  padding: '10px 10px 0px 10px',
-})
+var instruct = ui.Label('This tool uses a set of 5-year harmonic baseline ' + 
+  'models (2000-2019) fit to Landsat time series of Tasseled Cap Greenness ' +
+  'TCG) to assess potential changes in forest condition during the specified ' + 
+  'monitoring period.', {
+    fontSize: '12px', 
+    fontFamily: 'Verdana',
+    padding: '10px 10px 0px 10px',
+  })
 var headerPanel = ui.Panel([toolLabel, instruct])
 
 
 // Select States panel
-var stateList = [['MA'], ['RI'], ['CT'], ['PA'], ['NJ']];
+var stateList = [['MA'], ['RI'], ['CT'], ['NY'], ['PA'], ['NJ']];
 
 var stateBox = [];
 stateList.forEach(function(name, state) {
@@ -313,7 +316,7 @@ var statePanelLabel = ui.Label('SELECT STATES ', visLabels);
 var statePanel = ui.Panel(
   [
     ui.Panel([stateBox[0], stateBox[4]], null, {stretch: 'horizontal'}),
-    ui.Panel([stateBox[1]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[1], stateBox[5]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[2]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[3]], null, {stretch: 'horizontal'}),
   ],

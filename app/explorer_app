@@ -332,15 +332,15 @@ stateBox[2].setValue(1);
 // Monitoring Period panel
 var dateSectionLabel = ui.Label('🔘 MONITORING PERIOD', visLabels);
 
-var sliderLabel = ui.Label('Year:');
+var sliderLabel = ui.Label('◻️ Year:');
 var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
 startYearslider.style().set('stretch', 'horizontal')
 
-var startDayLabel = ui.Label('Date 1 (MM-DD):');
+var startDayLabel = ui.Label('◻️ Date 1 (MM-DD):');
 var startDayBox = ui.Textbox({value:'05-01'});
 startDayBox.style().set('stretch', 'horizontal');
 
-var endDayLabel = ui.Label('Date 2 (MM-DD):');
+var endDayLabel = ui.Label('◻️ Date 2 (MM-DD):');
 var endDayBox = ui.Textbox({value:'09-30'});
 endDayBox.style().set('stretch', 'horizontal');
 
@@ -365,7 +365,7 @@ var monitoringPanel = ui.Panel(
 
 
 // Non-forest Mask panel
-var tccLabel = ui.Label('Min % tree cover:')
+var tccLabel = ui.Label('◻️ Min % tree cover:')
 var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
 tccInput.style().set('stretch', 'horizontal');
 

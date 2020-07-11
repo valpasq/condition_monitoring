@@ -520,7 +520,7 @@ submitButton.onClick(function(){
   
   map.addLayer(monitor_count, {min:0, max:20}, 'Monitoring obs. count', false)
   map.addLayer(display_map, viz, 'Averaged assessment')
-  map.addLayer(zero_crossing, {palette: 'black'}, 'RMSE Threshold')
+  map.addLayer(zero_crossing, {palette: 'black'}, 'RMSE threshold')
   
  
   

@@ -299,7 +299,7 @@ var instruct = ui.Label('This tool uses a set of harmonic baseline ' +
   'monitoring period.', {
     fontSize: '10px', 
     fontFamily: 'Verdana',
-    padding: '10px 10px 0px 10px',
+    padding: '5px 5px 0px 5px',
   })
 var headerPanel = ui.Panel([toolLabel])
 var instrucPanel = ui.Panel([instruct])

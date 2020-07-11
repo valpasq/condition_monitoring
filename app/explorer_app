@@ -288,7 +288,7 @@ var toolLabel = ui.Label('Forest Condition Assessment', {
   padding: '10px 0px 10px 10px',
   width: '275px',
   color: 'white',
-  backgroundColor: 'rgba(0, 0, 0, 0.5)'
+  backgroundColor: 'rgba(0, 0, 0, 0.75)'
 })
 var toolDesc = ui.Label('')
 

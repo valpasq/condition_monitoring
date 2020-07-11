@@ -300,7 +300,7 @@ var instruct = ui.Label('This tool uses a set of 5-year harmonic baseline ' +
     fontFamily: 'Verdana',
     padding: '10px 10px 0px 10px',
   })
-var headerPanel = ui.Panel([toolLabel, instruct])
+var headerPanel = ui.Panel([toolLabel, instruct, toolDesc])
 
 
 // Select States panel
@@ -314,7 +314,7 @@ stateList.forEach(function(name, state) {
 
 var statePanelLabel = ui.Label('SELECT STATES ', visLabels);
 var statePanel = ui.Panel(
-  [
+  [ 
     ui.Panel([stateBox[0], stateBox[4]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[1], stateBox[5]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[2]], null, {stretch: 'horizontal'}),

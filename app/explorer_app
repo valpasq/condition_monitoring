@@ -505,8 +505,16 @@ submitButton.onClick(function(){
     .zeroCrossing()
     .selfMask()
 
-  map.addLayer(display_map, viz, 'Averaged Assessment')
-  map.addLayer(zero_crossing, {palette: 'black'}, 'Threshold')
+  var monitor_count = monitor.select(DEPENDENT)
+    .reduce('count')
+    .clip(clip_bound)
+    .updateMask(tcc_mask)
+  
+  map.addLayer(monitor_count, {min:0, max:20}, 'Monitoring obs. count')
+  map.addLayer(display_map, viz, 'Averaged assessment')
+  map.addLayer(zero_crossing, {palette: 'black'}, 'RMSE Threshold')
+  
+ 
   
   if (autoZoom.getValue() === true){
     map.centerObject(final_scores, 8)

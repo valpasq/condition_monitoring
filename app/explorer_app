@@ -15,7 +15,7 @@ var CC_THRESH = 50;
 var DEPENDENT = 'tcg'
 var MIN_OBS = 30;
 var TS = 'full'
-var FOCAL_KERNEL = 45
+var FOCAL_KERNEL = 30
 // var ZERO_THRESH = 1
 
 // ----------------------------- Visualization -------------------------------- 
@@ -509,6 +509,7 @@ submitButton.onClick(function(){
   var display_map = final_scores
     .reduce('mean')
     .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
+    // .updateMask(tcc_mask)
 
   var zero_crossing = display_map.add(ZERO_THRESH)
     .zeroCrossing()

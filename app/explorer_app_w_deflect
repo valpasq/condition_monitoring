@@ -507,8 +507,7 @@ submitButton.onClick(function(){
     if (monitor_subset.size().getInfo() >= 1){
       // Assessment for each path
       var results = baselines.map(assess)
-      map.addLayer(results.first().select('deflection'))
-      
+     
       // Average across baselines
       var assessment = results.select('score')
         .reduce('mean')

@@ -531,10 +531,10 @@ submitButton.onClick(function(){
   var outline = ee.Image().byte().paint({
     featureCollection: states_display,
     color: 1,
-    width: 2
+    width: 1
   });  
     
-  map.addLayer(outline, {palette: 'black'}, 'Selected States')
+  map.addLayer(outline, {palette: 'gray'}, 'Selected States')
   
   if (autoZoom.getValue() === true){
     map.centerObject(final_scores, 8)

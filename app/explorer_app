@@ -292,8 +292,8 @@ var toolLabel = ui.Label('Forest Condition Assessment', {
 var toolDesc = ui.Label('')
 
 var instruct = ui.Label('This tool uses a set of harmonic baseline ' + 
-  'models (2000-2019, 5-year moving window) fit to time series ' + 
-  'of Landsat Tasseled Cap Greenness (TCG) to assess changes in forest ' +
+  'models fit to time series of Landsat Tasseled Cap Greenness ' + 
+  '(2000-2019, 5-year moving window)  to assess changes in forest ' +
   'canopy condition during the specified monitoring period. ' + 
   'Mapped results represent mean RMSE-normalized residuals across ' +
   'an ensemble of baseline predictions. Results for individual WRS-2 ' +
@@ -537,7 +537,7 @@ submitButton.onClick(function(){
     width: 1
   });  
     
-  map.addLayer(outline, {palette: 'gray'}, 'Selected States')
+  map.addLayer(outline, {palette: 'gray'}, 'Selected states')
   
   if (autoZoom.getValue() === true){
     map.centerObject(final_scores, 8)

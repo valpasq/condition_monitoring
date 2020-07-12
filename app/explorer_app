@@ -523,8 +523,6 @@ submitButton.onClick(function(){
   map.addLayer(display_map, viz, 'Averaged assessment')
   map.addLayer(zero_crossing, {palette: 'black'}, 'Severity threshold')
   
- 
-  
   if (autoZoom.getValue() === true){
     map.centerObject(final_scores, 8)
   }

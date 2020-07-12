@@ -439,6 +439,7 @@ submitButton.onClick(function(){
     }
   });
 
+
   var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('spectral_band', 'equals', DEPENDENT)
     .filter(ee.Filter.inList('state', STATES)) 
@@ -522,6 +523,18 @@ submitButton.onClick(function(){
   map.addLayer(monitor_count, {min:0, max:20}, 'Monitoring obs. count', false)
   map.addLayer(display_map, viz, 'Averaged assessment')
   map.addLayer(zero_crossing, {palette: 'black'}, 'Severity threshold')
+  
+  
+  var states_display = ee.FeatureCollection("TIGER/2018/States")
+    .filter(ee.Filter.inList('STUSPS', STATES)) 
+    
+  var outline = ee.Image().byte().paint({
+    featureCollection: states_display,
+    color: 1,
+    width: 2
+  });  
+    
+  map.addLayer(outline, {}, 'Selected States')
   
   if (autoZoom.getValue() === true){
     map.centerObject(final_scores, 8)

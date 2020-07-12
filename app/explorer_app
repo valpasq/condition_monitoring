@@ -16,7 +16,6 @@ var DEPENDENT = 'tcg'
 var MIN_OBS = 30;
 var TS = 'full'
 var FOCAL_KERNEL = 30
-// var ZERO_THRESH = 1
 
 // ----------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018

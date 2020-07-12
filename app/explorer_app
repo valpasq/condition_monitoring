@@ -293,11 +293,12 @@ var toolDesc = ui.Label('')
 
 var instruct = ui.Label('This tool uses a set of harmonic baseline ' + 
   'models (2000-2019, 5-year moving window) fit to Landsat time series ' + 
-  'of Tasseled Cap Greenness (TCG) to assess potential changes in forest ' +
+  'of Tasseled Cap Greenness (TCG) to assess changes in forest ' +
   'canopy condition during the specified monitoring period. ' + 
   'Mapped results represent mean RMSE-normalized residuals across ' +
-  'an ensemble of baseline predictions and have been smoothed using ' +
-  'a focal mean filter.', {
+  'an ensemble of baseline predictions. Results for individual WRS-2 ' +
+  'Paths (available in Layers list) are averaged, and a focal mean is applied '+
+  'to produce the final assessment layer.', {
     fontSize: '10px', 
     fontFamily: 'Verdana',
     padding: '5px 5px 0px 5px',

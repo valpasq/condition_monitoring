@@ -233,7 +233,7 @@ var addDeflection = function(image) {
   .divide(2)
   
   var current = ee.Number(image.get('system:time_start'))
-  var deflection = ee.Image(current.subtract(base_start)).rename('deflect')
+  var deflection = ee.Image(current.subtract(base_start)).rename('deflection')
   
   return image.addBands(deflection)
 }
@@ -487,8 +487,14 @@ submitButton.onClick(function(){
     var score = collectPredictions.select('score')
       .reduce('mean')
       .rename('score')
+      
+    // Mean temporal deflection for monitoring period
+    var deflect = collectPredictions.select('deflection')
+      .reduce('mean')
+      .rename('deflection')
+      .float()
     
-    return ee.Image(score);
+    return ee.Image(score).addBands(deflect);
   }
   
   for(var i = 0; i < num_paths; i++){
@@ -501,6 +507,7 @@ submitButton.onClick(function(){
     if (monitor_subset.size().getInfo() >= 1){
       // Assessment for each path
       var results = baselines.map(assess)
+      map.addLayer(results.first().select('deflection'))
       
       // Average across baselines
       var assessment = results.select('score')

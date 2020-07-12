@@ -534,7 +534,7 @@ submitButton.onClick(function(){
     width: 2
   });  
     
-  map.addLayer(outline, {}, 'Selected States')
+  map.addLayer(outline, {palette: 'black'}, 'Selected States')
   
   if (autoZoom.getValue() === true){
     map.centerObject(final_scores, 8)

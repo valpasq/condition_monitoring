@@ -333,7 +333,7 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   
     print('Mosaic product:', outputMosaic);
     
-    // Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
+    Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
       
     Export.image.toAsset({
       image: outputMosaic,

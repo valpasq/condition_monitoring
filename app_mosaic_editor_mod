@@ -1,6 +1,8 @@
 // This script allows you to interactively explore the effects
 // of mosaicking different Landsat 8 TOA images using ee.Reducer.median().
 
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
+
 
 /*
  * Style defaults
@@ -41,14 +43,52 @@ var BORDER_STYLE = '4px solid rgba(97, 97, 97, 0.05)';
  */
 
 // Landsat 8 TOA
-var COLLECTION_ID = 'LANDSAT/LC08/C01/T1_SR';
+// var COLLECTION_ID = 'LANDSAT/LC08/C01/T1_SR';
 var START_DATE = '2020-05-01';
 var END_DATE = '2020-09-01';
-var VIZ_PARAMS = {bands: ['B4', 'B3', 'B2'], min: 0, max: 0.4, gamma: 1.5};
+var VIZ_PARAMS = {bands: ['B4', 'B3', 'B2'], min: 0, max: 4000};
 
-var BASE_COLLECTION = ee.ImageCollection(COLLECTION_ID)
-                          .filter(ee.Filter.lte('CLOUD_COVER', 50))
-                          .filterDate(START_DATE, END_DATE);
+// var BASE_COLLECTION = ee.ImageCollection(COLLECTION_ID)
+//                           .filter(ee.Filter.lte('CLOUD_COVER', 50))
+//                           .filterDate(START_DATE, END_DATE);
+
+
+var CC_THRESH = 50;
+
+
+// Get Landsat 5 imagery
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterDate(START_DATE, END_DATE)  
+      // .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess457) 
+      
+// Get Landsat 7 imagery
+var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+    .filterDate(START_DATE, END_DATE) 
+    // .filterBounds(clipBound) 
+    .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+    .map(utils.preprocess457) 
+
+// Get  Landsat 8 imagery
+var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+    .filterDate(START_DATE, END_DATE)
+    // .filterBounds(clipBound) 
+    .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+    .map(utils.preprocess8)  
+
+// Merge collections
+var BASE_COLLECTION = collection5.merge(collection7).merge(collection8)
+    // .map(function(image) {return image.set({
+    //     'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+    //     'WRS_PATH': image.get('WRS_PATH')})
+    // })
+    .map(utils.addCloudScore)
+    .map(utils.maskCloudScore) 
+    // .map(spectralTransforms)
+    .sort('system:time_start')
+
+// print(BASE_COLLECTION.limit(10))
 
 // Max number of images to use when generating a mosaic.
 var MAX_MOSAIC_SIZE = 20;
@@ -193,6 +233,9 @@ function findSelectedThumbnails(thumbnailGrid) {
   var ids = [];
   thumbs.forEach(function f(e) {
     var id = e.widgets().get(0).getValue();
+    var sensor = id.split('_').get(0)
+    var COLLECTION_ID = 'LANDSAT/' + sensor + '/C01/T1_SR';
+    
     var checked = e.widgets().get(2).getValue();
     if (checked) {
       ids.push(COLLECTION_ID + '/' + id);

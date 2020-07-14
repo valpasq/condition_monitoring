@@ -307,7 +307,7 @@ var headerPanel = ui.Panel([toolLabel])
 var instrucPanel = ui.Panel([instruct])
 
 // Select States panel
-var stateList = [['CT'], ['MA'], ['MD'], ['ME'], ['NH'], ['NJ'], ['NY'], ['PA'], ['RI'], ['VT']];
+var stateList = [['CT'], ['DE'], ['MA'], ['MD'], ['ME'], ['NH'], ['NJ'], ['NY'], ['PA'], ['RI'], ['VT']];
 
 var stateBox = [];
 stateList.forEach(function(name, state) {
@@ -327,8 +327,8 @@ var statePanel = ui.Panel(
 );
 
 stateBox[0].setValue(1);
-stateBox[1].setValue(1);
-stateBox[8].setValue(1);
+stateBox[2].setValue(1);
+stateBox[9].setValue(1);
 
 
 // Monitoring Period panel

@@ -235,7 +235,8 @@ var addPrediction = function(image) {
   var nobs = baseline.select('nobs').rename('nobs')
   var t = baseline.select('t').rename('trend')
   return image.addBands(prediction)
-    .addBands(rmse).addBands(nobs).addBands(t);
+    .addBands(rmse).addBands(nobs).addBands(t)
+    .copyProperties(image);
 }
 
 // Function to calculate scores
@@ -245,7 +246,8 @@ var addScore = function(image) {
   var score = observed.subtract(prediction)
       .divide(image.select('rmse'))
       
-  return image.addBands(score.rename('score'));
+  return image.addBands(score.rename('score'))
+    .copyProperties(image);
 }
 
 
@@ -408,6 +410,7 @@ controlPanel.add(instrucPanel)
 
 var baseline = []
 var final_scores = []
+var predictions = []
 
 // Harmonic frequences - use 12-month/4-month (h13)
 var harmonicFrequencies = ee.List([1,3]);
@@ -472,7 +475,7 @@ submitButton.onClick(function(){
     var collectPredictions = harmonicLandsat
       .map(addPrediction)
       .map(addScore);
-  
+    
     // Mean score for monitoring period
     var score = collectPredictions.select('score')
       .reduce('mean')
@@ -507,6 +510,8 @@ submitButton.onClick(function(){
     }
 
   }
+  
+  print(ee.ImageCollection(predictions).limit(10))
   
   // Average across Paths
   var display_map = final_scores
@@ -551,6 +556,7 @@ submitButton.onClick(function(){
   final_scores = []
   
 })
+
 
 map.setOptions('SATELLITE')
 

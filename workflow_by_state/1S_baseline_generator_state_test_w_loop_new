@@ -212,27 +212,25 @@ print(paths)
 
 var path_start = paths.get(0).getInfo()
 var path_stop = paths.get(-1).getInfo()
-print(path_stop)
-
 
 // Select all available (full) versus limited L7 (16d) time series
 if (TS == 'full') {
   
-  // Get all Landsat 5 imagery.
+  // Get Landsat 5 imagery.
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess457);
   
-  // Get all Landsat 7 imagery
+  // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess457);
   
-  // Get all Landsat 8 imagery.
+  // Get Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
@@ -241,7 +239,7 @@ if (TS == 'full') {
     
 } else if (TS == '16d') {
   
-  // Get all Landsat 5 imagery.
+  // Get Landsat 5 imagery.
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
@@ -257,7 +255,7 @@ if (TS == 'full') {
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess457);
   
-  // Get all Landsat 8 imagery.
+  // Get Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013

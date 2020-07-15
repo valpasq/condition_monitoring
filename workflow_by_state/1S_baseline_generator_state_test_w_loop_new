@@ -18,7 +18,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var STATE = 'DE';
+var STATE = 'WV';
 var roi = ee.FeatureCollection(table)
   .filterMetadata('STUSPS', 'equals', STATE)
   .geometry().dissolve()
@@ -313,11 +313,11 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   )
   })
   
-  // Map over scene collections
+  // Map harmonic estimation over scene collections
   var outputFull = ee.ImageCollection(collections.map(getCoeffs));
   
+  // Combine results by Path
   for(var path = path_start; path <= path_stop; path++){
-
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path)
     var path_proj = images.first().projection()
     
@@ -327,10 +327,9 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
       .clip(roi)
       .setMulti(outputProperties))
       .set('WRS_PATH', path);
-  
-    print('Mosaic product:', outputMosaic);
+    // print('Mosaic product:', outputMosaic);
     
-    Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
+    // Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
       
     Export.image.toAsset({
       image: outputMosaic,

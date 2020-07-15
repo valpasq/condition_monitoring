@@ -335,7 +335,7 @@ stateBox[9].setValue(1);
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var sliderLabel = ui.Label('⚪ Year:');
-var startYearslider = ui.Slider({min:1990, max:2019, value:2016, step:1});
+var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
 startYearslider.style().set('stretch', 'horizontal')
 
 var startDayLabel = ui.Label({value: '⚪  Start (mm-dd):' , style:{stretch: 'horizontal'}});
@@ -488,23 +488,23 @@ submitButton.onClick(function(){
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
     // print(monitor_subset.size())
     
-    // if (monitor_subset.size().getInfo() >= 1){
-    // Assessment for each path
-    var results = baselines.map(assess)
-    
-    // Average across baselines
-    var assessment = results.select('score')
-      .reduce('mean')
-      .clip(clip_bound)
-      .updateMask(tcc_mask)
-    
-    // Add reduced result to map
-    var layer_name = 'Path ' + path
-    map.addLayer(assessment.select('score_mean'), viz, layer_name, false)
-    
-    // Image where each band is a Path-level assessment
-    final_scores = ee.Image(final_scores).addBands(assessment)
-    // }
+    if (monitor_subset.size().getInfo() >= 1){
+      // Assessment for each path
+      var results = baselines.map(assess)
+      
+      // Average across baselines
+      var assessment = results.select('score')
+        .reduce('mean')
+        .clip(clip_bound)
+        .updateMask(tcc_mask)
+      
+      // Add reduced result to map
+      var layer_name = 'Path ' + path
+      map.addLayer(assessment.select('score_mean'), viz, layer_name, false)
+      
+      // Image where each band is a Path-level assessment
+      final_scores = ee.Image(final_scores).addBands(assessment)
+    }
 
   }
   

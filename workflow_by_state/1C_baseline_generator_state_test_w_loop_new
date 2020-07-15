@@ -17,20 +17,15 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// var US_STATES = ee.FeatureCollection("TIGER/2018/States")
-// var STATE = 'VA';
-// var roi = ee.FeatureCollection(US_STATES)
-//   .filterMetadata('STUSPS', 'equals', STATE)
-//   .geometry().dissolve()
   
 var COUNTRIES = ee.FeatureCollection("USDOS/LSIB_SIMPLE/2017")
-var STATE = 'GG'
+var COUNTRY = 'GG'
 var roi = ee.FeatureCollection(COUNTRIES)
-  .filterMetadata('country_co', 'equals', STATE)
+  .filterMetadata('country_co', 'equals', COUNTRY)
   .geometry().dissolve()
 
 // Specify output collection (empty collection created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_country/'
 
 
 // ---------------------------------- Model Parameters ---------------------------------- 
@@ -38,7 +33,7 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_state/'
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2015;  // Starts 01-01
+var START_YEAR = 2000;  // Starts 01-01
 var WINDOW = 5;
 var CURR_YEAR = 2019;   // Year to stop
 
@@ -296,7 +291,7 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
       'harmonics': HARMONICS,
       'time_series': TS,
       'name': experiment_name,
-      'state': STATE
+      'country': COUNTRY
   });
   
   // Filter full Landsat collection to moving window period
@@ -335,12 +330,12 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
       .set('WRS_PATH', path);
     // print('Mosaic product:', outputMosaic);
     
-    Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
+    // Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
       
     Export.image.toAsset({
       image: outputMosaic,
       description: DEPENDENT + '_' + start + '-' + end + '-' + path,
-      assetId: output_name + '_p' + path + '_' + STATE,
+      assetId: output_name + '_p' + path + '_' + COUNTRY,
       region: roi.bounds(),
       crs: path_proj,
       scale: 30,

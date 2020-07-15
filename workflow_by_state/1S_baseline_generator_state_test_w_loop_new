@@ -272,6 +272,7 @@ var collection = collection5.merge(collection7).merge(collection8)
 print(collection)
 
 
+// Moving window baseline estimation
 for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   var end = start + (WINDOW - 1);
   
@@ -292,9 +293,9 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
       'state': STATE
   });
   
-  var collection_filt = collection
-    .filterDate(start + '-01-01', end + '-12-31') 
-  print(collection_filt)
+  // Filter full Landsat collection to moving window period
+  var collection_filt = collection.filterDate(start + '-01-01', end + '-12-31') 
+  // print(collection_filt)
   
   // Join images by Scene (Path/Row)
   var join = ee.Join.saveAll('images', 'system:time_start', true)

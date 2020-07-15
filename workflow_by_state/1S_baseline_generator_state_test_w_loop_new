@@ -203,9 +203,10 @@ var sinNames = getNames('sin_', harmonicFrequencies);
 var independents = ee.List(['constant', 't'])
   .cat(cosNames).cat(sinNames);
 
-// Get WRS2 Scene boundaries
+// Get WRS2 scenes
 var scenes = wrs2.filterBounds(roi);
 
+// Get paths in study area
 var paths = scenes.aggregate_array('PATH').distinct().sort()
 print(paths)
 

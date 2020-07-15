@@ -311,11 +311,11 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   // print('Full collection:', outputFull);
   
   var paths = outputFull.aggregate_array('WRS_PATH').distinct().sort()
+  print(paths)
   
-  var num_paths = paths.size().getInfo()
-  // print(paths)
   var path_start = paths.get(0).getInfo()
-  var path_stop = paths.get(num_paths-1).getInfo()
+  var path_stop = paths.get(-1).getInfo()
+  print(path_stop)
   
   for(var path = path_start; path <= path_stop; path++){
     // print(path)

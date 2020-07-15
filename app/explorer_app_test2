@@ -335,11 +335,11 @@ stateBox[9].setValue(1);
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var sliderLabel = ui.Label('⚪ Year:');
-var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
+var startYearslider = ui.Slider({min:1990, max:2020, value:2020, step:1});
 startYearslider.style().set('stretch', 'horizontal')
 
 var startDayLabel = ui.Label({value: '⚪  Start (mm-dd):' , style:{stretch: 'horizontal'}});
-var startDayBox = ui.Textbox({value:'05-01'});
+var startDayBox = ui.Textbox({value:'06-20'});
 startDayBox.style().set('stretch', 'horizontal');
 
 var endDayLabel = ui.Label({value: '⚪  End (mm-dd):', style:{stretch: 'horizontal'}});
@@ -486,8 +486,7 @@ submitButton.onClick(function(){
     
     var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
     var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
-    print(monitor_subset.size())
-    
+
     if (monitor_subset.size().getInfo() >= 1){
       // Assessment for each path
       var results = baselines.map(assess)

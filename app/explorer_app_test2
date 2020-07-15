@@ -1,0 +1,559 @@
+// |
+// | Forest Condition Monitoring Explorer (v3.0)
+// | [valpasq@bu.edu], 2020 
+// |
+
+
+// ----------------------------- Imports & Outputs ---------------------------------- 
+ 
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
+
+var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_state')
+var NLCD = ee.Image('USGS/NLCD/NLCD2016')
+
+var CC_THRESH = 50;     
+var DEPENDENT = 'tcg'
+var MIN_OBS = 30;
+var TS = 'full'
+var FOCAL_KERNEL = 30
+
+// ----------------------------- Visualization -------------------------------- 
+// Default visualization palette used in Pasquarella et al. 2017, 2018
+
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+
+// Create colorbar for legend.
+function ColorBar(palette) {
+  return ui.Thumbnail({
+    image: ee.Image.pixelLonLat().select(0),
+    params: {
+      bbox: [0, 0, 1, 0.1],
+      dimensions: '100x5',
+      format: 'png',
+      min: 1,
+      max: 0,
+      palette: palette,
+    },
+    style: {stretch: 'horizontal', margin: '2px 2px'},
+  });
+}
+
+// Build legend.
+function makeLegend(palette) {
+  var legendTitle = ui.Label({
+    value: 'Average Change in Forest Condition',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '11px',
+      fontFamily: FONT,
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+    
+  var labelPanel = ui.Panel({
+      widgets: [
+        ui.Label('Small', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
+        ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
+        ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'})
+      ],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
+  
+  return ui.Panel({
+    widgets: [legendTitle, ColorBar(palette), labelPanel],
+    style: {position: 'bottom-right',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+}
+
+// Figure-style for map
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// ---------------------------------- Functions ---------------------------------- 
+
+var spectralTransforms = function(img){
+  // make sure index string in upper case
+  var index = DEPENDENT.toUpperCase();
+  
+  var scaled = img.divide(10000);
+
+  var dict = {
+    blue: scaled.select("blue"),
+    green: scaled.select("green"), 
+    red: scaled.select("red"),
+    nir: scaled.select("nir"),
+    swir1: scaled.select("swir1"),
+    swir2: scaled.select("swir2"),
+  };
+  
+  var indexImg;
+  switch (index){
+    case 'NDVI':
+      indexImg = scaled.normalizedDifference(['nir', 'red'])
+        .rename("ndvi");
+      break;
+    case 'EVI':
+      indexImg = scaled.expression("2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))", dict)
+        .rename("evi");
+      break;
+    case 'TCG':
+      indexImg = scaled.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
+        .rename("tcg");
+      break;
+    case 'SR':
+      indexImg = scaled.select('nir').divide(scaled.select('red'))
+        .rename("sr");
+      break;
+
+    default:
+      print('The index you provided is not supported');
+  }
+
+  return indexImg//.reproject(baseline_crs, null, output_resolution)
+    .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
+}
+
+
+var getNames = function(base, list) {
+  return ee.List(list).map(function(i) { 
+    return ee.String(base).cat(ee.Number(i).int());
+  });
+};
+
+
+var addConstant = function(image) {
+  return image.addBands(ee.Image(1))
+    // .setDefaultProjection(baseline_crs);
+};
+
+
+var addTime = function(image) {
+  // Compute time in fractional years since the epoch.
+  var date = ee.Date(image.get('system:time_start'));
+  var years = date.difference(ee.Date('1970-01-01'), 'year');
+  var timeRadians = ee.Image(years.multiply(2 * Math.PI));
+  return image.addBands(timeRadians.rename('t').float())
+    .setDefaultProjection(baseline.projection().crs());
+};
+
+
+var addHarmonics = function(freqs) {
+  return function(image) {
+    // Make an image of frequencies.
+    var frequencies = ee.Image.constant(freqs)
+      // .setDefaultProjection(baseline_crs);
+    // This band should represent time in radians.
+    var time = ee.Image(image).select('t');
+    // Get the cosine terms.
+    var cosines = time.multiply(frequencies).cos()
+      .rename(cosNames);
+    // Get the sin terms.
+    var sines = time.multiply(frequencies).sin()
+      .rename(sinNames);
+    return image.addBands(cosines).addBands(sines);
+  };
+};
+
+
+// Function to build monitoring collection
+var monitorTS = function(clipBound, monitor_start, monitor_end) {
+  
+// Get Landsat 5 imagery
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end)  
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess457) 
+    
+  // Get Landsat 7 imagery
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess457) 
+
+  // Get  Landsat 8 imagery
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess8)  
+
+  // Merge collections
+  var collection = collection5.merge(collection7).merge(collection8)
+      .map(function(image) {return image.set({
+          'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+          'WRS_PATH': image.get('WRS_PATH')})
+      })
+      .map(utils.addCloudScore)
+      .map(utils.maskCloudScore) 
+      .map(spectralTransforms)
+      .sort('system:time_start') 
+      
+  // Filter endlaps (within-Path)
+  var acquisitions = collection.aggregate_array('SENSING_TIME').distinct()
+  
+  // Take mean for each acquisition date (Path)
+  var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
+    var date = ee.Date(d)
+    var date2 = date.advance(24, 'hour')
+    var path = collection.filterDate(date, date2).first().get('WRS_PATH')
+    
+    return collection.filterDate(date, date2).mean()
+      .set({
+        'system:time_start': date.millis(), 
+        'date': date,
+        'WRS_PATH': path
+      })
+  }));
+  
+  // Return image collection for monitoring period
+  return monitorC;
+  
+  };
+  
+  
+// Function to add predicted value
+var addPrediction = function(image) {
+  var prediction = image.select(independents)
+      .multiply(baseline.select(independents))
+      .reduce('sum')
+      .rename('fitted')
+  var rmse = baseline.select('rmse').rename('rmse')
+  var nobs = baseline.select('nobs').rename('nobs')
+  var t = baseline.select('t').rename('trend')
+  return image.addBands(prediction)
+    .addBands(rmse).addBands(nobs).addBands(t);
+}
+
+// Function to calculate scores
+var addScore = function(image) {
+  var observed = image.select(DEPENDENT)
+  var prediction = image.select('fitted')
+  var score = observed.subtract(prediction)
+      .divide(image.select('rmse'))
+      
+  return image.addBands(score.rename('score'));
+}
+
+
+// ---------------------------------- MAIN PANELS ---------------------------------- 
+
+// Set up Control Panel 
+var controlPanel = ui.Panel({
+  layout: ui.Panel.Layout.flow('vertical'),
+  style: {width: '275px',
+  backgroundColor: 'white'}
+});
+
+
+// Set up Map 
+var map = ui.Map();
+
+// ---------------------------------- SECONDARY PANELS ---------------------------------- 
+
+var FONT = 'Verdana'
+
+// Style for heading labels
+var visLabels = {
+  fontWeight: 'bold', 
+  fontSize: '12px', 
+  fontFamily: FONT,
+  width: '275px',
+  padding: '5px 0px 5px 10px',
+  color: 'rgba(0, 0, 0, 0.5)', 
+  backgroundColor: 'rgba(0, 0, 0, 0.1)',
+  textAlign: 'left'
+  
+};
+
+// Title panel 
+var toolLabel = ui.Label('Forest Condition Assessment', {
+  fontWeight: 'bold', 
+  fontSize: '20px', 
+  fontFamily: FONT,
+  padding: '10px 0px 10px 10px',
+  width: '275px',
+  color: 'white',
+  backgroundColor: 'rgba(0, 0, 0, 0.75)'
+})
+var toolDesc = ui.Label('')
+
+var instruct = ui.Label('This tool uses a set of harmonic baseline ' + 
+  'models fit to time series of Landsat Tasseled Cap Greenness ' + 
+  '(2000-2019, 5-year moving window)  to assess changes in forest ' +
+  'canopy condition during the specified monitoring period. ' + 
+  'Mapped results represent mean RMSE-normalized residuals across ' +
+  'an ensemble of baseline predictions. Results for individual WRS-2 ' +
+  'Paths (available in Layers list) are averaged, and a focal mean is applied '+
+  'to produce the final assessment layer.', {
+    fontSize: '10px', 
+    fontFamily: 'Verdana',
+    padding: '5px 5px 0px 5px',
+  })
+var headerPanel = ui.Panel([toolLabel])
+var instrucPanel = ui.Panel([instruct])
+
+// Select States panel
+var stateList = [['CT'], ['DE'], ['MA'], ['MD'], ['ME'], ['NH'], ['NJ'], ['NY'], ['PA'], ['RI'], ['VT']];
+
+var stateBox = [];
+stateList.forEach(function(name, state) {
+  var checkBox = ui.Checkbox(name[0]);
+  stateBox.push(checkBox);
+});
+
+var statePanelLabel = ui.Label('SELECT STATES ', visLabels);
+var statePanel = ui.Panel(
+  [ 
+    ui.Panel([stateBox[0], stateBox[4], stateBox[8]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[1], stateBox[5], stateBox[9]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[2], stateBox[6]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[3], stateBox[7]], null, {stretch: 'horizontal'}),
+  ],
+  ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
+);
+
+stateBox[0].setValue(1);
+stateBox[2].setValue(1);
+stateBox[9].setValue(1);
+
+
+// Monitoring Period panel
+var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
+
+var sliderLabel = ui.Label('⚪ Year:');
+var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
+startYearslider.style().set('stretch', 'horizontal')
+
+var startDayLabel = ui.Label({value: '⚪  Start (mm-dd):' , style:{stretch: 'horizontal'}});
+var startDayBox = ui.Textbox({value:'05-01'});
+startDayBox.style().set('stretch', 'horizontal');
+
+var endDayLabel = ui.Label({value: '⚪  End (mm-dd):', style:{stretch: 'horizontal'}});
+var endDayBox = ui.Textbox({value:'09-30'});
+endDayBox.style().set('stretch', 'horizontal');
+
+var monitoringPanel = ui.Panel(
+  [
+    dateSectionLabel,
+    ui.Panel(
+      [startDayLabel, startDayBox],
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
+    ),
+    ui.Panel(
+      [endDayLabel, endDayBox],
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
+    ),
+    ui.Panel(
+      [sliderLabel, startYearslider], 
+      ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
+    ),
+  // ui.Label('Predictions generated from baseline models are compared with images acquired during the monitoring period to assess potential changes in condition.', {fontSize: '12px'}),
+  ]
+);
+
+
+// Non-forest Mask panel
+var tccLabel = ui.Label('⚪ Min. tree cover (%):')
+var tccInput = ui.Slider({min:0, max:100, value:75, step:5})
+tccInput.style().set('stretch', 'horizontal');
+
+var threshLabel = ui.Label('⚪ Severity threshold:')
+var threshInput = ui.Slider({min:0, max:4, value:1, step:1})
+threshInput.style().set('stretch', 'horizontal');
+
+
+var tccPanel = ui.Panel(
+  [
+  ui.Label('MAP DISPLAY', visLabels),
+  ui.Panel([tccLabel,tccInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
+  ui.Panel([threshLabel,threshInput], ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}),
+  ui.Label(''),
+   ]
+);
+
+
+// Submit button
+var submitButton = ui.Button({label: 'GENERATE ASSESSMENT'});
+submitButton.style().set('stretch', 'horizontal');
+
+
+var autoZoom = ui.Checkbox('Auto-zoom');
+autoZoom.setValue(1)
+var submitPanel = ui.Panel([submitButton, autoZoom])
+
+// Add secondary panels
+controlPanel.add(headerPanel)
+controlPanel.add(statePanelLabel)
+controlPanel.add(statePanel)
+controlPanel.add(monitoringPanel);
+controlPanel.add(tccPanel)
+controlPanel.add(submitPanel)
+controlPanel.add(instrucPanel)
+
+// --------------------------------- PREDICT ---------------------------------- 
+
+var baseline = []
+var final_scores = []
+
+// Harmonic frequences - use 12-month/4-month (h13)
+var harmonicFrequencies = ee.List([1,3]);
+  
+// Construct lists of names for the harmonic terms.
+var cosNames = getNames('cos_', harmonicFrequencies);
+var sinNames = getNames('sin_', harmonicFrequencies);
+
+// Independent variables.
+var independents = ee.List(['constant', 't'])
+  .cat(cosNames).cat(sinNames);
+  
+  
+// Generate map and clicked time series chart
+submitButton.onClick(function(){
+  map.clear()
+  
+  var min_tcc = tccInput.getValue();
+  var tcc_mask = NLCD.select('percent_tree_cover').gte(min_tcc)
+  
+  var ZERO_THRESH = threshInput.getValue()
+  
+  var monitor_year = startYearslider.getValue()
+  var monitor_start = monitor_year + '-' + startDayBox.getValue();
+  var monitor_end = monitor_year + '-' + endDayBox.getValue();
+  
+  var STATES = [];
+  stateBox.forEach(function(name, state) {
+    var isChecked = stateBox[state].getValue();
+    if(isChecked){
+      STATES.push(stateList[state][0]);
+    }
+  });
+
+
+  var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
+    .filterMetadata('spectral_band', 'equals', DEPENDENT)
+    .filter(ee.Filter.inList('state', STATES)) 
+    .filterMetadata('harmonics', 'equals', 'h13')
+    .filterMetadata('time_series', 'equals', TS))
+  
+  // Get WRS2 paths
+  var paths = experiment_baselines.aggregate_array('WRS_PATH').distinct()
+  var num_paths = paths.size().getInfo()
+  
+  // Get study area boundary
+  var clip_bound = experiment_baselines.geometry().bounds()
+  
+  // Get monitoring period imagery
+  var monitor = monitorTS(clip_bound, monitor_start, monitor_end);
+  
+  var assess = function(img){
+    baseline = img.updateMask(img.select('nobs').gte(MIN_OBS))
+    
+    // Add constant, time, and coefficients to monitoring collection.
+    var harmonicLandsat = monitor_subset.select(DEPENDENT)
+      .map(addConstant)
+      .map(addTime)
+      .map(addHarmonics(harmonicFrequencies));
+    
+    // Add predictions and scores
+    var collectPredictions = harmonicLandsat
+      .map(addPrediction)
+      .map(addScore);
+  
+    // Mean score for monitoring period
+    var score = collectPredictions.select('score')
+      .reduce('mean')
+      .rename('score')
+    
+    return ee.Image(score);
+  }
+  
+  for(var i = 0; i < num_paths; i++){
+    var path = paths.get(i).getInfo()
+    
+    var baselines = experiment_baselines.filterMetadata('WRS_PATH', 'equals', path)
+    var monitor_subset = monitor.filterMetadata('WRS_PATH', 'equals', path)
+    print(monitor_subset.size())
+    
+    if (monitor_subset.size().getInfo() >= 1){
+      // Assessment for each path
+      var results = baselines.map(assess)
+      
+      // Average across baselines
+      var assessment = results.select('score')
+        .reduce('mean')
+        .clip(clip_bound)
+        .updateMask(tcc_mask)
+      
+      // Add reduced result to map
+      var layer_name = 'Path ' + path
+      map.addLayer(assessment.select('score_mean'), viz, layer_name, false)
+      
+      // Image where each band is a Path-level assessment
+      final_scores = ee.Image(final_scores).addBands(assessment)
+    }
+
+  }
+  
+  // Average across Paths
+  var display_map = final_scores
+    .reduce('mean')
+    .focal_mean(FOCAL_KERNEL, 'circle', 'meters', 1)
+    // .updateMask(tcc_mask)
+
+  var zero_crossing = display_map.add(ZERO_THRESH)
+    .zeroCrossing()
+    .selfMask()
+
+  var monitor_count = monitor.select(DEPENDENT)
+    .reduce('count')
+    .clip(clip_bound)
+    .updateMask(tcc_mask)
+  
+  map.addLayer(monitor_count, {min:0, max:20}, 'Monitoring obs. count', false)
+  map.addLayer(display_map, viz, 'Averaged assessment')
+  map.addLayer(zero_crossing, {palette: 'black'}, 'Severity threshold')
+  
+  
+  var states_display = ee.FeatureCollection("TIGER/2018/States")
+    .filter(ee.Filter.inList('STUSPS', STATES)) 
+    
+  var outline = ee.Image().byte().paint({
+    featureCollection: states_display,
+    color: 1,
+    width: 1
+  });  
+    
+  map.addLayer(outline, {palette: 'gray'}, 'Selected states')
+  
+  if (autoZoom.getValue() === true){
+    map.centerObject(final_scores, 8)
+  }
+  
+  map.setOptions(null, style);
+  map.setOptions('SATELLITE')
+  
+  map.add(makeLegend(palette))
+  
+  final_scores = []
+  
+})
+
+map.setOptions('SATELLITE')
+
+ui.root.clear();
+ui.root.add(controlPanel);
+ui.root.add(map);

@@ -421,7 +421,7 @@ var independents = ee.List(['constant', 't'])
   .cat(cosNames).cat(sinNames);
   
   
-// Generate map 
+// Generate map and clicked time series chart
 submitButton.onClick(function(){
   map.clear()
   
@@ -557,5 +557,3 @@ map.setOptions('SATELLITE')
 ui.root.clear();
 ui.root.add(controlPanel);
 ui.root.add(map);
-
-  

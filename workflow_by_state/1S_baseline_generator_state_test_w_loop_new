@@ -317,23 +317,13 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
   
   // Map over scene collections
   var outputFull = ee.ImageCollection(collections.map(getCoeffs));
-  // print('Full collection:', outputFull);
-  
-  // var paths = outputFull.aggregate_array('WRS_PATH').distinct().sort()
-  // print(paths)
-  
-  // var path_start = paths.get(0).getInfo()
-  // var path_stop = paths.get(-1).getInfo()
-  // print(path_stop)
   
   for(var path = path_start; path <= path_stop; path++){
-    // print(path)
+
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path)
-    // print(images)
     var path_proj = images.first().projection()
-    // print(path_proj)
     
-      // Quality mosaic based on number of observations per pixel
+    // Quality mosaic based on number of observations per pixel (endlap filter)
     var outputMosaic = ee.Image(images
       .qualityMosaic('nobs')
       .clip(roi)

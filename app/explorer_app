@@ -335,7 +335,7 @@ stateBox[9].setValue(1);
 var dateSectionLabel = ui.Label('MONITORING PERIOD', visLabels);
 
 var sliderLabel = ui.Label('⚪ Year:');
-var startYearslider = ui.Slider({min:1990, max:2020, value:2016, step:1});
+var startYearslider = ui.Slider({min:1990, max:2019, value:2016, step:1});
 startYearslider.style().set('stretch', 'horizontal')
 
 var startDayLabel = ui.Label({value: '⚪  Start (mm-dd):' , style:{stretch: 'horizontal'}});

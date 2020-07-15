@@ -40,7 +40,6 @@ var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 
-
 // ---------------------------------- Functions ---------------------------------- 
 
 var spectralTransforms = function(img){
@@ -167,7 +166,7 @@ var getCoeffs = function(feature) {
     .arrayProject([0])
     .arrayFlatten([independents])
   
-  // Get RMS from linearRegression result
+  // Get RMSE from linearRegression result
   var rmse = harmonicTrend.select('residuals')
     .arrayProject([0])
     .arrayFlatten([ee.List(['rmse'])])

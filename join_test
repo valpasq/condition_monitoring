@@ -224,9 +224,6 @@ var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('time_series', 'equals', TS))
 print(experiment_baselines)
 
-// Get WRS2 paths
-var paths = experiment_baselines.aggregate_array('WRS_PATH').distinct()
-var num_paths = paths.size().getInfo()
 
 // Get study area boundary
 var clip_bound = experiment_baselines.geometry().bounds()

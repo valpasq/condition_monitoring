@@ -200,8 +200,8 @@ var DEPENDENT = 'tcg'
 var MIN_OBS = 30;
 var TS = 'full'
 var STATES = ['MA']
-var monitor_start = '2019-05-01'
-var monitor_end = '2019-09-30'
+var monitor_start = '2019-01-01'
+var monitor_end = '2019-12-31'
 
 var SCORES_IC = []
 var baseline = []
@@ -247,32 +247,43 @@ var collections = join.apply({
 
 print(collections)
 
-var test = collections.aggregate_array('system:index')
-print(test.getInfo())
+var experiments = collections.aggregate_array('system:index')
+var num_experiments = experiments.size().getInfo()
+// print(test)
 
+var final_result = []
 
-var baseline_id = collections.filterMetadata('system:index', 'equals', 'features-v6-3_tcg_2000-2004_h13_full_p11_MA')
-var baseline = ee.Image(baseline_id)
-print(baseline)
-// Map.addLayer(ee.Image(baseline))
+// Loop over experiments in baselines collection
+for(var experiment = 0; experiment < num_experiments; experiment++){
+// for(var experiment = 0; experiment < 2; experiment++){
+  
+  var baseline_id = experiments.get(experiment)
+  
+  // var baseline_id = 'features-v6-3_tcg_2000-2004_h13_full_p11_MA'
+  var baseline = ee.Image(collections.filterMetadata('system:index', 'equals', baseline_id).first())
+  print(baseline)
+  // Map.addLayer(ee.Image(baseline))
+  
+  var baseline_images = ee.ImageCollection.fromImages(baseline.get('images'));
+  print(baseline_images)
+  
+  
+  // Add constant, time, and coefficients to monitoring collection.
+  var harmonicLandsat = baseline_images.select(DEPENDENT)
+    .map(addConstant)
+    .map(addTime)
+    .map(addHarmonics(harmonicFrequencies));
+  
+  // Add predictions and scores
+  var collectPredictions = harmonicLandsat
+    .map(addPrediction)
+    .map(addScore);
+  
+  final_result = ee.ImageCollection(final_result).merge(collectPredictions)
+  
+  // Map.addLayer(collectPredictions.select(['fitted', 'tcg']))
 
-var baseline_images = ee.ImageCollection.fromImages(baseline_id.get('images'));
-print(baseline_images)
+}
 
-
-// Add constant, time, and coefficients to monitoring collection.
-var harmonicLandsat = baseline_images.select(DEPENDENT)
-  .map(addConstant)
-  .map(addTime)
-  .map(addHarmonics(harmonicFrequencies));
-
-// Add predictions and scores
-var collectPredictions = harmonicLandsat
-  .map(addPrediction)
-  .map(addScore);
-
-print(collectPredictions)
-Map.addLayer(collectPredictions)
-
-
-
+print(final_result)
+Map.addLayer(final_result.select(['fitted', 'tcg']))

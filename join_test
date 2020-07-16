@@ -69,7 +69,7 @@ var addTime = function(image) {
   var years = date.difference(ee.Date('1970-01-01'), 'year');
   var timeRadians = ee.Image(years.multiply(2 * Math.PI));
   return image.addBands(timeRadians.rename('t').float())
-    .setDefaultProjection(baseline.projection().crs());
+    .setDefaultProjection(ee.Image(baseline).projection().crs());
 };
 
 
@@ -152,12 +152,12 @@ var monitorTS = function(clipBound, monitor_start, monitor_end) {
 // Function to add predicted value
 var addPrediction = function(image) {
   var prediction = image.select(independents)
-      .multiply(baseline.select(independents))
+      .multiply(ee.Image(baseline).select(independents))
       .reduce('sum')
       .rename('fitted')
-  var rmse = baseline.select('rmse').rename('rmse')
-  var nobs = baseline.select('nobs').rename('nobs')
-  var t = baseline.select('t').rename('trend')
+  var rmse = ee.Image(baseline).select('rmse').rename('rmse')
+  var nobs = ee.Image(baseline).select('nobs').rename('nobs')
+  var t = ee.Image(baseline).select('t').rename('trend')
   return image.addBands(prediction)
     .addBands(rmse).addBands(nobs).addBands(t);
 }
@@ -174,6 +174,23 @@ var addScore = function(image) {
 
 
 
+// var getCoeffs = function(feature) {
+//   var baseline_images = ee.ImageCollection.fromImages(feature.get('images'));
+//   var baseline = ee.Image(feature)
+
+//   // Add constant, time, and coefficients to monitoring collection.
+//   var harmonicLandsat = baseline_images.select(DEPENDENT)
+//     .map(addConstant)
+//     .map(addTime)
+//     .map(addHarmonics(harmonicFrequencies));
+  
+//   // Add predictions and scores
+//   var collectPredictions = harmonicLandsat
+//     .map(addPrediction)
+//     .map(addScore);
+  
+//   return collectPredictions;
+// };
 
 
 // ---------------------------------- UI ---------------------------------- 
@@ -220,7 +237,7 @@ print(monitor)
 
 // Join images by Scene (Path/Row)
 var join = ee.Join.saveAll('images', 'system:time_start', true)
-var test = join.apply({
+var collections = join.apply({
   primary: experiment_baselines, 
   secondary: monitor, 
   condition: 
@@ -230,9 +247,31 @@ var test = join.apply({
     })
   })
 
-print(test.first())
+print(collections)
 
-var baseline_images = ee.ImageCollection.fromImages(test.first().get('images'));
+var baseline = collections.first()
+print(baseline)
+// Map.addLayer(ee.Image(baseline))
+
+
+var baseline_images = ee.ImageCollection.fromImages(collections.first().get('images'));
 print(baseline_images)
 
+
+// Add constant, time, and coefficients to monitoring collection.
+var harmonicLandsat = baseline_images.select(DEPENDENT)
+  .map(addConstant)
+  .map(addTime)
+  .map(addHarmonics(harmonicFrequencies));
+
+// Add predictions and scores
+var collectPredictions = harmonicLandsat
+  .map(addPrediction)
+  .map(addScore);
+
+print(collectPredictions)
+Map.addLayer(collectPredictions)
+
+// var outputFull = ee.ImageCollection(collections.map(getCoeffs))
+// print(outputFull)
 

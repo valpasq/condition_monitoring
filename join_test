@@ -175,7 +175,7 @@ var addScore = function(image) {
   var score = observed.subtract(prediction)
       .divide(image.select('rmse'))
       
-  return image.addBands(score.rename('score'));
+  return image.addBands(score.rename('score')).set('name', baseline_id);
 }
 
 

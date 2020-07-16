@@ -291,19 +291,6 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
 
 }
 
-
-// function collectionToImage(collection){
-//   var stack = ee.Image(collection.iterate(function(img, prev) {
-//     var tcg = img.select('tcg')
-//     var fitted = img.select('fitted')
-   
-//     return ee.Image(prev).addBands([tcg, score]);
-//   }, ee.Image(1)));
-
-//   stack = stack.select(ee.List.sequence(1, stack.bandNames().size().subtract(1)));
-//   return stack;
-// }
-
 // print(final_result)
 
 var to_map = final_result.filter(ee.Filter.inList('WRS_PATH', [12, 13])) .select(['fitted', 'tcg'])

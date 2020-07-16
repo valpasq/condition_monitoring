@@ -174,6 +174,26 @@ var addScore = function(image) {
 
 
 
+// var getCoeffs = function(feature) {
+//   var baseline = ee.Image(feature)
+//   var baseline_images = ee.ImageCollection.fromImages(feature.get('images'));
+    
+//   // Add constant, time, and coefficients to monitoring collection.
+//   var harmonicLandsat = baseline_images.select(DEPENDENT)
+//     .map(addConstant)
+//     .map(addTime)
+//     .map(addHarmonics(harmonicFrequencies));
+  
+//   // Add predictions and scores
+//   var collectPredictions = harmonicLandsat
+//     .map(addPrediction)
+//     .map(addScore);
+    
+//   return collectPredictions
+// }
+
+
+
 // ---------------------------------- UI ---------------------------------- 
 var CC_THRESH = 50;     
 var DEPENDENT = 'tcg'
@@ -227,28 +247,32 @@ var collections = join.apply({
 
 print(collections)
 
-var baseline = collections.first()
+var test = collections.aggregate_array('system:index')
+print(test.getInfo())
+
+
+var baseline_id = collections.filterMetadata('system:index', 'equals', 'features-v6-3_tcg_2000-2004_h13_full_p11_MA')
+var baseline = ee.Image(baseline_id)
 print(baseline)
 // Map.addLayer(ee.Image(baseline))
 
-
-var baseline_images = ee.ImageCollection.fromImages(collections.first().get('images'));
+var baseline_images = ee.ImageCollection.fromImages(baseline_id.get('images'));
 print(baseline_images)
 
 
-// // Add constant, time, and coefficients to monitoring collection.
-// var harmonicLandsat = baseline_images.select(DEPENDENT)
-//   .map(addConstant)
-//   .map(addTime)
-//   .map(addHarmonics(harmonicFrequencies));
+// Add constant, time, and coefficients to monitoring collection.
+var harmonicLandsat = baseline_images.select(DEPENDENT)
+  .map(addConstant)
+  .map(addTime)
+  .map(addHarmonics(harmonicFrequencies));
 
-// // Add predictions and scores
-// var collectPredictions = harmonicLandsat
-//   .map(addPrediction)
-//   .map(addScore);
+// Add predictions and scores
+var collectPredictions = harmonicLandsat
+  .map(addPrediction)
+  .map(addScore);
 
-// print(collectPredictions)
-// Map.addLayer(collectPredictions)
+print(collectPredictions)
+Map.addLayer(collectPredictions)
 
 
 

@@ -174,25 +174,6 @@ var addScore = function(image) {
 
 
 
-// var getCoeffs = function(feature) {
-//   var baseline_images = ee.ImageCollection.fromImages(feature.get('images'));
-//   var baseline = ee.Image(feature)
-
-//   // Add constant, time, and coefficients to monitoring collection.
-//   var harmonicLandsat = baseline_images.select(DEPENDENT)
-//     .map(addConstant)
-//     .map(addTime)
-//     .map(addHarmonics(harmonicFrequencies));
-  
-//   // Add predictions and scores
-//   var collectPredictions = harmonicLandsat
-//     .map(addPrediction)
-//     .map(addScore);
-  
-//   return collectPredictions;
-// };
-
-
 // ---------------------------------- UI ---------------------------------- 
 var CC_THRESH = 50;     
 var DEPENDENT = 'tcg'
@@ -269,6 +250,5 @@ var collectPredictions = harmonicLandsat
 print(collectPredictions)
 Map.addLayer(collectPredictions)
 
-// var outputFull = ee.ImageCollection(collections.map(getCoeffs))
-// print(outputFull)
+
 

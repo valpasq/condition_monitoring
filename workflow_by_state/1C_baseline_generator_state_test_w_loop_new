@@ -26,7 +26,7 @@ var roi = ee.FeatureCollection(COUNTRIES)
   .geometry().dissolve()
 
 // Specify output collection (empty collection created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_by_country/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_georgia/'
 
 
 // ---------------------------------- Model Parameters ---------------------------------- 

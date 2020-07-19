@@ -20,9 +20,9 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
   
 var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level1")
+var ID_FIELD = x
 var UNIT_ID = 'GG'
-var roi = ee.FeatureCollection(COUNTRIES)
-  .filterMetadata('country_co', 'equals', UNIT_ID)
+var roi = UNITS.filterMetadata(ID_FIELD, 'equals', UNIT_ID)
   .geometry().dissolve()
 
 // Specify output collection (empty collection created using Assets Manager)

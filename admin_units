@@ -1,6 +1,10 @@
 
 var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level1")
-var ID_FIELD = 'ADM1_CODE'
+var ID_FIELD = 'ADM1_NAME'
+
+var NAME = 'Northwest Territories'
+
+var UNIT = UNITS.filterMetadata(ID_FIELD, 'starts_with', NAME)
 
 Map.addLayer(UNITS)
-Map.addLayer(UNITS.filterMetadata(ID_FIELD, 'equals', 830))
+print(UNIT)

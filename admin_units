@@ -1,0 +1,6 @@
+
+var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level1")
+var ID_FIELD = 'ADM1_CODE'
+
+Map.addLayer(UNITS)
+Map.addLayer(UNITS.filterMetadata(ID_FIELD, 'equals', 830))

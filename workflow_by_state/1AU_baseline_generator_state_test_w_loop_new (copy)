@@ -20,13 +20,14 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
   
 var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level1")
-var ID_FIELD = x
-var UNIT_ID = 'GG'
+var ID_FIELD = 'ADM1_CODE'
+var UNIT_ID = 826
+var UNIT_NAME = 'BC'
 var roi = UNITS.filterMetadata(ID_FIELD, 'equals', UNIT_ID)
   .geometry().dissolve()
 
 // Specify output collection (empty collection created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_georgia/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_above/'
 
 
 // ---------------------------------- Model Parameters ---------------------------------- 
@@ -36,7 +37,7 @@ var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 2000;  // Starts 01-01
 var WINDOW = 5;
-var CURR_YEAR = 2019;   // Year to stop
+var CURR_YEAR = 2010;   // Year to stop
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
@@ -292,7 +293,8 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
       'harmonics': HARMONICS,
       'time_series': TS,
       'name': experiment_name,
-      'country': COUNTRY
+      'admin_name': UNIT_NAME,
+      'admin1_code': UNIT_ID
   });
   
   // Filter full Landsat collection to moving window period
@@ -336,7 +338,7 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
     Export.image.toAsset({
       image: outputMosaic,
       description: DEPENDENT + '_' + start + '-' + end + '-' + path,
-      assetId: output_name + '_p' + path + '_' + COUNTRY,
+      assetId: output_name + '_p' + path + '_' + UNIT_NAME,
       region: roi.bounds(),
       crs: path_proj,
       scale: 30,

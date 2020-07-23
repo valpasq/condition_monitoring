@@ -1,9 +1,6 @@
-var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level1")
-var ID_FIELD = 'ADM1_NAME'
+var UNITS_LVL1 = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level1")
+var UNITS_LVL2 = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level2")
 
-var NAME = 'Northwest Territories'
+Map.addLayer(UNITS_LVL1, {}, 'Level 1 Admin Units', false)
+Map.addLayer(UNITS_LVL2, {}, 'Level 2 Admin Units')
 
-var UNIT = UNITS.filterMetadata(ID_FIELD, 'starts_with', NAME)
-
-Map.addLayer(UNITS)
-print(UNIT)

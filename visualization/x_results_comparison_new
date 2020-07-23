@@ -1,6 +1,9 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending"),
-    geometry = /* color: #d63000 */ee.Geometry.MultiPoint(
+    geometry = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.MultiPoint(
         [[-72.23501892402889, 41.807357153800126],
          [-72.32660683603468, 41.887064648114055],
          [-72.24467500916975, 42.428951297130176],
@@ -74,6 +77,9 @@ for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
     
 }
 
+Map.addLayer(tcc_mask.updateMask(tcc_mask.eq(0)), {color: 'black'}, 'mask')
+
+
 // -------------------------------- Add plot locations  -------------------------------- 
 
 // Bounding boxes
@@ -127,7 +133,7 @@ function makeLegend(palette) {
     value: 'Detected Change in Forest Condition',
     style: {
       fontWeight: 'bold',
-      fontSize: '12px',
+      fontSize: '16px',
       margin: '0 0 2px 0',
       padding: '0',
       backgroundColor: 'rgba(255, 255, 255, 0)'
@@ -135,9 +141,9 @@ function makeLegend(palette) {
     });
   var labelPanel = ui.Panel({
       widgets: [
-        ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
-        ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'}),
-        ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'})
+        ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '14px'}),
+        ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '14px'}),
+        ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '14px'})
       ],
       layout: ui.Panel.Layout.flow('horizontal'),
       style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
@@ -156,7 +162,7 @@ Map.add(makeLegend(palette))
 var style = {
   'Figure': [{
       featureType: 'all',
-      stylers: [{ color: '#000000'}]
+      stylers: [{ color: '#FEFEFE'}]
   }]
 };
 

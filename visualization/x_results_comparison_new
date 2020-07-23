@@ -104,8 +104,8 @@ Map.addLayer(ct_bounds, {}, 'CT plots - bounds')
 Map.addLayer(ma_bounds, {}, 'MA plots - bounds')
 
 // Add plot points
-Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots')
-Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots')
+Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots', false)
+Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots', false)
 
 
 // ------------------------------------- Map styling  ------------------------------------- 
@@ -167,5 +167,5 @@ var style = {
 };
 
 Map.setOptions(null, style);
-Map.setOptions('SATELLITE')
+// Map.setOptions('SATELLITE')
 

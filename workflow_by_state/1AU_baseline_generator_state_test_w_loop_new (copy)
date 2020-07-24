@@ -37,7 +37,7 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_above/'
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2009;  // Starts 01-01
+var START_YEAR = 2000;  // Starts 01-01
 var WINDOW = 5;
 var CURR_YEAR = 2019;   // Year to stop
 

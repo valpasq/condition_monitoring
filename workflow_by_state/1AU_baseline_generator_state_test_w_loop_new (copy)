@@ -18,11 +18,12 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending");
 var VERSION = '6-3';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-  
-var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level1")
-var ID_FIELD = 'ADM1_CODE'
-var UNIT_ID = 826
-var UNIT_NAME = 'BC'
+
+var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level2")
+var ID_FIELD = 'ADM2_CODE'
+var UNIT_ID = 190733
+var UNIT_NAME = 'NT_R4'
+
 var roi = UNITS.filterMetadata(ID_FIELD, 'equals', UNIT_ID)
   .geometry()//.dissolve()
 Map.addLayer(roi)
@@ -36,9 +37,9 @@ var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v6-3_above/'
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2000;  // Starts 01-01
+var START_YEAR = 2009;  // Starts 01-01
 var WINDOW = 5;
-var CURR_YEAR = 2010;   // Year to stop
+var CURR_YEAR = 2019;   // Year to stop
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs

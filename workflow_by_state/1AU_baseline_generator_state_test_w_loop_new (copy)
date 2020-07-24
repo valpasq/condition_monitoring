@@ -21,8 +21,8 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var UNITS = ee.FeatureCollection("FAO/GAUL_SIMPLIFIED_500m/2015/level2")
 var ID_FIELD = 'ADM2_CODE'
-var UNIT_ID = 190733
-var UNIT_NAME = 'NT_R4'
+var UNIT_ID = 12551
+var UNIT_NAME = 'BC_FF-G'
 
 var roi = UNITS.filterMetadata(ID_FIELD, 'equals', UNIT_ID)
   .geometry()//.dissolve()
@@ -296,7 +296,7 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
       'time_series': TS,
       'name': experiment_name,
       'admin_name': UNIT_NAME,
-      'admin1_code': UNIT_ID
+      'admin2_code': UNIT_ID
   });
   
   // Filter full Landsat collection to moving window period

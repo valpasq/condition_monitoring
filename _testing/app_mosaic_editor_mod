@@ -88,7 +88,9 @@ var BASE_COLLECTION = collection5.merge(collection7).merge(collection8)
     // .map(spectralTransforms)
     .sort('system:time_start')
 
-// print(BASE_COLLECTION.limit(10))
+print(BASE_COLLECTION.limit(10))
+print(BASE_COLLECTION.filterMetadata('LANDSAT_ID', 'equals', 'LC08_018030_20200616'))
+
 
 // Max number of images to use when generating a mosaic.
 var MAX_MOSAIC_SIZE = 20;

@@ -307,7 +307,7 @@ var headerPanel = ui.Panel([toolLabel])
 var instrucPanel = ui.Panel([instruct])
 
 // Select States panel
-var stateList = [['CT'], ['DE'], ['MA'], ['MD'], ['ME'], ['NH'], ['NJ'], ['NY'], ['PA'], ['RI'], ['VA'], ['VT'], ['WV']];
+var stateList = [['CT'], ['DE'], ['MA'], ['MD'], ['ME'], ['MI'], ['NH'], ['NJ'], ['NY'], ['PA'], ['RI'], ['VA'], ['VT'], ['WV']];
 
 var stateBox = [];
 stateList.forEach(function(name, state) {
@@ -321,7 +321,7 @@ var statePanel = ui.Panel(
     ui.Panel([stateBox[0], stateBox[5], stateBox[10]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[1], stateBox[6], stateBox[11]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[2], stateBox[7], stateBox[12]], null, {stretch: 'horizontal'}),
-    ui.Panel([stateBox[3], stateBox[8]], null, {stretch: 'horizontal'}),
+    ui.Panel([stateBox[3], stateBox[8], stateBox[13]], null, {stretch: 'horizontal'}),
     ui.Panel([stateBox[4], stateBox[9]], null, {stretch: 'horizontal'}),
   ],
   ui.Panel.Layout.Flow('horizontal'), {stretch: 'horizontal'}
@@ -329,7 +329,7 @@ var statePanel = ui.Panel(
 
 stateBox[0].setValue(1);
 stateBox[2].setValue(1);
-stateBox[9].setValue(1);
+stateBox[10].setValue(1);
 
 
 // Monitoring Period panel

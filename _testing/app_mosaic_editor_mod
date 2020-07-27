@@ -171,6 +171,7 @@ function makeThumbnail(id, onChangeFunc) {
   var imageLabel = ui.Label(shortImageId, LABEL_STYLE);
   thumbnailContainer.add(imageLabel);
 
+
   // Add the thumbnail itself to the container
   var thumbnail = ui.Thumbnail({
     image: ee.Image(id).visualize(VIZ_PARAMS),

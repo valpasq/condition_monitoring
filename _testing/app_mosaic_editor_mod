@@ -219,8 +219,8 @@ function updateMosaic(ids, mapPanel) {
     mapPanel.layers().set(0, ee.Image());
     return;
   }
-  var mosaickedImage = ee.ImageCollection(ids).median();
-  mapPanel.layers().set(0, mosaickedImage.visualize(VIZ_PARAMS));
+  // var mosaickedImage = ee.ImageCollection(ids).median();
+  // mapPanel.layers().set(0, mosaickedImage.visualize(VIZ_PARAMS));
 }
 
 

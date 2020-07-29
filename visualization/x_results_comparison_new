@@ -86,13 +86,13 @@ Map.addLayer(tcc_mask.updateMask(tcc_mask.eq(0)), {color: 'black'}, 'mask')
 var ct_bounds = ee.Image().byte().paint({
   featureCollection: ct_burlap.geometry().bounds(),
   color: 1,
-  width: 3
+  width: 2
 });
 
 var ma_bounds = ee.Image().byte().paint({
   featureCollection: ma_quabbin.geometry().bounds(),
   color: 1,
-  width: 3
+  width: 2
 });
 
 
@@ -100,11 +100,11 @@ var ma_bounds = ee.Image().byte().paint({
 Map.addLayer(wrs2,{}, 'WRS2', false)
 
 // Add bounding boxes
-Map.addLayer(ct_bounds, {}, 'CT plots - bounds')
-Map.addLayer(ma_bounds, {}, 'MA plots - bounds')
+Map.addLayer(ct_bounds, {palette: 'white'}, 'CT plots - bounds')
+Map.addLayer(ma_bounds, {palette: 'white'}, 'MA plots - bounds')
 
 // Add plot points
-Map.addLayer(ct_burlap, {color: 'white'}, 'CT plots', false)
+Map.addLayer(ct_burlap.draw({color: 'white', pointRadius: 2}), 'CT plots', false)
 Map.addLayer(ma_quabbin, {color: 'white'}, 'MA plots', false)
 
 

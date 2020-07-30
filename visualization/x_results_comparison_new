@@ -84,7 +84,7 @@ Map.addLayer(tcc_mask.updateMask(tcc_mask.eq(0)), {color: 'black'}, 'mask')
 
 // Bounding boxes
 var ct_bounds = ee.Image().byte().paint({
-  featureCollection: ct_burlap.geometry().bounds().buffer(1000),
+  featureCollection: ct_burlap.geometry().bounds().buffer(5000),
   color: 1,
   width: 2
 });

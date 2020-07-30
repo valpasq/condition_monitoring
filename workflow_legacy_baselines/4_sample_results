@@ -19,7 +19,7 @@ var EXPERIMENTS = ee.ImageCollection(RESULTS_FN)
 
 var RESULT_BAND = 'score_weighted_mean'
 
-var WHICH_SAMPLE = 1;
+var WHICH_SAMPLE = 2;
 var YEAR = 2017
 
 var map_result = 8
@@ -40,7 +40,7 @@ if (WHICH_SAMPLE == 1) {
     .filterMetadata('Year', 'equals', YEAR);
     
 }
-
+print(SAMPLE)
 // ---------------------------------- Get experiments ---------------------------------- 
 
 // Get results for selected year

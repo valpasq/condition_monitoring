@@ -24,6 +24,7 @@ var ma_quabbin = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-
 var ct_burlap = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
 var study_area = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/simplified_southernNE')
 var NLCD = ee.Image('USGS/NLCD/NLCD2011')
+var STATES = ee.FeatureCollection('TIGER/2018/States')
 
 // ------------------------------------- Config ------------------------------------- 
 
@@ -110,6 +111,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
     .clip(study_area)
     .updateMask(tcc_mask)
     .rename(reanalysis_cn)
+    .setMulti({'name':'reanalysis'})
 } 
 
 // Get results
@@ -158,8 +160,7 @@ var style = {
   }]
 };
 
-var states_display = ee.FeatureCollection("TIGER/2018/States")
-    .filter(ee.Filter.inList('STUSPS', ['MA', 'CT', 'RI'])) 
+var states_display = STATES.filter(ee.Filter.inList('STUSPS', ['MA', 'CT', 'RI'])) 
     
 var state_outlines = ee.Image().byte().paint({
     featureCollection: states_display,

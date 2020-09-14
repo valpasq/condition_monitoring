@@ -103,16 +103,16 @@ var tcc_mask = NLCD.select('percent_tree_cover')
   .gte(MIN_TCC)
   .reproject('EPSG:5070', null, 30)
 
-// Legacy results
-var reanalysis_cn = 'reanalysis_score'
-if (YEAR >= 2015 & YEAR <= 2018) {
-  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
-  var reanalysis = ee.Image(reanalysis_fn)
-    .clip(study_area)
-    .updateMask(tcc_mask)
-    .rename(reanalysis_cn)
-    .setMulti({'name':'reanalysis'})
-} 
+// // Legacy results
+// var reanalysis_cn = 'reanalysis_score'
+// if (YEAR >= 2015 & YEAR <= 2018) {
+//   var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
+//   var reanalysis = ee.Image(reanalysis_fn)
+//     .clip(study_area)
+//     .updateMask(tcc_mask)
+//     .rename(reanalysis_cn)
+//     .setMulti({'name':'reanalysis'})
+// } 
 
 // Get results
 var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
@@ -130,10 +130,9 @@ var select = ui.Select({
     select.style().set('stretch', 'horizontal');
     
     var assessment = ee.Image(RESULTS_COLLECTION.filterMetadata('name', 'equals', value).first())
-    var assessment_masked = assessment.updateMask(tcc_mask)
-
-    map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
-    map.addLayer(assessment_masked.select('score_weighted_mean'), viz, value, true)
+        .updateMask(tcc_mask)
+    
+    map.addLayer(assessment.select('score_weighted_mean'), viz, value, true)
     
     redraw()
     

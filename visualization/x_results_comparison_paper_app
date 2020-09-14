@@ -23,6 +23,7 @@ var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6
 var ma_quabbin = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
 var ct_burlap = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
 var study_area = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/simplified_southernNE')
+var NLCD = ee.Image('USGS/NLCD/NLCD2011')
 
 // ------------------------------------- Config ------------------------------------- 
 
@@ -76,6 +77,7 @@ function makeLegend(palette) {
       backgroundColor: 'rgba(255, 255, 255, 0)'
     }
     });
+    
   var labelPanel = ui.Panel({
       widgets: [
         ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
@@ -94,17 +96,13 @@ function makeLegend(palette) {
 }
 
   
-// ------------------------------------- Masking ------------------------------------- 
-
-var NLCD = ee.Image('USGS/NLCD/NLCD2011')
-
+// Mask based on Tree Canopy Cover
 var tcc_mask = NLCD.select('percent_tree_cover')
   .clip(study_area)
   .gte(MIN_TCC)
   .reproject('EPSG:5070', null, 30)
 
-// ---------------------------------- Legacy results  ---------------------------------- 
-
+// Legacy results
 var reanalysis_cn = 'reanalysis_score'
 if (YEAR >= 2015 & YEAR <= 2018) {
   var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
@@ -114,8 +112,7 @@ if (YEAR >= 2015 & YEAR <= 2018) {
     .rename(reanalysis_cn)
 } 
 
-// ------------------------------------- Processing  ------------------------------------- 
-
+// Get results
 var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
 var names_list = selectedResults
     .aggregate_array('name')
@@ -140,10 +137,11 @@ var select = ui.Select({
     
 }});
 
+// Set up Select Experiment pulldown
 select.setPlaceholder('Select an experiment')
 select.style().set('stretch', 'horizontal')
 
-
+// Set up Autozoom checkbox
 var autoZoom = ui.Checkbox('Auto-zoom', null, null, null, {backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'});
 autoZoom.setValue(1)
 
@@ -160,13 +158,24 @@ var style = {
   }]
 };
 
+var states_display = ee.FeatureCollection("TIGER/2018/States")
+    .filter(ee.Filter.inList('STUSPS', ['MA', 'CT', 'RI'])) 
+    
+var state_outlines = ee.Image().byte().paint({
+    featureCollection: states_display,
+    color: 1,
+    width: 1
+  });  
+    
+
 // Function to redraw "base" layers 
 function redraw() {
 
+  map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries')
   map.addLayer(ct_burlap.draw({color: 'white', pointRadius: 1}), {}, 'CT plots', true)
   map.addLayer(ma_quabbin.draw({color: 'white', pointRadius: 1}), {}, 'MA plots', true)
-
   
+
   map.setOptions(null, style);
   map.setOptions('SATELLITE');
   map.style().set({cursor:'crosshair'});

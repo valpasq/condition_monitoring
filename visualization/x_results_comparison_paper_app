@@ -36,6 +36,18 @@ var max = 0;
 var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
+
+// ------------- Set up UI Panel ------------- 
+var map = ui.Map();
+var panel = ui.Panel({
+    style: {
+      width: '400px',
+      height: '110px',
+      position: 'top-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+  
 // ------------------------------------- Masking ------------------------------------- 
 
 var NLCD = ee.Image('USGS/NLCD/NLCD2016')
@@ -47,22 +59,65 @@ var tcc_mask = NLCD.select('percent_tree_cover')
 
 // ---------------------------------- Legacy results  ---------------------------------- 
 
-var reanalysis_cn = 'reanalysis_score'
-if (YEAR >= 2015 & YEAR <= 2018) {
-  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
-  var reanalysis = ee.Image(reanalysis_fn)
-    // .reproject('EPSG:5070')
-    .clip(study_area)
-    .updateMask(tcc_mask)
-    .rename(reanalysis_cn)
+// var reanalysis_cn = 'reanalysis_score'
+// if (YEAR >= 2015 & YEAR <= 2018) {
+//   var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
+//   var reanalysis = ee.Image(reanalysis_fn)
+//     // .reproject('EPSG:5070')
+//     .clip(study_area)
+//     .updateMask(tcc_mask)
+//     .rename(reanalysis_cn)
 
-  Map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
-} 
+//   Map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
+// } 
 
 // ------------------------------------- Processing  ------------------------------------- 
 
 var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
 var NUM_RESULTS = selectedResults.size().getInfo()
+
+////////////////
+// Select by Class
+var select = ui.Select({
+  items: Object.keys(classList),
+  onChange: function(key) {
+    map.layers().reset();
+    redraw()  
+    
+    if (classList[key] === 0) {
+      var ptSelect = allPoints;
+    } else {
+      ptSelect = allPoints.filter(ee.Filter.eq('level2', classList[key]));
+      
+    }
+    map.addLayer(ptSelect, {color: 'white'}, 'FROM-GLC - ' + key )
+    
+    // Select by Biome
+    var biome = ui.Select({
+      items: Object.keys(ecoList),
+      onChange: function(key2) {
+        map.layers().reset();
+        redraw()  
+
+        var biome = ecoregions.filterMetadata('BIOME_NAME', 'equals', key2);
+        var train_points = ee.Join.simple().apply(
+            ptSelect, biome, ee.Filter.intersects({leftField: '.geo', rightField: '.geo'}));
+        
+        // Visualize points that intersect biome.
+        map.addLayer(train_points, {color: 'white'}, 'FROM-GLC - ' + key + ' - ' + key2);
+        
+        
+      }
+    });
+    
+    biome.setPlaceholder('Select RESOLVE 2017 Biome')
+    biome.style().set('stretch', 'horizontal');
+    
+  panel.clear()
+  panel.add(select).add(biome)
+  
+}});
+////////////////
 
 // Add results to map
 for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){

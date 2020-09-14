@@ -37,7 +37,7 @@ var palette = ['red', 'orange', 'yellow', 'blue']
 var viz = {min: min, max: max, palette: palette};
 
 
-// ------------- Set up UI Panel ------------- 
+// Set up UI Panel
 var map = ui.Map();
 var panel = ui.Panel({
     style: {
@@ -48,64 +48,6 @@ var panel = ui.Panel({
     }
   });
   
-// ------------------------------------- Masking ------------------------------------- 
-
-var NLCD = ee.Image('USGS/NLCD/NLCD2011')
-
-var tcc_mask = NLCD.select('percent_tree_cover')
-  .clip(study_area)
-  .gte(MIN_TCC)
-  .reproject('EPSG:5070', null, 30)
-
-// ---------------------------------- Legacy results  ---------------------------------- 
-
-var reanalysis_cn = 'reanalysis_score'
-if (YEAR >= 2015 & YEAR <= 2018) {
-  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
-  var reanalysis = ee.Image(reanalysis_fn)
-    .clip(study_area)
-    .updateMask(tcc_mask)
-    .rename(reanalysis_cn)
-} 
-
-// ------------------------------------- Processing  ------------------------------------- 
-
-var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
-var names_list = selectedResults
-    .aggregate_array('name')
-    .distinct()
-    .getInfo()
-// var NUM_RESULTS = selectedResults.size().getInfo()
-
-////////////////
-// Select by Class
-var select = ui.Select({
-  items: names_list,
-  onChange: function(value) {
-    map.layers().reset();
-
-    select.style().set('stretch', 'horizontal');
-    
-    var assessment = ee.Image(RESULTS_COLLECTION.filterMetadata('name', 'equals', value).first())
-    var assessment_masked = assessment.updateMask(tcc_mask)
-
-    map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
-    map.addLayer(assessment_masked.select('score_weighted_mean'), viz, value, true)
-    
-    redraw()
-    
-  
-}});
-
-select.setPlaceholder('Select an experiment')
-select.style().set('stretch', 'horizontal')
-////////////////
-
-
-
-// ------------------------------------- Map styling  ------------------------------------- 
-
-
 // Create colorbar for legend.
 function ColorBar(palette) {
   return ui.Thumbnail({
@@ -122,7 +64,7 @@ function ColorBar(palette) {
   });
 }
 
-// Build legend.
+// Build legend
 function makeLegend(palette) {
   var legendTitle = ui.Label({
     value: 'Detected Change in Forest Condition',
@@ -151,13 +93,62 @@ function makeLegend(palette) {
   });
 }
 
+  
+// ------------------------------------- Masking ------------------------------------- 
+
+var NLCD = ee.Image('USGS/NLCD/NLCD2011')
+
+var tcc_mask = NLCD.select('percent_tree_cover')
+  .clip(study_area)
+  .gte(MIN_TCC)
+  .reproject('EPSG:5070', null, 30)
+
+// ---------------------------------- Legacy results  ---------------------------------- 
+
+var reanalysis_cn = 'reanalysis_score'
+if (YEAR >= 2015 & YEAR <= 2018) {
+  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
+  var reanalysis = ee.Image(reanalysis_fn)
+    .clip(study_area)
+    .updateMask(tcc_mask)
+    .rename(reanalysis_cn)
+} 
+
+// ------------------------------------- Processing  ------------------------------------- 
+
+var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
+var names_list = selectedResults
+    .aggregate_array('name')
+    .distinct()
+    .getInfo()
+
+// Select by experiment
+var select = ui.Select({
+  items: names_list,
+  onChange: function(value) {
+    map.layers().reset();
+
+    select.style().set('stretch', 'horizontal');
+    
+    var assessment = ee.Image(RESULTS_COLLECTION.filterMetadata('name', 'equals', value).first())
+    var assessment_masked = assessment.updateMask(tcc_mask)
+
+    map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
+    map.addLayer(assessment_masked.select('score_weighted_mean'), viz, value, true)
+    
+    redraw()
+    
+}});
+
+select.setPlaceholder('Select an experiment')
+select.style().set('stretch', 'horizontal')
+
 
 var autoZoom = ui.Checkbox('Auto-zoom', null, null, null, {backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '10px'});
 autoZoom.setValue(1)
 
-// Setup panel
+// Set up panel
 panel.add(select).add(autoZoom);
-
 ui.root.clear();
 ui.root.add(map.add(panel));
 
@@ -168,7 +159,6 @@ var style = {
       stylers: [{ color: '#000000'}]
   }]
 };
-
 
 // Function to redraw "base" layers 
 function redraw() {

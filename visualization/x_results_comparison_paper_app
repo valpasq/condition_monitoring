@@ -1,0 +1,171 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var wrs2 = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/wrs2_descending"),
+    geometry = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.MultiPoint(
+        [[-72.23501892402889, 41.807357153800126],
+         [-72.32660683603468, 41.887064648114055],
+         [-72.24467500916975, 42.428951297130176],
+         [-72.25194911282166, 42.43278961115788]]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Assessment -- Compare mapped results
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script loads mapped results for a specified year for comparison.
+
+
+// ------------------------------------- Imports  ------------------------------------- 
+
+var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v6-3_by_path_monitoring_qa_final')
+var ma_quabbin = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple')
+var ct_burlap = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/CT-GM/FEN_BurlapSurvey_Coords')
+var study_area = ee.FeatureCollection('projects/ee-valeriepasquarella/assets/simplified_southernNE')
+
+// ------------------------------------- Config ------------------------------------- 
+
+var YEAR = 2017
+var MIN_TCC = 75;
+
+// ---------------------------------- Visualization  ---------------------------------- 
+
+var min = -4;
+var max = 0;
+var palette = ['red', 'orange', 'yellow', 'blue']
+var viz = {min: min, max: max, palette: palette};
+
+// ------------------------------------- Masking ------------------------------------- 
+
+var NLCD = ee.Image('USGS/NLCD/NLCD2016')
+
+var tcc_mask = NLCD.select('percent_tree_cover')
+  .clip(study_area)
+  .gte(MIN_TCC)
+  .reproject('EPSG:5070', null, 30)
+
+// ---------------------------------- Legacy results  ---------------------------------- 
+
+var reanalysis_cn = 'reanalysis_score'
+if (YEAR >= 2015 & YEAR <= 2018) {
+  var reanalysis_fn = 'projects/ee-valeriepasquarella/assets/ForestCondition/' + YEAR + '_reanalysis_meanresiduals'
+  var reanalysis = ee.Image(reanalysis_fn)
+    // .reproject('EPSG:5070')
+    .clip(study_area)
+    .updateMask(tcc_mask)
+    .rename(reanalysis_cn)
+
+  Map.addLayer(reanalysis.select('reanalysis_score'), viz, 'reanalysis', false)
+} 
+
+// ------------------------------------- Processing  ------------------------------------- 
+
+var selectedResults = RESULTS_COLLECTION.filterMetadata('monitor_year', 'equals', YEAR)
+var NUM_RESULTS = selectedResults.size().getInfo()
+
+// Add results to map
+for(var RESULT = 0; RESULT < NUM_RESULTS; RESULT++){
+
+  var assessment = ee.Image(selectedResults.toList(selectedResults.size()).get(RESULT))
+  var assessment_masked = assessment.updateMask(tcc_mask)
+    // .updateMask(assessment.lte(-1))
+  var result_name = assessment.get('system:index')
+  var layer_name = ee.String(result_name).split('_' + YEAR).get(0).getInfo()
+
+  Map.addLayer(assessment_masked.select('score_weighted_mean'), viz, layer_name, false)
+    
+}
+
+Map.addLayer(tcc_mask.updateMask(tcc_mask.eq(0)), {color: 'black'}, 'mask')
+
+
+// -------------------------------- Add plot locations  -------------------------------- 
+
+// Bounding boxes
+var ct_bounds = ee.Image().byte().paint({
+  featureCollection: ct_burlap.geometry().bounds().buffer(5000),
+  color: 1,
+  width: 2
+});
+
+var ma_bounds = ee.Image().byte().paint({
+  featureCollection: ma_quabbin.geometry().bounds().buffer(1000),
+  color: 1,
+  width: 2
+});
+
+
+// Add WRS2
+Map.addLayer(wrs2,{}, 'WRS2', false)
+
+// Add bounding boxes
+Map.addLayer(ct_bounds, {palette: 'white'}, 'CT plots - bounds')
+Map.addLayer(ma_bounds, {palette: 'white'}, 'MA plots - bounds')
+
+// Add plot points
+Map.addLayer(ct_burlap.draw({color: 'white', pointRadius: 1}), {}, 'CT plots', false)
+Map.addLayer(ma_quabbin.draw({color: 'white', pointRadius: 1}), {}, 'MA plots', false)
+
+
+// ------------------------------------- Map styling  ------------------------------------- 
+
+
+// Create colorbar for legend.
+function ColorBar(palette) {
+  return ui.Thumbnail({
+    image: ee.Image.pixelLonLat().select(0),
+    params: {
+      bbox: [0, 0, 1, 0.1],
+      dimensions: '100x10',
+      format: 'png',
+      min: 1,
+      max: 0,
+      palette: palette,
+    },
+    style: {stretch: 'horizontal', margin: '2px 2px'},
+  });
+}
+
+// Build legend.
+function makeLegend(palette) {
+  var legendTitle = ui.Label({
+    value: 'Detected Change in Forest Condition',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '12px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+  var labelPanel = ui.Panel({
+      widgets: [
+        ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '14px'}),
+        ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '14px'}),
+        ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '14px'})
+      ],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
+  
+  return ui.Panel({
+    widgets: [legendTitle, ColorBar(palette), labelPanel],
+    style: {position: 'bottom-right',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+}
+Map.add(makeLegend(palette))
+
+
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+Map.setOptions(null, style);
+Map.setOptions('SATELLITE')
+

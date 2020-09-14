@@ -50,7 +50,7 @@ var panel = ui.Panel({
   
 // ------------------------------------- Masking ------------------------------------- 
 
-var NLCD = ee.Image('USGS/NLCD/NLCD2016')
+var NLCD = ee.Image('USGS/NLCD/NLCD2011')
 
 var tcc_mask = NLCD.select('percent_tree_cover')
   .clip(study_area)

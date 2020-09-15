@@ -174,7 +174,6 @@ function redraw() {
   map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries')
   map.addLayer(ct_burlap.draw({color: 'white', pointRadius: 1}), {}, 'CT plots', true)
   map.addLayer(ma_quabbin.draw({color: 'white', pointRadius: 1}), {}, 'MA plots', true)
-  
 
   map.setOptions(null, style);
   map.setOptions('SATELLITE');

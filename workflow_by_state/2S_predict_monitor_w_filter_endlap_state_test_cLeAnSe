@@ -206,7 +206,6 @@ var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
   
   // Return image collection for monitoring period
   return monitorC;
-  
 };
   
   
@@ -224,13 +223,15 @@ var addPrediction = function(image) {
 }
 
 // Function to calculate scores
-var addScore = function(image) {
-  var observed = image.select(DEPENDENT)
-  var prediction = image.select('fitted')
-  var score = observed.subtract(prediction)
-      .divide(image.select('rmse'))
-      
-  return image.addBands(score.rename('score'));
+var addScoreFnFactory = function(dependent) {
+  return function(image) {
+    var observed = image.select(dependent)
+    var prediction = image.select('fitted')
+    var score = observed.subtract(prediction)
+        .divide(image.select('rmse'))
+        
+    return image.addBands(score.rename('score'));
+  };
 }
 
 
@@ -247,26 +248,25 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     .filterMetadata('state', 'equals', STATE))
   // print('Baseline collection:', experiment_baselines)
 
-  var VERSION = experiment_baselines.first().get('version').getInfo()
+  var version = experiment_baselines.first().get('version').getInfo()
   var dependent = experiment_baselines.first().get('spectral_band').getInfo()
-  var TS = experiment_baselines.first().get('time_series').getInfo()
-  var FREQ = experiment_baselines.first().get('harmonics').getInfo()
-  var YEAR_START = experiment_baselines.first().get('year_start').getInfo()
-  var YEAR_END = experiment_baselines.first().get('year_end').getInfo()
-  var REF_PERIOD = YEAR_START + '-' + YEAR_END
-  var STATE = experiment_baselines.first().get('state').getInfo()
-  
-  var OUTPUT_NAME = OUTPUT_COLLECTION + DEPENDENT + '_' + REF_PERIOD + '_' + FREQ + '_' + TS + '_' + monitor_start + '_' + monitor_end
+  var ts = experiment_baselines.first().get('time_series').getInfo()
+  var freq = experiment_baselines.first().get('harmonics').getInfo()
+  var year_start = experiment_baselines.first().get('year_start').getInfo()
+  var year_end = experiment_baselines.first().get('year_end').getInfo()
+  var ref_period = year_start + '-' + year_end
+
+  var output_name = OUTPUT_COLLECTION + dependent + '_' + ref_period + '_' + freq + '_' + ts + '_' + monitor_start + '_' + monitor_end
 
   // Get study area boundary
   var clip_bound = experiment_baselines.geometry().bounds()
   // Map.addLayer(clip_bound)
   
   // get frequencies
-  if (FREQ == 'h13') {
+  if (freq == 'h13') {
     var harmonicFrequencies = ee.List([1,3]);
     
-  } else if (FREQ == 'h12') {
+  } else if (freq == 'h12') {
     var harmonicFrequencies = ee.List([1,2]);
   }
   
@@ -298,15 +298,15 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     // print('Monitoring dates within Path:', monitor_subset)
   
     // Add constant, time, and coefficients to monitoring collection.
-    var harmonicLandsat = monitor_subset.select(DEPENDENT)
+    var harmonicLandsat = monitor_subset.select(dependent)
       .map(addConstant)
       .map(addTime)
-      .map(addHarmonicsFactoryFn(harmonicFrequencies));
+      .map(addHarmonicsFnFactory(harmonicFrequencies));
     
     // Add predictions and scores
     var collectPredictions = harmonicLandsat
       .map(addPrediction)
-      .map(addScore);
+      .map(addScoreFnFactory(dependent));
     // print('Collection of results for Path', collectPredictions)
     
     var mean = collectPredictions.select('score').reduce('mean');
@@ -316,14 +316,14 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     // Dictionary for asset properties
     var outputProperties = ee.Dictionary({
           'system:time_start': ee.Date(monitor_start).millis(),
-          'spectral_band': DEPENDENT,
-          'monitor_year': YEAR,
+          'spectral_band': dependent,
+          'monitor_year': year,
           'monitor_start': monitor_start,
           'monitor_end': monitor_end,
-          'run_version': VERSION,
-          'harmonics': FREQ,
-          'time_series': TS,
-          'ref_period': REF_PERIOD,
+          'run_version': version,
+          'harmonics': freq,
+          'time_series': ts,
+          'ref_period': ref_period,
           'name': experiment_name,
           'WRS_PATH': path,
           'state': STATE
@@ -340,8 +340,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     
     Export.image.toAsset({
       image: assessment,
-      description: DEPENDENT + '_' + YEAR_START + '-' + YEAR_END + '_monitor-' + path,
-      assetId: OUTPUT_NAME + '_p' + path + '_' + STATE,
+      description: dependent + '_' + year_start + '-' + year_end + '_monitor-' + path,
+      assetId: output_name + '_p' + path + '_' + STATE,
       region: clip_bound,
       crs: baseline.projection().crs(),
       scale: 30,

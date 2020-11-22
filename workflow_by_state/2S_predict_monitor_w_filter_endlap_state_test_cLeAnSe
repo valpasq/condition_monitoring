@@ -243,17 +243,18 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   var experiment_name = experiments.get(experiment)
   // print('Experiment:', experiment_name)
   
-  var experiment_baselines = ee.ImageCollection(BASELINES_COLLECTION
+  var baseline_element = ee.ImageCollection(BASELINES_COLLECTION
     .filterMetadata('name', 'equals', experiment_name)
     .filterMetadata('state', 'equals', STATE))
+    .first();
   // print('Baseline collection:', experiment_baselines)
 
-  var version = experiment_baselines.first().get('version').getInfo()
-  var dependent = experiment_baselines.first().get('spectral_band').getInfo()
-  var ts = experiment_baselines.first().get('time_series').getInfo()
-  var freq = experiment_baselines.first().get('harmonics').getInfo()
-  var year_start = experiment_baselines.first().get('year_start').getInfo()
-  var year_end = experiment_baselines.first().get('year_end').getInfo()
+  var version = baseline_element.get('version').getInfo()
+  var dependent = baseline_element.get('spectral_band').getInfo()
+  var ts = baseline_element.get('time_series').getInfo()
+  var freq = baseline_element.get('harmonics').getInfo()
+  var year_start = baseline_element.get('year_start').getInfo()
+  var year_end = baseline_element.get('year_end').getInfo()
   var ref_period = year_start + '-' + year_end
 
   var output_name = OUTPUT_COLLECTION + dependent + '_' + ref_period + '_' + freq + '_' + ts + '_' + monitor_start + '_' + monitor_end

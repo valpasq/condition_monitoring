@@ -36,12 +36,13 @@ var monitor_start = YEAR + '-' + DAY_START;
 var monitor_end = YEAR + '-' + DAY_END;
 
 // Get baselines
-var experiments = BASELINES_COLLECTION.aggregate_array('name').distinct()
+var experiments = BASELINES_COLLECTION.filterMetadata('state', 'equals', 'MA').aggregate_array('name').distinct()
 var num_experiments = experiments.size().getInfo()
 
 // Get WRS2 paths
-var paths = BASELINES_COLLECTION.aggregate_array('WRS_PATH').distinct()
+var paths = BASELINES_COLLECTION.filterMetadata('state', 'equals', 'MA').aggregate_array('WRS_PATH').distinct()
 var num_paths = paths.size().getInfo()
+print(paths)
 
 // -------------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
@@ -86,7 +87,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
       })
       .map(utils.addCloudScore)
       .map(utils.maskCloudScore) 
-      .map(spectralTransformsFnFactory(dependent))
+      .map(utils.spectralTransformsFnFactory(dependent))
       .sort('system:time_start') 
       
   // ENDLAP FILTERING
@@ -174,8 +175,8 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   }
   
   // Construct lists of names for the harmonic terms.
-  var cosNames = getNames('cos_', harmonicFrequencies);
-  var sinNames = getNames('sin_', harmonicFrequencies);
+  var cosNames = utils.getNames('cos_', harmonicFrequencies);
+  var sinNames = utils.getNames('sin_', harmonicFrequencies);
   
   // Independent variables.
   var independents = ee.List(['constant', 't'])
@@ -202,9 +203,9 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
   
     // Add constant, time, and coefficients to monitoring collection.
     var harmonicLandsat = monitor_subset.select(dependent)
-      .map(addConstant)
-      .map(addTime)
-      .map(addHarmonicsFnFactory(harmonicFrequencies));
+      .map(utils.addConstant)
+      .map(utils.addTime)
+      .map(utils.addHarmonicsFnFactory(harmonicFrequencies, cosNames, sinNames));
     
     // Add predictions and scores
     var collectPredictions = harmonicLandsat
@@ -220,7 +221,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var outputProperties = ee.Dictionary({
           'system:time_start': ee.Date(monitor_start).millis(),
           'spectral_band': dependent,
-          'monitor_year': year,
+          'monitor_year': YEAR,
           'monitor_start': monitor_start,
           'monitor_end': monitor_end,
           'run_version': version,
@@ -241,15 +242,15 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var layer_name = 'Path ' + path;
     Map.addLayer(assessment.select('score_mean'), viz, layer_name);
     
-    Export.image.toAsset({
-      image: assessment,
-      description: dependent + '_' + year_start + '-' + year_end + '_monitor-' + path,
-      assetId: output_name + '_p' + path + '_' + STATE,
-      region: clip_bound,
-      crs: baseline.projection().crs(),
-      scale: 30,
-      maxPixels: 1e13,
-    });
+    // Export.image.toAsset({
+    //   image: assessment,
+    //   description: dependent + '_' + year_start + '-' + year_end + '_monitor-' + path,
+    //   assetId: output_name + '_p' + path + '_' + STATE,
+    //   region: clip_bound,
+    //   crs: baseline.projection().crs(),
+    //   scale: 30,
+    //   maxPixels: 1e13,
+    // });
 
   }
   

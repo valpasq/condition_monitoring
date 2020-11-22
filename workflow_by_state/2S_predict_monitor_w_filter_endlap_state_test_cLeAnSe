@@ -333,11 +333,11 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     // Average over monitoring period
     var assessment = ee.Image(mean.addBands(stddev).addBands(nobs)
         .clip(clip_bound)
-        .setMulti(outputProperties))
+        .setMulti(outputProperties));
     // print('Assessment:', assessment)
     
-    var layer_name = 'Path ' + path
-    Map.addLayer(assessment.select('score_mean'), viz, layer_name)
+    var layer_name = 'Path ' + path;
+    Map.addLayer(assessment.select('score_mean'), viz, layer_name);
     
     Export.image.toAsset({
       image: assessment,
@@ -347,7 +347,7 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
       crs: baseline.projection().crs(),
       scale: 30,
       maxPixels: 1e13,
-    })
+    });
 
   }
   

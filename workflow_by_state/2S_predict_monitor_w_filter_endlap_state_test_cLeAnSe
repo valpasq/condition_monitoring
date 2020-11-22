@@ -36,11 +36,12 @@ var monitor_start = YEAR + '-' + DAY_START;
 var monitor_end = YEAR + '-' + DAY_END;
 
 // Get baselines
-var experiments = BASELINES_COLLECTION.filterMetadata('state', 'equals', 'MA').aggregate_array('name').distinct()
+var baselines_for_state = BASELINES_COLLECTION.filterMetadata('state', 'equals', 'MA')
+var experiments = baselines_for_state.aggregate_array('name').distinct()
 var num_experiments = experiments.size().getInfo()
 
 // Get WRS2 paths
-var paths = BASELINES_COLLECTION.filterMetadata('state', 'equals', 'MA').aggregate_array('WRS_PATH').distinct()
+var paths = baselines_for_state.aggregate_array('WRS_PATH').distinct()
 var num_paths = paths.size().getInfo()
 print(paths)
 
@@ -242,15 +243,15 @@ for(var experiment = 0; experiment < num_experiments; experiment++){
     var layer_name = 'Path ' + path;
     Map.addLayer(assessment.select('score_mean'), viz, layer_name);
     
-    // Export.image.toAsset({
-    //   image: assessment,
-    //   description: dependent + '_' + year_start + '-' + year_end + '_monitor-' + path,
-    //   assetId: output_name + '_p' + path + '_' + STATE,
-    //   region: clip_bound,
-    //   crs: baseline.projection().crs(),
-    //   scale: 30,
-    //   maxPixels: 1e13,
-    // });
+    Export.image.toAsset({
+      image: assessment,
+      description: dependent + '_' + year_start + '-' + year_end + '_monitor-' + path,
+      assetId: output_name + '_p' + path + '_' + STATE,
+      region: clip_bound,
+      crs: baseline.projection().crs(),
+      scale: 30,
+      maxPixels: 1e13,
+    });
 
   }
   

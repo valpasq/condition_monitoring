@@ -219,7 +219,7 @@ var spectralTransformsFnFactory = function(dependent) {
 }
 
 
-var addHarmonicsFnFactory = function(freqs) {
+var addHarmonicsFnFactory = function(freqs, cosNames, sinNames) {
   return function(image) {
     // Make an image of frequencies.
     var frequencies = ee.Image.constant(freqs)

@@ -15,7 +15,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 
 // --------------------------------- Imports & Outputs --------------------------------- 
 
-var VERSION = '6-3';
+var VERSION = '7-0';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var STATE = 'PA';

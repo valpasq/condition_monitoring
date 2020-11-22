@@ -21,10 +21,11 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 var STATE = 'PA';
 var roi = ee.FeatureCollection(table)
   .filterMetadata('STUSPS', 'equals', STATE)
-  .geometry().dissolve()
+  .geometry().dissolve();
 
 // Specify output collection (empty collection created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_' + VERSION + '_by_state/'
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_' 
+    + VERSION + '_by_state/';
 
 
 // ---------------------------------- Model Parameters ---------------------------------- 

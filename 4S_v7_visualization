@@ -1,0 +1,77 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_by_state_products"),
+    geometry = 
+    /* color: #d63000 */
+    /* shown: false */
+    ee.Geometry.Point([-71.63368837393529, 42.13639392565926]),
+    geometry2 = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.Geometry.Point([-71.64648846576168, 42.11627454580716]),
+    geometry3 = 
+    /* color: #00ffff */
+    /* shown: false */
+    ee.Geometry.Point([-71.50492246146914, 42.24882427968454]),
+    geometry4 = /* color: #bf04c2 */ee.Geometry.Point([-72.1454022973083, 41.66337481904335]);
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+var collection = imageCollection;
+
+// -----------------------------
+var MIN = -4;
+var MAX = 0;
+var PALETTE = ['red', 'orange', 'yellow', 'blue'];
+var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var THRESHOLD = -2;
+
+var START_ASSESS = 2010;
+var END_ASSESS = 2020;
+
+// -----------------------------
+
+var images = collection
+    .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
+    .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
+var years = images
+    .aggregate_array('monitor_year')
+    .distinct();
+var num_years = years.size().getInfo();
+
+print(years);
+
+var min_score = images.select('score_weighted').min();
+Map.addLayer(min_score, {min:-10, max: 0, palette:['black', 'white']}, 'min score');
+
+for(var year = 0; year < num_years; year++){
+  var year_value = years.get(year);
+  
+  var disp_img = images
+      .filterMetadata('monitor_year', 'equals', year_value)
+      .mosaic()
+      .select('score_weighted');
+  
+  var score_disp = disp_img
+    .focal_mean(30, 'circle', 'meters', 1);
+    
+  var thresh_mask = score_disp.lte(THRESHOLD);
+  score_disp = score_disp.updateMask(thresh_mask);
+  
+  var year_str = year_value.getInfo();
+  
+  Map.addLayer(score_disp, viz, 'score ' + year_str, true, 0.5);
+
+}
+
+ // -----------------------------------
+ 
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Set map options
+Map.setOptions(null, style);
+// Map.setOptions('SATELLITE');

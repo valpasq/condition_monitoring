@@ -21,14 +21,14 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_
 // | [valpasq@bu.edu], 2020
 // |
 // |
-// | This script reads in assessments generated for individual Paths
-// | and combines them into a final wall-to-wall assessment product
-// | to produce a single map per state
+// | This script is used to add spatially smoothed and thresholded 
+// | products to the map. All years added at once.
 
+// -------------------- IMAGE COLLECTION ---------------------
 
 var collection = imageCollection;
 
-// -----------------------------
+// -------------------- VISUALIZATION SETUP -------------------
 var MIN = -4;
 var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
@@ -39,7 +39,7 @@ var THRESHOLD = -2;
 var START_ASSESS = 2010;
 var END_ASSESS = 2020;
 
-// -----------------------------
+// ----------------------- GET RESULTS ------------------------
 
 var images = collection
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
@@ -48,12 +48,13 @@ var years = images
     .aggregate_array('monitor_year')
     .distinct();
 var num_years = years.size().getInfo();
-
 print(years);
 
+// Min score over assessment years
 var min_score = images.select('score_weighted').min();
 Map.addLayer(min_score, {min:-10, max: 0, palette:['black', 'white']}, 'min score');
 
+// Loop over years to add each product to Map
 for(var year = 0; year < num_years; year++){
   var year_value = years.get(year);
   
@@ -74,7 +75,7 @@ for(var year = 0; year < num_years; year++){
 
 }
 
- // -----------------------------------
+// ----------------------- MAP STYLING ------------------------
  
 var style = {
   'Figure': [{
@@ -83,6 +84,5 @@ var style = {
   }]
 };
 
-// Set map options
 Map.setOptions(null, style);
 // Map.setOptions('SATELLITE');

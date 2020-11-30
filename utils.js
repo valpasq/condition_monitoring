@@ -199,8 +199,8 @@ var addPredictionFnFactory = function(independents, model) {
   return function(image) {
     var prediction = image.select(independents)
       .multiply(model.select(independents))
-      .reduce('sum')
-      .rename('fitted')
+      .arrayReduce(ee.Reducer('sum'))
+      .rename('prediction')
     var rmse = model.select('rmse').rename('rmse')
     var nobs = model.select('nobs').rename('nobs')
     var t = model.select('t').rename('trend')

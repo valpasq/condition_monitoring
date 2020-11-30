@@ -22,7 +22,7 @@ var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_
 
 var STATE = 'NY';
 
-var YEAR = 2010;        // Monitoring year
+var YEAR = 2020;        // Monitoring year
 var DAY_START = '05-01'; // Date to start monitoring
 var DAY_END = '09-30';   // Date to end monitoring
 var MONITOR_START = YEAR + '-' + DAY_START;

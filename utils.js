@@ -1,5 +1,5 @@
 // |
-// | Utility functions for Forest Condition Monitoring Workflow
+// | Utility functions for Condition Monitoring Workflow
 // | [valpasq@bu.edu], 2020
 // |
 // |

@@ -198,12 +198,12 @@ var addHarmonicsFnFactory = function(freqs, cosNames, sinNames) {
 var addPredictionFnFactory = function(independents, model) {
   return function(image) {
       image.select(independents)
-      .multiply(baseline.select(independents))
+      .multiply(model.select(independents))
       .reduce('sum')
       .rename('fitted')
-    var rmse = baseline.select('rmse').rename('rmse')
-    var nobs = baseline.select('nobs').rename('nobs')
-    var t = baseline.select('t').rename('trend')
+    var rmse = model.select('rmse').rename('rmse')
+    var nobs = model.select('nobs').rename('nobs')
+    var t = model.select('t').rename('trend')
     return image.addBands(prediction)
         .addBands(rmse).addBands(nobs).addBands(t);
   };

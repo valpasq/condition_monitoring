@@ -14,6 +14,17 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_
     ee.Geometry.Point([-71.50492246146914, 42.24882427968454]),
     geometry4 = /* color: #bf04c2 */ee.Geometry.Point([-72.1454022973083, 41.66337481904335]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Harmonic Condition Assessment -- 
+// | Visualize products
+// | 
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script reads in assessments generated for individual Paths
+// | and combines them into a final wall-to-wall assessment product
+// | to produce a single map per state
+
 
 var collection = imageCollection;
 

@@ -1,5 +1,12 @@
-// | by experiment/WRS2 Path and combines them into a final wall-to-wall
-// | assessment product
+// |
+// | Landsat Time Series Harmonic Condition Assessment -- 
+// | Mosaic results
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script reads in assessments generated for individual Paths
+// | and combines them into a final wall-to-wall assessment product
+// | to produce a single map per state
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var VERSION = '7-0'

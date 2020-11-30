@@ -3,8 +3,8 @@
 // | [valpasq@bu.edu], 2020
 // |
 // |
-// | This script reads a collection of baseline "experiments" and generates
-// | a collection of condition assessment scores by experiment/WRS2 Path for
+// | This script reads a collection of baseline models and generates
+// | predictions and condition assessment scores by WRS2 Path for
 // | a user-specified monitoring period.
 
 

@@ -25,7 +25,8 @@ var roi = ee.FeatureCollection(table)
   .filterMetadata('STUSPS', 'equals', STATE)
   .geometry().dissolve();
 
-// Specify output collection (empty collection created using Assets Manager)
+// Specify output collection
+// (empty collection created using Assets Manager)
 var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' 
     + VERSION + '_by_state/';
 

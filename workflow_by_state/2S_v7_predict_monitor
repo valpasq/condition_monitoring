@@ -33,12 +33,13 @@ var OBS_MIN = 30;       // exclude baseline models fit with less than minimum no
 
 var N_MODELS = 5;
 
+// Specify collection for saving monitoring results (created using Assets Manager)
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' + VERSION + '_by_state_monitoring/'
+
+// Set up NLCD masking
 var MIN_TCC = 50;
 var NLCD = ee.Image('USGS/NLCD/NLCD2016');
 var tcc_mask = NLCD.select('percent_tree_cover').gte(MIN_TCC);
-
-// Specify collection for saving monitoring results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' + VERSION + '_by_state_monitoring/'
 
 
 // ------------------------------ Modeling Constants -------------------------------- 

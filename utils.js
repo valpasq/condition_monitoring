@@ -194,18 +194,19 @@ var addHarmonicsFnFactory = function(freqs, cosNames, sinNames) {
 
 ////
 
-
 // Function to add predicted value
-var addPrediction = function(image) {
-  var prediction = image.select(independents)
+var addPredictionFnFactory = function(INDEPENDENTS, model) {
+  return function(image) {
+      image.select(independents)
       .multiply(baseline.select(independents))
       .reduce('sum')
       .rename('fitted')
-  var rmse = baseline.select('rmse').rename('rmse')
-  var nobs = baseline.select('nobs').rename('nobs')
-  var t = baseline.select('t').rename('trend')
-  return image.addBands(prediction)
-    .addBands(rmse).addBands(nobs).addBands(t);
+    var rmse = baseline.select('rmse').rename('rmse')
+    var nobs = baseline.select('nobs').rename('nobs')
+    var t = baseline.select('t').rename('trend')
+    return image.addBands(prediction)
+        .addBands(rmse).addBands(nobs).addBands(t);
+  };
 }
 
 
@@ -221,5 +222,6 @@ exports = {
   cloudScore: cloudScore,
   addCloudScore: addCloudScore,
   maskCloudScore: maskCloudScore,
-  spectralTransformsFnFactory: spectralTransformsFnFactory
+  spectralTransformsFnFactory: spectralTransformsFnFactory,
+  addPredictionFnFactory: addPredictionFnFactory
 }

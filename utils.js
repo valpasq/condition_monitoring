@@ -1,5 +1,5 @@
 // |
-// | Utility functions for Condition Monitoring Workflow
+// | Utility functions for Harmonic Condition Monitoring Workflow
 // | [valpasq@bu.edu], 2020
 // |
 // |

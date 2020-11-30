@@ -192,8 +192,6 @@ var addHarmonicsFnFactory = function(freqs, cosNames, sinNames) {
   };
 };
 
-////
-
 // Function to add predicted value
 var addPredictionFnFactory = function(independents, model) {
   return function(image) {

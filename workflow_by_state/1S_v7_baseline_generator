@@ -3,8 +3,8 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
     table = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
-// | Landsat Time Series -- 
-// | Harmonic Baseline Generator
+// | Landsat Time Series Harmonic Condition -- 
+// | Baseline Model Generator
 // | [valpasq@bu.edu], 2020
 // |
 // |

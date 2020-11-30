@@ -202,7 +202,7 @@ var addPredictionFnFactory = function(independents, model) {
       // .reduce('sum')
       .arrayReduce(ee.Reducer.sum(), [0])
       .arrayGet([0])
-      // .rename('prediction')
+      .rename('prediction')
     var rmse = model.select('rmse').rename('rmse')
     var nobs = model.select('nobs').rename('nobs')
     var t = model.select('t').rename('trend')

@@ -195,7 +195,7 @@ var addHarmonicsFnFactory = function(freqs, cosNames, sinNames) {
 ////
 
 // Function to add predicted value
-var addPredictionFnFactory = function(INDEPENDENTS, model) {
+var addPredictionFnFactory = function(independents, model) {
   return function(image) {
       image.select(independents)
       .multiply(baseline.select(independents))

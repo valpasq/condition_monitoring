@@ -201,7 +201,7 @@ var addPredictionFnFactory = function(independents, model) {
       .multiply(model.select(independents))
       // .reduce('sum')
       .arrayReduce(ee.Reducer.sum(), [0])
-      .arrayGet([0])
+      // .arrayGet([0])
       .rename('prediction')
     var rmse = model.select('rmse').rename('rmse')
     var nobs = model.select('nobs').rename('nobs')

@@ -19,7 +19,7 @@ var RESULTS_COLLECTION = ee.ImageCollection('baselines_v' + VERSION + '_by_state
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/'
 var OUTPUT_CRS = 'EPSG:5070'
 
-// -------------------------------- Monitoring Parameters --------------------------------- 
+// -------------------------------- Assessment Parameters --------------------------------- 
 
 var STATE = 'NY'
 

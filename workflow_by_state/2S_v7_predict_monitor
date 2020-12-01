@@ -15,8 +15,8 @@
 var VERSION = '7-0';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// Specify collection with experiments from 1_baseline_generator
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v' + VERSION + '_by_state');
+var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' + VERSION + '_by_state_monitoring/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -32,9 +32,6 @@ var CC_THRESH = 50;     // maximum CLOUD_COVER_LAND
 var OBS_MIN = 30;       // exclude baseline models fit with less than minimum nobs
 
 var N_MODELS = 5;
-
-// Specify collection for saving monitoring results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' + VERSION + '_by_state_monitoring/'
 
 
 // ------------------------------ Modeling Constants -------------------------------- 

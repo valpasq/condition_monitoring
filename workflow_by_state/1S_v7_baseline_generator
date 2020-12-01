@@ -20,7 +20,8 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 var VERSION = '7-0';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' + VERSION + '_by_state/';
+var ROOT = 'projects/sites-project/';
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 

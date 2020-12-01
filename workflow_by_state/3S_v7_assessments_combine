@@ -30,7 +30,6 @@ var MIN_MONITOR_NOBS = 3;
 var MIN_RMSE_SCORE = -10;
 
 // -------------------------------- Visualization --------------------------------- 
-
 // Palette for mapped results
 
 var MIN = -4;

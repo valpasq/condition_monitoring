@@ -15,8 +15,10 @@
 var VERSION = '7-0';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v' + VERSION + '_by_state');
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' + VERSION + '_by_state_monitoring/'
+var ROOT = 'projects/sites-project/';
+
+var BASELINES_COLLECTION = ee.ImageCollection(ROOT + 'baselines_v' + VERSION + '_by_state');
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_monitoring/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 

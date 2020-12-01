@@ -12,8 +12,8 @@
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 
-var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 var VERSION = '7-0';
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // Specify collection with experiments from 1_baseline_generator
 var BASELINES_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v' + VERSION + '_by_state');

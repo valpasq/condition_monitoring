@@ -292,7 +292,3 @@ for(var path = path_start; path <= path_stop; path++){
   Map.addLayer(scaled, {}, 'rmse score mean x std');
 
   }
-
-
-// Map.addLayer(table, {}, '2016 aerial survey')
-

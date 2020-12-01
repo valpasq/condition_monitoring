@@ -12,12 +12,11 @@
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var VERSION = '7-0'
 
-// Specify collection with saved results by path
-var RESULTS_COLLECTION = ee.ImageCollection('projects/sites-project/baselines_v' + VERSION + '_by_state_monitoring')
-var bounds = RESULTS_COLLECTION.geometry().bounds()
+var ROOT = 'projects/sites-project/';
 
-// Specify collection for saving combined results (created using Assets Manager)
-var OUTPUT_COLLECTION = 'projects/sites-project/baselines_v' + VERSION + '_by_state_products/'
+var RESULTS_COLLECTION = ee.ImageCollection('baselines_v' + VERSION + '_by_state_monitoring')
+
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/'
 var OUTPUT_CRS = 'EPSG:5070'
 
 var STATE = 'NY'
@@ -54,6 +53,7 @@ var weightScore = function(image) {
 }
 
 // -------------------------------- Assessment --------------------------------- 
+var bounds = RESULTS_COLLECTION.geometry().bounds()
 
 var years = RESULTS_COLLECTION
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)

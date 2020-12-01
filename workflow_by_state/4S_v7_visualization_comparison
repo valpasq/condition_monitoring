@@ -76,6 +76,35 @@ for(var year = 0; year < num_years; year++){
 
 }
 
+// ----------------- MAP -----------------
+
+// set yod palette
+var palette = ['#9400D3', '#4B0082', 
+               '#0000FF', '#00FF00', 
+               '#FFFF00', '#FF7F00', 
+               '#FF0000'];
+
+// yod visualization parameters
+var yodVizParms = {
+  min: 1990,
+  max: 2019,
+  palette: palette
+};
+  
+var yod_img = image
+    .mask(image.select(['mmu']).gt(5))
+    // .mask(water.eq(0))
+    // .mask(image1.select(['yod']).eq(1991))
+    .selfMask();
+
+
+var mag = yod_img.select(['mag']).divide(500);
+var yod_viz = yod_img.select(['yod']).visualize(yodVizParms);
+var yod_scaled = yod_viz.multiply(mag).toUint8();
+
+Map.addLayer(yod_scaled, {}, 'LandTrendr greatest loss 1990-2019');
+
+
 // ----------------------- MAP STYLING ------------------------
  
 var style = {

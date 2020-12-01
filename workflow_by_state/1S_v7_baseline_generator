@@ -221,25 +221,23 @@ for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path)
     var path_proj = images.first().projection()
     
-    // Quality mosaic based on number of observations per pixel (endlap filter)
-    var outputMosaic = ee.Image(images
-      .qualityMosaic('nobs')
-      .clip(roi)
-      .setMulti(outputProperties))
-      .set('WRS_PATH', path);
-    // print('Mosaic product:', outputMosaic);
-    
-    // Map.addLayer(outputMosaic.select('rmse'), {min:0, max:0.05}, 'RMSE');
-      
-    Export.image.toAsset({
-      image: outputMosaic,
-      description: DEPENDENT + '_' + start + '-' + end + '-' + path,
-      assetId: output_name + '_p' + path + '_' + STATE,
-      region: roi.bounds(),
-      crs: path_proj,
-      scale: 30,
-      maxPixels: 1e13,
-    })
+  // Quality mosaic based on number of observations per pixel (endlap filter)
+  var outputMosaic = ee.Image(images
+    .qualityMosaic('nobs')
+    .clip(roi)
+    .setMulti(outputProperties))
+    .set('WRS_PATH', path);
+
+
+  Export.image.toAsset({
+    image: outputMosaic,
+    description: DEPENDENT + '_' + start + '-' + end + '-' + path,
+    assetId: output_name + '_p' + path + '_' + STATE,
+    region: roi.bounds(),
+    crs: path_proj,
+    scale: 30,
+    maxPixels: 1e13,
+  })
   }
 
 }

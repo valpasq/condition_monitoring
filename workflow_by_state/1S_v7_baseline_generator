@@ -41,18 +41,16 @@ var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
 
 
 if (HARMONICS == 'h13') {
-  var harmonicFrequencies = ee.List([1,3]);
+  var HARMONIC_FREQUENCIES = ee.List([1,3]);
 } else if (HARMONICS == 'h12') {
-  var harmonicFrequencies = ee.List([1,2]);
+  var HARMONIC_FREQUENCIES = ee.List([1,2]);
 }
   
-// Construct lists of names for the harmonic terms
-var cosNames = utils.getNames('cos_', harmonicFrequencies);
-var sinNames = utils.getNames('sin_', harmonicFrequencies);
+var COS_NAMES = utils.getNames('cos_', HARMONIC_FREQUENCIES);
+var SIN_NAMES = utils.getNames('sin_', HARMONIC_FREQUENCIES);
 
-// Make list of  variables
-var independents = ee.List(['constant', 't'])
-  .cat(cosNames).cat(sinNames);
+var INDEPENDENTS = ee.List(['constant', 't']).cat(COS_NAMES).cat(SIN_NAMES);
+    
 
 // ---------------------------------- Functions ---------------------------------- 
 
@@ -67,17 +65,17 @@ var getCoeffs = function(feature) {
   var harmonicLandsat = collectionScene.select(DEPENDENT)
     .map(utils.addConstant)
     .map(utils.addTime)
-    .map(utils.addHarmonicsFnFactory(harmonicFrequencies, cosNames, sinNames))
+    .map(utils.addHarmonicsFnFactory(HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES))
     
   // The output of the regression reduction is a 4x1 array image
   var harmonicTrend = harmonicLandsat
-    .select(independents.add(DEPENDENT))
-    .reduce(ee.Reducer.linearRegression(independents.length(), 1))
+    .select(INDEPENDENTS.add(DEPENDENT))
+    .reduce(ee.Reducer.linearRegression(INDEPENDENTS.length(), 1))
   
   // Turn the array image into a multi-band image of coefficients
   var harmonicTrendCoefficients = harmonicTrend.select('coefficients')
     .arrayProject([0])
-    .arrayFlatten([independents])
+    .arrayFlatten([INDEPENDENTS])
   
   // Get RMSE from linearRegression result
   var rmse = harmonicTrend.select('residuals')

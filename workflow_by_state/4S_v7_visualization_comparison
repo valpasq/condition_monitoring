@@ -94,7 +94,7 @@ var yodVizParms = {
 var yod_img = image
     .mask(image.select(['mmu']).gt(5))
     // .mask(water.eq(0))
-    // .mask(image1.select(['yod']).eq(1991))
+    .mask(image.select(['yod']).gte(2010))
     .selfMask();
 
 

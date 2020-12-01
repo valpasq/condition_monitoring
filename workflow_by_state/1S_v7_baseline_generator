@@ -31,7 +31,7 @@ var STATE = 'WV';
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 1985;  // Starts 01-01
+var START_YEAR = 2013;  // Starts 01-01
 var CURR_YEAR = 2019;   // Year to stop
 var WINDOW = 5;
 
@@ -169,11 +169,10 @@ var collection = collection5.merge(collection7).merge(collection8)
   .map(utils.maskCloudScore) // mask based on simple cloud score
   .map(utils.spectralTransformsFnFactory(DEPENDENT))
   .sort('system:time_start');
-// print(collection)
-
+  
 
 // Moving window baseline estimation
-for(var start = START_YEAR; start <= (CURR_YEAR - 4); start++){
+for(var start = START_YEAR; start <= (CURR_YEAR - (WINDOW - 1)); start++){
   var end = start + (WINDOW - 1);
   
   var experiment_name = DEPENDENT + '_' + start + '-' + end + '_' + HARMONICS + '_' + TS;

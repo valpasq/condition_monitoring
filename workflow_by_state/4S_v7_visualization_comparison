@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_by_state_products"),
+    image = ee.Image("projects/ee-valeriepasquarella/assets/LPT/lt-gee_disturbance_map_v2-0_LPT_NewEngland_NBR_06-20_09-20_1990-2019"),
     geometry = 
     /* color: #d63000 */
     /* shown: false */
@@ -12,8 +13,7 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_
     /* color: #00ffff */
     /* shown: false */
     ee.Geometry.Point([-71.50492246146914, 42.24882427968454]),
-    geometry4 = /* color: #bf04c2 */ee.Geometry.Point([-72.1454022973083, 41.66337481904335]),
-    image = ee.Image("projects/ee-valeriepasquarella/assets/LPT/lt-gee_disturbance_map_v2-0_LPT_NewEngland_NBR_06-20_09-20_1990-2019");
+    geometry4 = /* color: #bf04c2 */ee.Geometry.Point([-72.1454022973083, 41.66337481904335]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -52,8 +52,12 @@ var num_years = years.size().getInfo();
 print(years);
 
 // Min score over assessment years
-var min_score = images.select('score_weighted').min();
-Map.addLayer(min_score, {min:-10, max: 0, palette:['black', 'white']}, 'min score');
+var min_score = images.map(function(img) {
+  thresh_mask = img.select('score_weighted').lte(-2).unmask()
+  return thresh_mask
+});
+
+Map.addLayer(min_score.reduce('sum'), {min:0, max: 10, palette:['black', 'white']}, 'min score');
 
 // Loop over years to add each product to Map
 for(var year = 0; year < num_years; year++){

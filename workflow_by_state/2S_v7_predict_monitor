@@ -22,7 +22,7 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_monitoring/'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var STATE = 'NY';
+var STATE = 'MA';
 
 var YEAR = 2020;            // Monitoring year
 var DAY_START = '05-01';    // Date to start monitoring
@@ -181,7 +181,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
       var observations = ee.ImageCollection.fromImages(
           model_image.get('observed'));
           
-      var obs_nobs = observations.reduce('count')
+      var obs_nobs = observations.reduce('count');
           
       var model_rmse = model_image.select('rmse');
       

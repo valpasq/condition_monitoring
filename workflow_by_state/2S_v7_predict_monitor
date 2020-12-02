@@ -195,6 +195,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
             var predictions = predict_fn(terms).select('prediction');
             
             var residuals = observed_image.subtract(predictions);
+            
             var rmse_scores = residuals.divide(model_rmse);
             var rmse_scores_mean = rmse_scores
                 .arrayReduce(ee.Reducer.mean(), [0])

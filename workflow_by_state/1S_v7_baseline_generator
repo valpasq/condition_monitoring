@@ -26,7 +26,7 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
-var STATE = 'MI';
+var STATE = 'IL';
 
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month

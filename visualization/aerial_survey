@@ -1,0 +1,11 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var table = ee.FeatureCollection("users/valeriepasquarella/REG09_IDS_damageareas_prj_shp");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+print(table.first());
+
+var YEAR = 2017;
+var aerial = table
+    .filterMetadata('SURVEY_YEA', 'equals', YEAR)
+
+Map.addLayer(aerial);

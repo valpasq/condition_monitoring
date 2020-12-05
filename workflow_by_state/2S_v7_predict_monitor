@@ -12,13 +12,13 @@
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 
-var VERSION = '7-0'
+var VERSION = '7-0';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var ROOT = 'projects/sites-project/';
 
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + 'baselines_v' + VERSION + '_by_state');
-var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_monitoring/'
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_monitoring/';
 
 var STATE = 'WV';
 

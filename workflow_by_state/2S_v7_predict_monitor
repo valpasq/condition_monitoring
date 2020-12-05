@@ -27,8 +27,6 @@ var STATE = 'WV';
 var YEAR = 2020;            // Monitoring year
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '09-30';      // Date to end monitoring
-var MONITOR_START = YEAR + '-' + DAY_START;
-var MONITOR_END = YEAR + '-' + DAY_END;
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs
@@ -36,6 +34,9 @@ var OBS_MIN = 30;           // exclude baseline models fit with less than minimu
 var N_MODELS = 5;
 
 // ------------------------------ Modeling Constants -------------------------------- 
+
+var MONITOR_START = YEAR + '-' + DAY_START;
+var MONITOR_END = YEAR + '-' + DAY_END;
 
 var HARMONIC_FREQUENCIES = ee.List([1,3]);
 

@@ -12,7 +12,7 @@
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 
-var VERSION = '7-0';
+var VERSION = '7-0'
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var ROOT = 'projects/sites-project/';
@@ -33,6 +33,11 @@ var OBS_MIN = 30;           // exclude baseline models fit with less than minimu
 
 var N_MODELS = 5;
 
+// -------------------------------- Baseline Info -------------------------------- 
+
+var DEPENDENT = BASELINES_COLLECTION.first().get('spectral_band').getInfo()
+var FREQ = BASELINES_COLLECTION.first().get('harmonics').getInfo()
+
 // ------------------------------ Modeling Constants -------------------------------- 
 
 var MONITOR_START = YEAR + '-' + DAY_START;
@@ -51,7 +56,7 @@ var ADD_HARMONICS_FN = utils.addHarmonicsFnFactory(
 var OUTPUT_PROPERTIES = ee.Dictionary({
       'system:time_start': ee.Date(MONITOR_START).millis(),
       'system:time_end': ee.Date(MONITOR_END).millis(),
-      'spectral_band': 'tcg',
+      'spectral_band': DEPENDENT,
       'monitor_year': YEAR,
       'monitor_start': MONITOR_START,
       'monitor_end': MONITOR_END,
@@ -169,7 +174,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
 // --------------------------------- PREDICT ---------------------------------- 
 
 var all_observations = monitorTS(
-    broad_geo_footprint, MONITOR_START, MONITOR_END, 'tcg');
+    broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
 
 var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
         baseline_coeffs_by_path,
@@ -253,13 +258,13 @@ for(var path = path_start; path <= path_stop; path++){
       .first();
   var path_proj = image.projection();
   
-  var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_tcg';
+  var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + DEPENDENT;
 
   print(image);
   
   Export.image.toAsset({
     image: image,
-    description: 'tcg' + '_' + MONITOR_START + '_' + MONITOR_END + '-' + path,
+    description: DEPENDENT + '_' + MONITOR_START + '_' + MONITOR_END + '-' + path,
     assetId: output_name + '_' + MONITOR_START + '_' + MONITOR_END + '_p' + path + '_' + STATE,
     region: broad_geo_footprint.bounds(),
     crs: path_proj,
@@ -270,7 +275,7 @@ for(var path = path_start; path <= path_stop; path++){
   var score_disp = image;
   
   // Number of observation in monitoring period
-  Map.addLayer(score_disp.select('tcg_count'), {min:0, max:14}, 'nobs', false);
+  Map.addLayer(score_disp.select(DEPENDENT + '_count'), {min:0, max:14}, 'nobs', false);
   
   // Focal mean (spatial smoothing)
   score_disp = score_disp

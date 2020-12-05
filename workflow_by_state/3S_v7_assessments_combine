@@ -19,9 +19,9 @@ var RESULTS_COLLECTION = ee.ImageCollection('baselines_v' + VERSION + '_by_state
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/'
 var OUTPUT_CRS = 'EPSG:5070'
 
-// -------------------------------- Assessment Parameters --------------------------------- 
-
 var STATE = 'NY'
+
+// -------------------------------- Assessment Parameters --------------------------------- 
 
 var START_ASSESS = 2010;
 var END_ASSESS = 2020;

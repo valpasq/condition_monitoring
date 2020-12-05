@@ -10,16 +10,16 @@
 // | to produce a single map per state
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
-var VERSION = '7-0'
+var VERSION = '7-0';
 
 var ROOT = 'projects/sites-project/';
 
-var RESULTS_COLLECTION = ee.ImageCollection('baselines_v' + VERSION + '_by_state_monitoring')
+var RESULTS_COLLECTION = ee.ImageCollection('baselines_v' + VERSION + '_by_state_monitoring');
 
-var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/'
-var OUTPUT_CRS = 'EPSG:5070'
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
+var OUTPUT_CRS = 'EPSG:5070';
 
-var STATE = 'NY'
+var STATE = 'NY';
 
 // -------------------------------- Assessment Parameters --------------------------------- 
 

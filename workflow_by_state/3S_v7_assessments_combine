@@ -29,6 +29,10 @@ var END_ASSESS = 2020;
 var MIN_MONITOR_NOBS = 3;
 var MIN_RMSE_SCORE = -10;
 
+// -------------------------------- Monitoring Info -------------------------------- 
+
+var DEPENDENT = RESULTS_COLLECTION.first().get('spectral_band').getInfo()
+
 // -------------------------------- Visualization --------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018
 

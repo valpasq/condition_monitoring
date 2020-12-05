@@ -14,7 +14,7 @@ var VERSION = '7-0';
 
 var ROOT = 'projects/sites-project/';
 
-var RESULTS_COLLECTION = ee.ImageCollection('baselines_v' + VERSION + '_by_state_monitoring');
+var RESULTS_COLLECTION = ee.ImageCollection(ROOT + 'baselines_v' + VERSION + '_by_state_monitoring');
 
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 var OUTPUT_CRS = 'EPSG:5070';
@@ -47,7 +47,7 @@ var THRESHOLD = -2;
 
 var weightScore = function(image) {
  var score = image.select('mean_rmse_score')
- var nobs = image.select('tcg_count')
+ var nobs = image.select(DEPENDENT + '_count')
  
  nobs = nobs.updateMask(nobs.gte(MIN_MONITOR_NOBS))
  nobs = nobs.updateMask(score.gte(MIN_RMSE_SCORE))
@@ -78,7 +78,7 @@ for(var year = 0; year < num_years; year++){
   print(result)
   
   // Get total number of observations per pixel
-  var totalObs = result.select('tcg_count').reduce('sum')
+  var totalObs = result.select(DEPENDENT + '_count').reduce('sum')
     .reproject(OUTPUT_CRS, null, 30)
   
   // Weight mean scores by nobs per Path

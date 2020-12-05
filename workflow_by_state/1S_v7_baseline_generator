@@ -31,7 +31,7 @@ var DEPENDENT = 'tcg';  // Select spectral transform
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 1985;  // Starts 01-01
-var CURR_YEAR = 2019;   // Year to stop
+var END_YEAR = 2019;   // Year to stop
 var WINDOW = 5;
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
@@ -117,21 +117,21 @@ if (TS == 'full') {
   // Get Landsat 5 imagery.
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
     .filterBounds(roi)
-    .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess457);
   
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
     .filterBounds(roi)
-    .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess457);
   
   // Get Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
-    .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess8);
     
@@ -141,7 +141,7 @@ if (TS == 'full') {
   var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
-    .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess457);
   
@@ -149,7 +149,7 @@ if (TS == 'full') {
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
-    .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess457);
   
@@ -157,7 +157,7 @@ if (TS == 'full') {
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
     .filterBounds(roi)
     .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
-    .filterDate(START_YEAR + '-01-01', CURR_YEAR + '-12-31') 
+    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
     .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
     .map(utils.preprocess8);
 }
@@ -171,7 +171,7 @@ var collection = collection5.merge(collection7).merge(collection8)
   
 
 // Moving window baseline estimation
-for(var start = START_YEAR; start <= (CURR_YEAR - (WINDOW - 1)); start++){
+for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   var end = start + (WINDOW - 1);
   
   var experiment_name = DEPENDENT + '_' + start + '-' + end + '_' + HARMONICS + '_' + TS;

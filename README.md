@@ -22,14 +22,14 @@ The scripts in this repository include:
     * `APP_v7_disturbance_atlas` - Interactive mapping App with select by year
 * `utils.js` - Utility functions shared across scripts
 
-While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas.
+While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas. See [Docs](https://valpasq.github.io/condition_monitoring/harmonics/) for addition information.
 
 ___
 
 ## Products
-Each step in the processing workflow generates a separate set of products, including baseline model collections, results by path, and final maps by state.
+As proof of concept, we have piloted the harmonic baseline monitoring workflow for a selection of Northeastern states within USFS Region 9 and generated annual change assessments for 2010-2020 using a May 1 through September 30 monitoring period.
 
-As proof of concept, we have piloted this workflow for a number of states in the Northeastern US and generated annual change assessments for 2010-2020 using a May through September monitoring period. To view preliminary results, visit our [Vegetation Disturbance Atlas App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-disturbance-atlas).
+To view these preliminary results, visit our [Vegetation Disturbance Atlas App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-disturbance-atlas).
 
 
 ___

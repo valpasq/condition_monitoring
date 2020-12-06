@@ -108,6 +108,12 @@ var select = ui.Select({
     
     map.addLayer(score_disp, viz, 'Condition score', true);
     
+    if (SELECT_LIST[key] < 2020) {
+      var aerial = aerial_display
+          .filterMetadata('SURVEY_YEA', 'equals', SELECT_LIST[key])
+    }
+    map.addLayer(aerial)
+    
     redraw();
     
 }});
@@ -136,6 +142,9 @@ var states_list = images.aggregate_array('state')
     
 var states_display = STATES.filter(
     ee.Filter.inList('STUSPS', states_list)); 
+
+var aerial_display = aerial_survey
+    .filterBounds(states_display);
     
 var state_outlines = ee.Image().byte().paint({
     featureCollection: states_display,

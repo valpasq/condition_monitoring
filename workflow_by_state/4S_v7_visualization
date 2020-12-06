@@ -32,6 +32,7 @@ var START_ASSESS = 2010;
 var END_ASSESS = 2020;
 
 // -------------------- VISUALIZATION SETUP -------------------
+
 var MIN = -4;
 var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];

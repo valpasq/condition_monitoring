@@ -1,18 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_by_state_products"),
-    geometry = 
-    /* color: #d63000 */
-    /* shown: false */
-    ee.Geometry.Point([-71.63368837393529, 42.13639392565926]),
-    geometry2 = 
-    /* color: #0b4a8b */
-    /* shown: false */
-    ee.Geometry.Point([-71.64648846576168, 42.11627454580716]),
-    geometry3 = 
-    /* color: #00ffff */
-    /* shown: false */
-    ee.Geometry.Point([-71.50492246146914, 42.24882427968454]),
-    geometry4 = /* color: #bf04c2 */ee.Geometry.Point([-72.1454022973083, 41.66337481904335]);
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_by_state_products");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 

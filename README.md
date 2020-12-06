@@ -22,17 +22,21 @@ The scripts in this repository include:
     * `APP_v7_disturbance_atlas` - Interactive mapping App with select by year
 * `utils.js` - Utility functions shared across scripts
 
+While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas.
+
 ___
 
 ## Products
 Each step in the processing workflow generates a separate set of products, including baseline model collections, results by path, and final maps by state.
 
-As proof of concept, we have piloted this workflow for a number of states in the Northeastern US and generated annual change assessments for 2010-2020 using a May through September monitoring period. To view preliminary results, visit our [Disturbance Atlas App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-disturbance-atlas).
+As proof of concept, we have piloted this workflow for a number of states in the Northeastern US and generated annual change assessments for 2010-2020 using a May through September monitoring period. To view preliminary results, visit our [Vegetation Disturbance Atlas App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-disturbance-atlas).
 
 
 ___
 
-## Citations
+## Related Publications
+Pasquarella, V. J., Mickley, J. G., Barker Plotkin, A., MacLean, R. G., Anderson, R. M., Brown, L. M., Wagner, D. L., Singer, M. S., and Bagchi, R. (in review). Assessing a Landsat-based harmonic modeling approach for forest condition monitoring using defoliator abundance and defoliation measurements.
+
 Pasquarella, V. J., Bradley, B. A., & Woodcock, C. E. (2017). [Near-real-time monitoring of insect defoliation using Landsat time series](https://www.mdpi.com/1999-4907/8/8/275). _Forests_, 8(8), 275.
 
 Pasquarella, V. J., Elkinton, J. S., & Bradley, B. A. (2018). [Extensive gypsy moth defoliation in Southern New England characterized using Landsat satellite observations](https://link.springer.com/article/10.1007/s10530-018-1778-0). _Biological Invasions_, 20(11), 3047-3053.

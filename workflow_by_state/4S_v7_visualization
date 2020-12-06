@@ -26,7 +26,10 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_
 
 // -------------------- IMAGE COLLECTION ---------------------
 
-var collection = imageCollection;
+var FINAL_PRODUCTS = imageCollection;
+
+var START_ASSESS = 2010;
+var END_ASSESS = 2020;
 
 // -------------------- VISUALIZATION SETUP -------------------
 var MIN = -4;
@@ -36,12 +39,9 @@ var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var THRESHOLD = -2;
 
-var START_ASSESS = 2010;
-var END_ASSESS = 2020;
-
 // ----------------------- GET RESULTS ------------------------
 
-var images = collection
+var images = FINAL_PRODUCTS
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
     .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
 var years = images

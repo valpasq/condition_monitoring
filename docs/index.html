@@ -355,7 +355,7 @@
 
 
   <li class="md-nav__item">
-    <a href="citations/" class="md-nav__link">
+    <a href="publications/" class="md-nav__link">
       Publications
     </a>
   </li>
@@ -427,16 +427,16 @@
 <p>The tools and workflow described in these docs and hosted in the associated repositories on <a href="https://github.com/valpasq/condition_monitoring">GitHub</a> and <a href="https://code.earthengine.google.com/?accept_repo=users/valeriepasquarella/condition_monitoring">Earth Engine</a> are designed to support spatially and temporally consistent Landsat-based condition change monitoring for retrospective disturbance assessment at regional to national scales.</p>
 <hr />
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>Detecting changes in surface conditions requires establishing reference or "baseline" conditions to be used for comparison. Our approach uses time series of <a href="https://www.usgs.gov/core-science-systems/nli/landsat">Landsat</a> observations to estimate a series of harmonic baseline models that account for seasonal variability in vegetation conditions and builds on <a href="https://www.mdpi.com/1999-4907/8/8/275">previously published methods</a>. This ensemble of harmonic models is used to estimate the average anomaly in Greenness for a given acquisition date. By then aggregating these average anomalies over a specified monitoring period (i.e. summer growing season), a relatively stable and robust annual estimate of change in Greenness can be produced. Spatial smoothing and thresholding by anomaly magnitude improves visualization of disturbance patches, and the resulting map products can be used to compare disturbances across years.</p>
+<p>Detecting changes in surface conditions requires establishing reference or "baseline" conditions to be used for comparison. Our approach uses time series of <a href="https://www.usgs.gov/core-science-systems/nli/landsat">Landsat</a> observations to estimate a series of harmonic baseline models that account for seasonal variability in vegetation conditions and builds on <a href="https://www.mdpi.com/1999-4907/8/8/275">previously published methods</a>. An ensemble of the <em>n</em> preceding harmonic models is used to estimate the average anomaly in Greenness for a given acquisition date. By then aggregating average anomalies over a specified monitoring period (i.e. summer growing season), a relatively stable and robust annual estimate of change in Greenness can be produced. Spatial smoothing and thresholding by anomaly magnitude improves visualization of disturbance patches, and the resulting map products can be used to compare disturbances across years.</p>
 <hr />
 <h2 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h2>
-<p>Our workflow can be used to process Landsat time series and generate mean annual Tasseled Cap Greenness anomalies over large spatial extents using <a href="https://earthengine.google.com/">Google Earth Engine</a>. </p>
+<p>Our workflow is designed to generate estimates of mean annual Tasseled Cap Greenness anomalies over large spatial extents using <a href="https://earthengine.google.com/">Google Earth Engine</a>.</p>
 <p>Earth Engine users can add this repository with Reader access <a href="https://code.earthengine.google.com/?accept_repo=users/valeriepasquarella/condition_monitoring">here</a>.</p>
 <p>The scripts in this repository include:</p>
 <ul>
 <li><code>workflow_by_state/</code><ul>
 <li><code>1S_v7_baseline_generator</code> - Generate harmonic baseline models using fixed-length moving window (default: 5-year models)</li>
-<li><code>2S_v7_predict_monitor</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May-September)</li>
+<li><code>2S_v7_predict_monitor</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30)</li>
 <li><code>3S_v7_assessments_combine</code> - Combine results across orbital Paths</li>
 <li><code>4S_v7_visualization</code> - Spatially smooth and threshold for visualization</li>
 </ul>

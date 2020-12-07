@@ -246,6 +246,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ensemble-approach" class="md-nav__link">
+    Ensemble Approach
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -344,7 +351,7 @@
 
 
   <li class="md-nav__item">
-    <a href="../citations/" class="md-nav__link">
+    <a href="../publications/" class="md-nav__link">
       Publications
     </a>
   </li>
@@ -390,6 +397,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#ensemble-approach" class="md-nav__link">
+    Ensemble Approach
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -407,12 +421,14 @@
                 
                 <p>Our approach is based on the assumption that univariate time series of  reflectance observations for a band or index of interest can be relatively well-characterized by a harmonic regression model.</p>
 <p>We use the following model form:</p>
-<p><img alt="harmonic_equation_2" src="https://user-images.githubusercontent.com/7560906/101266298-89c58500-371b-11eb-9f14-f0f166f414b0.png" /></p>
-<p>where <em>y<sub>t</sub></em> is the predicted vegetation index (e.g. Tasseled Cap Greenness), <em>x<sub>t</sub></em> is the ordinal date of each observation; <em>a<sub>0</sub></em> is the modeled intercept; <em>b<sub>0</sub></em> is the modeled slope; <em>N</em> is a set of integers specifying the frequency, <em>j</em>, of the Fourier series harmonics (e.g. <em>N</em> = {1, 3}, corresponding to 12-month and 4-month harmonics); <em>a<sub>j</sub></em> are the sine coefficients and <em>b<sub>j</sub></em> are the cosine coefficients estimated at each frequency; <em>T</em> is the number of days in a year (<em>T</em> = 365.25); and <em>ε<sub>t</sub></em> is the residual error term for each observation.</p>
+<p><img alt="harmonic_equation_3" src="https://user-images.githubusercontent.com/7560906/101307703-16ed0480-3816-11eb-86f1-a26c9c211f4a.png" /></p>
+<p>where <em>y</em> is the predicted vegetation index (e.g. Tasseled Cap Greenness), <em>x</em> is the ordinal date of each observation; <em>a<sub>0</sub></em> is the modeled intercept; <em>b<sub>0</sub></em> is the modeled slope; <em>N</em> is a set of integers specifying the frequency, <em>j</em>, of the Fourier series harmonics (e.g. <em>N</em> = {1, 3}, corresponding to 12-month and 4-month harmonics); <em>a<sub>j</sub></em> are the sine coefficients and <em>b<sub>j</sub></em> are the cosine coefficients estimated at each frequency; <em>T</em> is the number of days in a year (<em>T</em> = 365.25); and <em>ε<sub>t</sub></em> is the residual error term for each observation.</p>
 <h2 id="condition-scores">Condition Scores<a class="headerlink" href="#condition-scores" title="Permanent link">&para;</a></h2>
-<p>Condition scores are calculated by comparing observed reflectance values with baseline model predictions normalized by model Root Mean Squared Error (RMSE):</p>
-<p><img alt="score_equation" src="https://user-images.githubusercontent.com/7560906/101269954-1420df80-3742-11eb-8735-6612e1da8381.png" /></p>
-<p>A condition score can be calculated for each individual baseline model, and the current approach averages across an ensemble of predictions to generate a final estimate.</p>
+<p>Condition scores are calculated as the difference between the observed and predicted reflectance values for a given acquisition date, and are normalized by the Root Mean Square Error (RMSE) of the baseline model used to generate the predicted value:</p>
+<p><img alt="score_equation_2" src="https://user-images.githubusercontent.com/7560906/101307688-0b014280-3816-11eb-9025-14869cec07f5.png" /></p>
+<p>Thus, scores represent the magnitude of change in reflectance relative to the uncertainty in baseline model fit.</p>
+<h2 id="ensemble-approach">Ensemble Approach<a class="headerlink" href="#ensemble-approach" title="Permanent link">&para;</a></h2>
+<p><a href="https://valpasq.github.io/condition_monitoring/publications/">Previous implementations of this workflow</a> have relied on a single baseline model for prediction and monitoring such that a single condition score is generated for each pixel. However, selection of a suitable baseline period may be challenging in frequently disturbed landscapes, and noise in reflectance observations may impact the quality of models fit to different time periods. Therefore, the latest version of our workflow utilizes an ensemble approach that combines condition scores estimates from multiple baselines. Baseline models are fit using a moving window, and the <em>n</em> models preceding the specified monitoring period are used to generate a series of condition score estimates. These scores can then be averaged both for a given acquisition date and across all dates within the monitoring period to produce a more robust estimate of potential condition change.</p>
                 
               
               

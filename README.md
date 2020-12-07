@@ -1,4 +1,4 @@
-# [Harmonic baseline condition monitoring](https://valpasq.github.io/condition_monitoring/harmonics/)
+# [Harmonic baseline condition monitoring](https://valpasq.github.io/condition_monitoring/)
 
 The tools and workflow hosted in this repository are designed to support spatial and temporally consistent Landsat-based condition change monitoring for retrospective disturbance assessment at regional to national scales.
 ## Overview
@@ -15,7 +15,7 @@ The scripts in this repository include:
 
 * `workflow_by_state/`
     * `1S_v7_baseline_generator` - Generate harmonic baseline models using fixed-length moving window (default: 5-year models)
-    * `2S_v7_predict_monitor` - Estimate average Greenness anomalies for dates within monitoring period (default: May-September)
+    * `2S_v7_predict_monitor` - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30)
     * `3S_v7_assessments_combine` - Combine results across orbital Paths
     * `4S_v7_visualization` - Spatially smooth and threshold for visualization
 * `app/`
@@ -35,8 +35,9 @@ To view these preliminary results, visit our [Vegetation Disturbance Atlas App](
 ___
 
 ## Related Publications
-Pasquarella, V. J., Mickley, J. G., Barker Plotkin, A., MacLean, R. G., Anderson, R. M., Brown, L. M., Wagner, D. L., Singer, M. S., and Bagchi, R. (in review). Assessing a Landsat-based harmonic modeling approach for forest condition monitoring using defoliator abundance and defoliation measurements.
 
 Pasquarella, V. J., Bradley, B. A., & Woodcock, C. E. (2017). [Near-real-time monitoring of insect defoliation using Landsat time series](https://www.mdpi.com/1999-4907/8/8/275). _Forests_, 8(8), 275.
 
 Pasquarella, V. J., Elkinton, J. S., & Bradley, B. A. (2018). [Extensive gypsy moth defoliation in Southern New England characterized using Landsat satellite observations](https://link.springer.com/article/10.1007/s10530-018-1778-0). _Biological Invasions_, 20(11), 3047-3053.
+
+Pasquarella, V. J., Mickley, J. G., Barker Plotkin, A., MacLean, R. G., Anderson, R. M., Brown, L. M., Wagner, D. L., Singer, M. S., and Bagchi, R. (in review). Assessing a Landsat-based harmonic modeling approach for forest condition monitoring using defoliator abundance and defoliation measurements.

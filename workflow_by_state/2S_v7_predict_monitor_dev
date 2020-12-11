@@ -191,7 +191,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
       var observations = ee.ImageCollection.fromImages(
           model_image.get('observed'));
           
-      var obs_nobs = observations.reduce('count');
+      var obs_nobs = observations.reduce('count').toUint8();
           
       var model_rmse = model_image.select('rmse');
       
@@ -214,11 +214,13 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
       var scores_mean = scores_flat
           .arrayReduce(ee.Reducer.mean(), [0])
           .arrayGet([0])
-          .rename('score_mean');
+          .rename('score_mean')
+          .toFloat();
       var scores_stddev = scores_flat
           .arrayReduce(ee.Reducer.stdDev(), [0])
           .arrayGet([0])
-          .rename('score_stddev');
+          .rename('score_stddev')
+          .toFloat();
       
       var score_image = ee.Image(scores_mean
           .addBands(scores_stddev)

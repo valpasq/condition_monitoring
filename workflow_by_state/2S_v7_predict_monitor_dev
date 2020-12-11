@@ -278,20 +278,10 @@ for(var path = path_start; path <= path_stop; path++) {
   // Focal mean (spatial smoothing)
   score_disp = score_disp
       .focal_mean(30, 'circle', 'meters', 1);
-  
-  Map.addLayer(score_disp.select('score_mean'), viz, 'mean RMSE score', false);
-  
+
   // Threshold masking
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
-  score_disp = score_disp.updateMask(thresh_mask);
+  score_disp = score_disp.select('score_mean').updateMask(thresh_mask);
   
-  // Areas of notable change
-  var std_viz = ee.Image(1)
-      .divide(score_disp.select('mean_rmse_score_stdDev'));
-  var scaled_viz = score_disp
-      .select('mean_rmse_score')
-      .visualize(viz);
-  var scaled = scaled_viz.updateMask(std_viz).toUint8();
-  
-  // Map.addLayer(scaled, {}, 'rmse score mean x std');
+  Map.addLayer(scaled, {}, 'rmse score mean x std');
 }

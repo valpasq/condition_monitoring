@@ -20,7 +20,7 @@ var ROOT = 'projects/sites-project/';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + 'baselines_v' + VERSION + '_by_state');
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_monitoring/';
 
-var STATE = 'WV';
+var STATE = 'MA';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -237,8 +237,8 @@ var paths = avg_dev_per_path
     .sort();
 print(paths);
 
-var path_start = paths.get(0).getInfo();
-var path_stop = paths.get(-1).getInfo();
+var path_start = 0; //paths.get(0).getInfo();
+var path_stop = 0; //paths.get(-1).getInfo();
 
 // Visualize and export results by Path
 for(var path = path_start; path <= path_stop; path++) {

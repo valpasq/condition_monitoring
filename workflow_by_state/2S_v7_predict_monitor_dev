@@ -237,8 +237,8 @@ var paths = avg_dev_per_path
     .sort();
 print(paths);
 
-var path_start = 31; //paths.get(0).getInfo();
-var path_stop = 31; //paths.get(-1).getInfo();
+var path_start = 12; //paths.get(0).getInfo();
+var path_stop = 12; //paths.get(-1).getInfo();
 
 // Visualize and export results by Path
 for(var path = path_start; path <= path_stop; path++) {

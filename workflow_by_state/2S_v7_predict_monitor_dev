@@ -24,7 +24,7 @@ var STATE = 'MA';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2020;            // Monitoring year
+var YEAR = 2016;            // Monitoring year
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '09-30';      // Date to end monitoring
 

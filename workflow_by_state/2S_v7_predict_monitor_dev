@@ -214,6 +214,9 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           });
       
       var scores_flat = scores.toArrayPerBand();
+      
+      
+      
       var scores_mean = scores_flat
           .arrayReduce(ee.Reducer.mean(), [0])
           .arrayGet([0])

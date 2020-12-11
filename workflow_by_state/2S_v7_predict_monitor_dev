@@ -270,13 +270,11 @@ for(var path = path_start; path <= path_stop; path++) {
     maxPixels: 1e13,
   });
   
-  var score_disp = image;
-  
   // Number of observation in monitoring period
-  Map.addLayer(score_disp.select(DEPENDENT + '_count'), {min:0, max:14}, 'nobs', false);
+  Map.addLayer(image.select(DEPENDENT + '_count'), {min:0, max:14}, 'nobs', false);
   
   // Focal mean (spatial smoothing)
-  score_disp = score_disp
+  var score_disp = image.select('score_mean', 'score_stddev')
       .focal_mean(30, 'circle', 'meters', 1);
 
   // Threshold masking

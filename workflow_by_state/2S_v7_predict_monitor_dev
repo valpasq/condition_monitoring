@@ -237,8 +237,8 @@ var paths = avg_dev_per_path
     .sort();
 print(paths);
 
-var path_start = 0; //paths.get(0).getInfo();
-var path_stop = 0; //paths.get(-1).getInfo();
+var path_start = 31; //paths.get(0).getInfo();
+var path_stop = 31; //paths.get(-1).getInfo();
 
 // Visualize and export results by Path
 for(var path = path_start; path <= path_stop; path++) {
@@ -270,10 +270,10 @@ for(var path = path_start; path <= path_stop; path++) {
   score_disp = score_disp
       .focal_mean(30, 'circle', 'meters', 1);
   
-  Map.addLayer(score_disp.select('mean_rmse_score'), viz, 'mean RMSE score', false);
+  Map.addLayer(score_disp.select('score_mean'), viz, 'mean RMSE score', false);
   
   // Threshold masking
-  var thresh_mask = score_disp.select('mean_rmse_score').lte(THRESHOLD);
+  var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
   score_disp = score_disp.updateMask(thresh_mask);
   
   // Areas of notable change
@@ -284,6 +284,6 @@ for(var path = path_start; path <= path_stop; path++) {
       .visualize(viz);
   var scaled = scaled_viz.updateMask(std_viz).toUint8();
   
-  Map.addLayer(scaled, {}, 'rmse score mean x std');
+  // Map.addLayer(scaled, {}, 'rmse score mean x std');
 
 }

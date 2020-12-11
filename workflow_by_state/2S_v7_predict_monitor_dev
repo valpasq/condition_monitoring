@@ -220,10 +220,10 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .arrayGet([0])
           .rename('score_stddev');
       
-      var score_image = scores_mean
+      var score_image = ee.Image(scores_mean
           .addBands(scores_stddev)
           .addBands(obs_nobs)
-          .copyProperties(model_image, ['WRS_PATH']);
+          .copyProperties(model_image, ['WRS_PATH']));
 
       return score_image.reproject(model_image.projection())
           .set(OUTPUT_PROPERTIES);
@@ -285,5 +285,4 @@ for(var path = path_start; path <= path_stop; path++) {
   var scaled = scaled_viz.updateMask(std_viz).toUint8();
   
   // Map.addLayer(scaled, {}, 'rmse score mean x std');
-
 }

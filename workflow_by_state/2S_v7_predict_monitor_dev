@@ -277,16 +277,30 @@ for(var path = path_start; path <= path_stop; path++) {
   var score_disp = image.select('score_mean', 'score_stddev')
       .focal_mean(30, 'circle', 'meters', 1);
 
-  var confidence_scale = ee.Image(1).divide(
-      score_disp.select('score_stddev').add(1));
-  var score_mean_viz = score_disp.select('score_mean')
-      .visualize(viz)
-      .multiply(confidence_scale)
-      .toUint8();
+  var confidence_scale = ee.Image(1)
+      .divide(score_disp.select('score_stddev').add(1))
+      .pow(0.6)
+      .subtract(0.5).multiply(7)
+      .tanh()
+      .add(1).multiply(0.5);
+      
+  // c = (1 / (1 + s))^0.6;
+  // c = (TanH(7*(c - 0.5)) + 1)*0.5;
   
   // Threshold masking
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
-  score_mean_viz = score_mean_viz.updateMask(thresh_mask);
+      
+  var score_mean_viz_black = score_disp.select('score_mean')
+      .visualize(viz)
+      .multiply(confidence_scale)
+      .toUint8()
+      .updateMask(thresh_mask);
   
-  Map.addLayer(score_mean_viz, {}, 'rmse score mean');
+  var score_mean_viz_alpha = score_disp.select('score_mean')
+      .visualize(viz)
+      .toUint8()
+      .updateMask(thresh_mask.multiply(confidence_scale));
+  
+  Map.addLayer(score_mean_viz_black, {}, 'rmse score mean (black)');
+  Map.addLayer(score_mean_viz_alpha, {}, 'rmse score mean (alpha)');
 }

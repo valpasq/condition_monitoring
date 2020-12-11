@@ -207,7 +207,10 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
             var residuals = observed_image.subtract(predictions);
             var rmse_scores = residuals.divide(model_rmse);
 
-            return rmse_scores;
+            return rmse_scores.toFloat();
+          }).map(function(observed_image) {
+            return observed_image.unmask(
+                ee.Image(ee.Array([], ee.PixelType.float())));
           });
       
       var scores_flat = scores.toArrayPerBand();

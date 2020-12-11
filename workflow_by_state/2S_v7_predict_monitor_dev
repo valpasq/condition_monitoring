@@ -279,7 +279,7 @@ for(var path = path_start; path <= path_stop; path++) {
 
   // Threshold masking
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
-  score_disp = score_disp.select('score_mean').updateMask(thresh_mask);
+  var score_mean = score_disp.select('score_mean').updateMask(thresh_mask);
   
-  Map.addLayer(scaled, {}, 'rmse score mean x std');
+  Map.addLayer(score_mean, viz, 'rmse score mean');
 }

@@ -203,32 +203,11 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
                     utils.addTime(utils.addConstant(observed_image)));
             
             var predictions = predict_fn(terms).select('prediction');
-            // ☃
+
             var residuals = observed_image.subtract(predictions);
             var rmse_scores = residuals.divide(model_rmse);
-            var rmse_scores_mean = rmse_scores
-                .arrayReduce(ee.Reducer.mean(), [0])
-                .arrayGet([0])
-                .rename('mean_rmse_score');
-            
-            var prediction_mean = predictions
-                .arrayReduce(ee.Reducer.mean(), [0])
-                .arrayGet([0])
-                .rename('predictions_mean');
-            var prediction_std = predictions
-                .arrayReduce(ee.Reducer.stdDev(), [0])
-                .arrayGet([0])
-                .rename('predictions_std');
 
-            var score = observed_image
-                .subtract(prediction_mean)
-                .divide(prediction_std)
-                .rename('z_score');
-
-            return observed_image
-                .addBands(prediction_mean)
-                .addBands(score)
-                .addBands(rmse_scores_mean);
+            return rmse_scores;
           });
       
       var std_image = ee.Image(scores

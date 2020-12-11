@@ -210,17 +210,23 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
             return rmse_scores;
           });
       
-      var std_image = ee.Image(scores
-          .reduce(ee.Reducer.stdDev()));
-          
-      var score_image = ee.Image(scores
-          .mean()
+      var scores_flat = scores.toArrayPerBand();
+      var scores_mean = scores_flat
+          .arrayReduce(ee.Reducer.mean(), [0])
+          .arrayGet([0])
+          .rename('score_mean');
+      var scores_stddev = scores_flat
+          .arrayReduce(ee.Reducer.stdDev(), [0])
+          .arrayGet([0])
+          .rename('score_stddev');
+      
+      var score_image = scores_mean
+          .addBands(scores_stddev)
           .addBands(obs_nobs)
-          .addBands(std_image)
-          .copyProperties(model_image, ['WRS_PATH']));
+          .copyProperties(model_image, ['WRS_PATH']);
 
       return score_image.reproject(model_image.projection())
-        .set(OUTPUT_PROPERTIES);
+          .set(OUTPUT_PROPERTIES);
     });
 
 print(avg_dev_per_path);
@@ -235,7 +241,7 @@ var path_start = paths.get(0).getInfo();
 var path_stop = paths.get(-1).getInfo();
 
 // Visualize and export results by Path
-for(var path = path_start; path <= path_stop; path++){
+for(var path = path_start; path <= path_stop; path++) {
   var image = avg_dev_per_path
       .filterMetadata('WRS_PATH', 'equals', path)
       .first();
@@ -280,4 +286,4 @@ for(var path = path_start; path <= path_stop; path++){
   
   Map.addLayer(scaled, {}, 'rmse score mean x std');
 
-  }
+}

@@ -277,9 +277,16 @@ for(var path = path_start; path <= path_stop; path++) {
   var score_disp = image.select('score_mean', 'score_stddev')
       .focal_mean(30, 'circle', 'meters', 1);
 
+  var confidence_scale = ee.Image(1).divide(
+      score_disp.select('score_stddev').add(1));
+  var score_mean_viz = score_disp.select('score_mean')
+      .visualize(viz)
+      .multiply(confidence_scale)
+      .toUint8();
+  
   // Threshold masking
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
-  var score_mean = score_disp.select('score_mean').updateMask(thresh_mask);
+  score_mean_viz = score_mean_viz.updateMask(thresh_mask);
   
-  Map.addLayer(score_mean, viz, 'rmse score mean');
+  Map.addLayer(score_mean_viz, {}, 'rmse score mean');
 }

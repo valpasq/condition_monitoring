@@ -12,7 +12,7 @@
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 
-var VERSION = '7-1';
+var VERSION = '7-0';
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var ROOT = 'projects/sites-project/';
@@ -246,8 +246,8 @@ var paths = avg_dev_per_path
     .sort();
 print(paths);
 
-var path_start = 12; //paths.get(0).getInfo();
-var path_stop = 12; //paths.get(-1).getInfo();
+var path_start = paths.get(0).getInfo();
+var path_stop = paths.get(-1).getInfo();
 
 // Visualize and export results by Path
 for(var path = path_start; path <= path_stop; path++) {
@@ -292,17 +292,17 @@ for(var path = path_start; path <= path_stop; path++) {
   // Threshold masking
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
       
-  var score_mean_viz_black = score_disp.select('score_mean')
-      .visualize(viz)
-      .multiply(confidence_scale)
-      .toUint8()
-      .updateMask(thresh_mask);
+  // var score_mean_viz_black = score_disp.select('score_mean')
+  //     .visualize(viz)
+  //     .multiply(confidence_scale)
+  //     .toUint8()
+  //     .updateMask(thresh_mask);
   
   var score_mean_viz_alpha = score_disp.select('score_mean')
       .visualize(viz)
       .toUint8()
       .updateMask(thresh_mask.multiply(confidence_scale));
   
-  Map.addLayer(score_mean_viz_black, {}, 'rmse score mean (black)');
+  // Map.addLayer(score_mean_viz_black, {}, 'rmse score mean (black)');
   Map.addLayer(score_mean_viz_alpha, {}, 'rmse score mean (alpha)');
 }

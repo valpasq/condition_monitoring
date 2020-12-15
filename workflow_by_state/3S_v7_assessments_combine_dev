@@ -149,7 +149,6 @@ var style = {
   'Figure': [{
       featureType: 'all',
       stylers: [{ color: '#000000'}],
-      
   }],
 };
 

@@ -102,7 +102,7 @@ for(var year = 0; year < num_years; year++){
   
   var resultFinal = ee.Image(final_mean.addBands(final_stddev)
     .addBands(total_obs)
-    .rename(['weighted_mean', 'weighted_stdddev', 'total_nobs'])
+    .rename(['weighted_mean', 'weighted_stddev', 'total_nobs'])
     .copyProperties(result.first(), null, ['WRS_PATH']));
     
   print(resultFinal);
@@ -117,7 +117,7 @@ for(var year = 0; year < num_years; year++){
   score_disp = score_disp.updateMask(thresh_mask);
   
   var confidence_scale = ee.Image(1)
-    .divide(score_disp.select('weighted_stdddev').add(1))
+    .divide(score_disp.select('weighted_stddev').add(1))
     .pow(0.6)
     .subtract(0.5).multiply(7)
     .tanh()

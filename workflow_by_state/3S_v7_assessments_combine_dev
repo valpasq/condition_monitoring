@@ -102,6 +102,7 @@ for(var year = 0; year < num_years; year++){
     .rename(['weighted_mean', 'weighted_stdddev', 'total_nobs'])
     .copyProperties(result.first(), null, ['WRS_PATH']))
   print(resultFinal)
+  
   // resultFinal = resultFinal
   //     .updateMask(resultFinal.select('score_weighted').gte(-100))
   

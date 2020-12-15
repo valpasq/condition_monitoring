@@ -73,8 +73,6 @@ var years = RESULTS_COLLECTION
     
 var num_years = years.size().getInfo();
 
-print(years);
-
 for(var year = 0; year < num_years; year++){
   var year_value = years.get(year);
   

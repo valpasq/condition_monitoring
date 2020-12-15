@@ -82,11 +82,6 @@ var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var THRESHOLD = -2;
 
-var NLCD = ee.Image('USGS/NLCD/NLCD2016');
-var MIN_TCC = 50;
-var tcc_mask = NLCD.select('percent_tree_cover').gte(MIN_TCC);
-
-
 // -------------------------------- Monitoring Setup -------------------------------- 
 
 // Get baselines

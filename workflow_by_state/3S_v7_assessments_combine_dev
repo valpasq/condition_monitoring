@@ -63,30 +63,33 @@ var combinePaths = function(image) {
 };
 
 // -------------------------------- Assessment --------------------------------- 
-var bounds = RESULTS_COLLECTION.geometry().bounds()
+var bounds = RESULTS_COLLECTION.geometry().bounds();
 
 var years = RESULTS_COLLECTION
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
     .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS)
     .aggregate_array('monitor_year')
-    .distinct()
-var num_years = years.size().getInfo()
-print(years)
+    .distinct();
+    
+var num_years = years.size().getInfo();
 
+print(years);
 
 for(var year = 0; year < num_years; year++){
-  var year_value = years.get(year)
+  var year_value = years.get(year);
   
   var result = ee.ImageCollection(RESULTS_COLLECTION
     .filterMetadata('state', 'equals', STATE)
-    .filterMetadata('monitor_year', 'equals', year_value))
-  print(result)
+    .filterMetadata('monitor_year', 'equals', year_value));
+    
+  print(result);
   
   // Get total number of observations per pixel
-  var total_obs = result.select(DEPENDENT + '_count').reduce('sum')
-    .reproject(OUTPUT_CRS, null, 30)
+  var total_obs = result.select(DEPENDENT + '_count')
+    .reduce('sum')
+    .reproject(OUTPUT_CRS, null, 30);
   
-  var weighted = result.map(combinePaths)
+  var weighted = result.map(combinePaths);
   
   var final_mean = ee.Image(weighted.select('mean_wt')
     .reduce('sum')
@@ -109,6 +112,7 @@ for(var year = 0; year < num_years; year++){
   
   var score_disp = resultFinal
     // .focal_mean(30, 'circle', 'meters', 1);
+  
   var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
   score_disp = score_disp.updateMask(thresh_mask);
   
@@ -124,9 +128,9 @@ for(var year = 0; year < num_years; year++){
       .toUint8()
       .updateMask(thresh_mask.multiply(confidence_scale));
   
-  var year_str = year_value.getInfo()
-  Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true)
-  Map.addLayer(score_disp, {}, 'hidden', false)
+  var year_str = year_value.getInfo();
+  Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+  Map.addLayer(score_disp, {}, 'hidden', false);
   
   // Export final product for full study area
   Export.image.toAsset({
@@ -137,7 +141,7 @@ for(var year = 0; year < num_years; year++){
     crs: OUTPUT_CRS,
     scale: 30,
     maxPixels: 1e13,
-  })
+  });
 }
 // }
 
@@ -151,4 +155,4 @@ var style = {
 
 
 Map.setOptions(null, style);
-Map.setOptions('SATELLITE')
+Map.setOptions('SATELLITE');

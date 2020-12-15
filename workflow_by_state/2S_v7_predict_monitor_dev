@@ -276,7 +276,7 @@ for(var path = path_start; path <= path_stop; path++) {
   
   // Focal mean (spatial smoothing)
   var score_disp = image.select('score_mean', 'score_stddev')
-      .focal_mean(30, 'circle', 'meters', 1);
+      // .focal_mean(30, 'circle', 'meters', 1);
 
   Map.addLayer(score_disp, {}, '(hidden)', false);
 

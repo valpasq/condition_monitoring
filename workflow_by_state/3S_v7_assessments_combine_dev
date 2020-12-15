@@ -100,17 +100,17 @@ for(var year = 0; year < num_years; year++){
     .divide(total_obs)
     .sqrt());
   
-  var resultFinal = ee.Image(final_mean.addBands(final_stddev)
+  var final_img = ee.Image(final_mean.addBands(final_stddev)
     .addBands(total_obs)
     .rename(['weighted_mean', 'weighted_stddev', 'total_nobs'])
     .copyProperties(result.first(), null, ['WRS_PATH']));
     
-  print(resultFinal);
+  print(final_img);
   
   // resultFinal = resultFinal
   //     .updateMask(resultFinal.select('score_weighted').gte(-100))
   
-  var score_disp = resultFinal
+  var score_disp = final_img
     // .focal_mean(30, 'circle', 'meters', 1);
   
   var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
@@ -134,7 +134,7 @@ for(var year = 0; year < num_years; year++){
   
   // Export final product for full study area
   Export.image.toAsset({
-    image: resultFinal,
+    image: final_img,
     description: 'result_' + year_str + '_' + STATE,
     assetId: OUTPUT_COLLECTION + year_str + '_' + STATE,
     region: bounds,

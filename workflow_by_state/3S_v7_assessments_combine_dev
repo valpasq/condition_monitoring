@@ -23,7 +23,7 @@ var STATE = 'MA';
 
 // -------------------------------- Assessment Parameters --------------------------------- 
 
-var START_ASSESS = 2010;
+var START_ASSESS = 2015;
 var END_ASSESS = 2020;
 
 var MIN_MONITOR_NOBS = 3;

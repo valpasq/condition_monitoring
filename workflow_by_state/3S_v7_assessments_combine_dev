@@ -46,15 +46,19 @@ var THRESHOLD = -2;
 // -------------------------------- Functions --------------------------------- 
 
 var weightScore = function(image) {
- var score = image.select('mean_rmse_score')
- var nobs = image.select(DEPENDENT + '_count')
+ var score = image.select('score_mean');
+ var nobs = image.select(DEPENDENT + '_count');
+ var variance = image.select('score_stddev').pow(2);
  
  nobs = nobs.updateMask(nobs.gte(MIN_MONITOR_NOBS))
  nobs = nobs.updateMask(score.gte(MIN_RMSE_SCORE))
  
- var weighted = score.multiply(nobs).rename('score_wt')
+ var weighted_mean = score.multiply(nobs).rename('mean_wt')
+ var weighted_var = variance.multiply(nobs).rename('var_wt')
  
- return image.addBands(weighted).reproject(OUTPUT_CRS, null, 30)
+ return image.addBands(weighted_mean)
+    .addBands(weighted_var)
+    .reproject(OUTPUT_CRS, null, 30)
 }
 
 // -------------------------------- Assessment --------------------------------- 
@@ -85,7 +89,7 @@ for(var year = 0; year < num_years; year++){
   var resultWts = result.map(weightScore)
   
   // Compute weighted mean
-  var resultFinal = ee.Image(resultWts.select('score_wt')
+  var resultFinal = ee.Image(resultWts.select('mean_wt')
     .reduce('sum')
     .divide(totalObs)
     .addBands(totalObs)

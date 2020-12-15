@@ -10,7 +10,7 @@
 // | to produce a single map per state
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
-var VERSION = '7-0';
+var VERSION = '7-1';
 
 var ROOT = 'projects/sites-project/';
 
@@ -82,18 +82,24 @@ for(var year = 0; year < num_years; year++){
   print(result)
   
   // Get total number of observations per pixel
-  var totalObs = result.select(DEPENDENT + '_count').reduce('sum')
+  var total_obs = result.select(DEPENDENT + '_count').reduce('sum')
     .reproject(OUTPUT_CRS, null, 30)
   
   // Weight mean scores by nobs per Path
-  var resultWts = result.map(weightScore)
+  var weighted = result.map(weightScore)
   
   // Compute weighted mean
-  var resultFinal = ee.Image(resultWts.select('mean_wt')
+  var final_mean = ee.Image(weighted.select('mean_wt')
     .reduce('sum')
-    .divide(totalObs)
-    .addBands(totalObs)
-    .rename(['score_weighted', 'total_nobs'])
+    .divide(total_obs));
+  var final_stddev = ee.Image(weighted.select('var_wt')
+    .reduce('sum')
+    .divide(total_obs)
+    .sqrt());
+  
+  var resultFinal = ee.Image(final_mean.addBands(final_stddev)
+    .addBands(total_obs)
+    .rename(['weighted_mean', 'weighted_stdddev', 'total_nobs'])
     .copyProperties(result.first(), null, ['WRS_PATH']))
   print(resultFinal)
   // resultFinal = resultFinal
@@ -101,11 +107,24 @@ for(var year = 0; year < num_years; year++){
   
   var score_disp = resultFinal
     .focal_mean(30, 'circle', 'meters', 1);
-  var thresh_mask = score_disp.select('score_weighted').lte(THRESHOLD);
+  var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
   score_disp = score_disp.updateMask(thresh_mask);
   
+  var confidence_scale = ee.Image(1)
+    .divide(score_disp.select('weighted_stdddev').add(1))
+    .pow(0.6)
+    .subtract(0.5).multiply(7)
+    .tanh()
+    .add(1).multiply(0.5);
+
+  var score_mean_viz_alpha = score_disp.select('weighted_mean')
+      .visualize(viz)
+      .toUint8()
+      .updateMask(thresh_mask.multiply(confidence_scale));
+  
   var year_str = year_value.getInfo()
-  Map.addLayer(score_disp.select('score_weighted'), viz, 'weighted score', true)
+  Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true)
+  Map.addLayer(score_disp, {}, 'hidden', false)
   
   // Export final product for full study area
   Export.image.toAsset({

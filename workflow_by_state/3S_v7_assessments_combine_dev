@@ -106,7 +106,7 @@ for(var year = 0; year < num_years; year++){
   //     .updateMask(resultFinal.select('score_weighted').gte(-100))
   
   var score_disp = resultFinal
-    .focal_mean(30, 'circle', 'meters', 1);
+    // .focal_mean(30, 'circle', 'meters', 1);
   var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
   score_disp = score_disp.updateMask(thresh_mask);
   

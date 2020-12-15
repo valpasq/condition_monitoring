@@ -81,8 +81,6 @@ for(var year = 0; year < num_years; year++){
   var result = ee.ImageCollection(RESULTS_COLLECTION
     .filterMetadata('state', 'equals', STATE)
     .filterMetadata('monitor_year', 'equals', year_value));
-    
-  print(result);
   
   // Get total number of observations per pixel
   var total_obs = result.select(DEPENDENT + '_count')
@@ -104,11 +102,6 @@ for(var year = 0; year < num_years; year++){
     .addBands(total_obs)
     .rename(['weighted_mean', 'weighted_stddev', 'total_nobs'])
     .copyProperties(result.first(), null, ['WRS_PATH']));
-    
-  print(final_img);
-  
-  // resultFinal = resultFinal
-  //     .updateMask(resultFinal.select('score_weighted').gte(-100))
   
   var score_disp = final_img
     // .focal_mean(30, 'circle', 'meters', 1);

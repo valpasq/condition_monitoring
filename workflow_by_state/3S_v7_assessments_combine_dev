@@ -26,8 +26,8 @@ var STATE = 'MA';
 var START_ASSESS = 2015;
 var END_ASSESS = 2020;
 
-var MIN_MONITOR_NOBS = 3;
-var MIN_RMSE_SCORE = -10;
+// var MIN_MONITOR_NOBS = 3;
+// var MIN_RMSE_SCORE = -10;
 
 // -------------------------------- Monitoring Info -------------------------------- 
 
@@ -50,8 +50,8 @@ var weightScore = function(image) {
  var nobs = image.select(DEPENDENT + '_count');
  var variance = image.select('score_stddev').pow(2);
  
- nobs = nobs.updateMask(nobs.gte(MIN_MONITOR_NOBS))
- nobs = nobs.updateMask(score.gte(MIN_RMSE_SCORE))
+// nobs = nobs.updateMask(nobs.gte(MIN_MONITOR_NOBS))
+// nobs = nobs.updateMask(score.gte(MIN_RMSE_SCORE))
  
  var weighted_mean = score.multiply(nobs).rename('mean_wt')
  var weighted_var = variance.multiply(nobs).rename('var_wt')

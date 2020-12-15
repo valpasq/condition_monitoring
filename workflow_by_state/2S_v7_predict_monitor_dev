@@ -36,8 +36,11 @@ var N_MODELS = 5;           // number of models to include in ensemble
 
 // -------------------------------- Baseline Info -------------------------------- 
 
-var DEPENDENT = BASELINES_COLLECTION.first().get('spectral_band').getInfo()
-var HARMONICS = BASELINES_COLLECTION.first().get('harmonics').getInfo()
+var DEPENDENT = BASELINES_COLLECTION.first()
+    .get('spectral_band').getInfo();
+    
+var HARMONICS = BASELINES_COLLECTION.first()
+    .get('harmonics').getInfo();
 
 // ------------------------------ Modeling Constants -------------------------------- 
 

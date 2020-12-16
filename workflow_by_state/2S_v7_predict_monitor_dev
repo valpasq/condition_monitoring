@@ -255,8 +255,6 @@ for(var path = path_start; path <= path_stop; path++) {
   var path_proj = image.projection();
   
   var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + DEPENDENT;
-
-  // print(image);
   
   Export.image.toAsset({
     image: image,

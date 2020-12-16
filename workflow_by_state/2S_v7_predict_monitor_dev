@@ -14,6 +14,7 @@
 
 var VERSION = '7-1';
 var BASELINES = 'baselines_v7-0_by_state';
+
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var ROOT = 'projects/sites-project/';

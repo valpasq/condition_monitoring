@@ -257,24 +257,24 @@ var combinePaths = function(image) {
 
 // Get total number of observations per pixel
 var total_obs = avg_dev_per_path.select(DEPENDENT + '_count')
-  .reduce('sum')
-  .reproject(OUTPUT_CRS, null, 30);
+    .reduce('sum')
+    .reproject(OUTPUT_CRS, null, 30);
 
 var weighted = avg_dev_per_path.map(combinePaths);
 
 var final_mean = ee.Image(weighted.select('mean_wt')
-  .reduce('sum')
-  .divide(total_obs));
+    .reduce('sum')
+    .divide(total_obs));
   
 var final_stddev = ee.Image(weighted.select('var_wt')
-  .reduce('sum')
-  .divide(total_obs)
-  .sqrt());
+    .reduce('sum')
+    .divide(total_obs)
+    .sqrt());
 
 var final_img = ee.Image(final_mean.addBands(final_stddev)
-  .addBands(total_obs)
-  .rename(['weighted_mean', 'weighted_stddev', 'total_nobs'])
-  .copyProperties(avg_dev_per_path.first(), null, ['WRS_PATH']));
+    .addBands(total_obs)
+    .rename(['weighted_mean', 'weighted_stddev', 'total_nobs'])
+    .copyProperties(avg_dev_per_path.first(), null, ['WRS_PATH']));
 
 var score_disp = final_img
   // .focal_mean(30, 'circle', 'meters', 1);

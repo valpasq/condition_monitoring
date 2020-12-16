@@ -10,7 +10,7 @@ var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-var THRESHOLD = -2;
+var THRESHOLD = -1.5;
 
 var SELECT_LIST = {
   // '2010': 2010, 

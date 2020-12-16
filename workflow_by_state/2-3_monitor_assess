@@ -19,7 +19,7 @@ var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 
-var STATE = 'PA';
+var STATE = 'ME';
 
 var OUTPUT_CRS = 'EPSG:5070';
 
@@ -292,6 +292,8 @@ var score_mean_viz_alpha = score_disp.select('weighted_mean')
 
 Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
 Map.addLayer(score_disp, {}, 'hidden', false);
+
+Map.setOptions('SATELLITE');
 
 // Export final product for full study area
 Export.image.toAsset({

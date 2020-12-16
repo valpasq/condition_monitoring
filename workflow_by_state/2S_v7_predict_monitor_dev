@@ -287,18 +287,11 @@ for(var path = path_start; path <= path_stop; path++) {
   
   // Threshold masking
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
-      
-  // var score_mean_viz_black = score_disp.select('score_mean')
-  //     .visualize(viz)
-  //     .multiply(confidence_scale)
-  //     .toUint8()
-  //     .updateMask(thresh_mask);
-  
+
   var score_mean_viz_alpha = score_disp.select('score_mean')
       .visualize(viz)
       .toUint8()
       .updateMask(thresh_mask.multiply(confidence_scale));
   
-  // Map.addLayer(score_mean_viz_black, {}, 'rmse score mean (black)');
   Map.addLayer(score_mean_viz_alpha, {}, 'rmse score mean (alpha)');
 }

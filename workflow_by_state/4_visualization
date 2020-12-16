@@ -18,14 +18,14 @@ var FINAL_PRODUCTS = imageCollection2;
 var START_ASSESS = 2010;
 var END_ASSESS = 2020;
 
-var THRESHOLD = -1.5;
-
 // -------------------- VISUALIZATION SETUP -------------------
 
 var MIN = -4;
 var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var THRESHOLD = -1.5;
 
 // ----------------------- GET RESULTS ------------------------
 

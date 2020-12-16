@@ -134,7 +134,6 @@ for(var year = 0; year < num_years; year++){
     maxPixels: 1e13,
   });
 }
-// }
 
 var style = {
   'Figure': [{
@@ -142,7 +141,6 @@ var style = {
       stylers: [{ color: '#000000'}],
   }],
 };
-
 
 Map.setOptions(null, style);
 Map.setOptions('SATELLITE');

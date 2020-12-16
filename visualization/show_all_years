@@ -1,6 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v7-1_by_state_products"),
-    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products");
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products"),
+    imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v7-1_by_state_products");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 

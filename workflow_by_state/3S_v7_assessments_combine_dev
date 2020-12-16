@@ -19,7 +19,7 @@ var RESULTS_COLLECTION = ee.ImageCollection(ROOT + 'baselines_v' + VERSION + '_b
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 var OUTPUT_CRS = 'EPSG:5070';
 
-var STATE = 'PA';
+var STATE = 'NJ';
 
 // -------------------------------- Assessment Parameters --------------------------------- 
 

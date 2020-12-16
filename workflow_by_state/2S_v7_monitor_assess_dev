@@ -21,6 +21,8 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 
 var STATE = 'NY';
 
+var OUTPUT_CRS = 'EPSG:5070';
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
 var YEAR = 2016;            // Monitoring year
@@ -236,8 +238,6 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
     });
 
 /////////////
-var OUTPUT_CRS = 'EPSG:5070';
-
 var combinePaths = function(image) {
   var mean = image.select('score_mean');
   var variance = image.select('score_stddev').pow(2);

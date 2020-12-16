@@ -119,7 +119,6 @@ var select = ui.Select({
         .updateMask(thresh_mask.multiply(confidence_scale));
     
     map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
-    // Map.addLayer(score_disp, {}, 'hidden', false);
       
     redraw();
     

@@ -16,6 +16,7 @@ var preprocess457 = function(image) {
   // var mask1 = image.select(['pixel_qa']).eq(66) // Clear land
   //             .or(image.select(['pixel_qa']).eq(68)); // Clear water
   // var mask2 = image.mask().reduce('min');
+  var qa = image.select('pixel_qa');
   var mask1 = qa.bitwiseAnd(1 << 5)
           .and(qa.bitwiseAnd(1 << 7))
           .or(qa.bitwiseAnd(1 << 3))

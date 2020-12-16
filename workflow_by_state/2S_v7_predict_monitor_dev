@@ -239,13 +239,10 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .set(OUTPUT_PROPERTIES);
     });
 
-print(avg_dev_per_path);
-
 var paths = avg_dev_per_path
     .aggregate_array('WRS_PATH')
     .distinct()
     .sort();
-print(paths);
 
 var path_start = paths.get(0).getInfo();
 var path_stop = paths.get(-1).getInfo();

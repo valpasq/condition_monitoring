@@ -222,6 +222,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .arrayGet([0])
           .rename('score_mean')
           .toFloat();
+          
       var scores_stddev = scores_flat
           .arrayReduce(ee.Reducer.stdDev(), [0])
           .arrayGet([0])

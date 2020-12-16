@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v7-1_by_state_products");
+var imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v7-1_by_state_products"),
+    imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -13,10 +14,10 @@ var imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v7-1
 
 // -------------------- IMAGE COLLECTION ---------------------
 
-var FINAL_PRODUCTS = imageCollection2;
+var FINAL_PRODUCTS = imageCollection;
 
-var START_ASSESS = 2010;
-var END_ASSESS = 2020;
+var START_ASSESS = 2016;
+var END_ASSESS = 2016;
 
 // -------------------- VISUALIZATION SETUP -------------------
 
@@ -25,7 +26,7 @@ var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-var THRESHOLD = -1.5;
+var THRESHOLD = -2;
 
 // ----------------------- GET RESULTS ------------------------
 

@@ -292,3 +292,14 @@ var score_mean_viz_alpha = score_disp.select('weighted_mean')
 
 Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
 Map.addLayer(score_disp, {}, 'hidden', false);
+
+// Export final product for full study area
+Export.image.toAsset({
+  image: final_img,
+  description: 'result_' + YEAR + '_' + STATE,
+  assetId: OUTPUT_COLLECTION + YEAR + '_' + STATE,
+  region: broad_geo_footprint,
+  crs: OUTPUT_CRS,
+  scale: 30,
+  maxPixels: 1e13,
+});

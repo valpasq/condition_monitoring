@@ -23,7 +23,7 @@ var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_monitoring/';
 
-var STATE = 'NJ';
+var STATE = 'MA';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 

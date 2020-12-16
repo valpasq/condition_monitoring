@@ -18,12 +18,12 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 
 var OUTPUT_CRS = 'EPSG:5070';
 
-var STATE = 'NJ';
+var STATE = 'MA';
 
 // -------------------------------- Assessment Parameters --------------------------------- 
 
-var START_ASSESS = 2015;
-var END_ASSESS = 2020;
+var START_ASSESS = 2016;
+var END_ASSESS = 2016;
 
 // -------------------------------- Monitoring Info -------------------------------- 
 

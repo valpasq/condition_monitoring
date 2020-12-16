@@ -1,0 +1,77 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_by_state_products"),
+    imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v7-1_by_state_products");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Harmonic Condition Assessment -- 
+// | Visualize products
+// | 
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script is used to add spatially smoothed and thresholded 
+// | products to the map. All years added at once.
+
+// -------------------- IMAGE COLLECTION ---------------------
+
+var FINAL_PRODUCTS = imageCollection2;
+
+var START_ASSESS = 2010;
+var END_ASSESS = 2020;
+
+var THRESHOLD = -2;
+
+// -------------------- VISUALIZATION SETUP -------------------
+
+var MIN = -4;
+var MAX = 0;
+var PALETTE = ['red', 'orange', 'yellow', 'blue'];
+var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+// ----------------------- GET RESULTS ------------------------
+
+var images = FINAL_PRODUCTS
+    .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
+    .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
+var years = images
+    .aggregate_array('monitor_year')
+    .distinct();
+var num_years = years.size().getInfo();
+print(years);
+
+// Min score over assessment years
+var min_score = images.select('score_weighted').min();
+Map.addLayer(min_score, {min:-10, max: 0, palette:['black', 'white']}, 'min score');
+
+// Loop over years to add each product to Map
+for(var year = 0; year < num_years; year++){
+  var year_value = years.get(year);
+  
+  var disp_img = images
+      .filterMetadata('monitor_year', 'equals', year_value)
+      .mosaic()
+      .select('score_weighted');
+  
+  var score_disp = disp_img
+    .focal_mean(30, 'circle', 'meters', 1);
+    
+  var thresh_mask = score_disp.lte(THRESHOLD);
+  score_disp = score_disp.updateMask(thresh_mask);
+  
+  var year_str = year_value.getInfo();
+  
+  Map.addLayer(score_disp, viz, 'score ' + year_str, true, 0.5);
+
+}
+
+// ----------------------- MAP STYLING ------------------------
+ 
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+Map.setOptions(null, style);
+// Map.setOptions('SATELLITE');

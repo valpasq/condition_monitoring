@@ -19,7 +19,7 @@ var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 
-var STATE = 'NY';
+var STATE = 'PA';
 
 var OUTPUT_CRS = 'EPSG:5070';
 
@@ -33,6 +33,16 @@ var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND
 var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs
 
 var N_MODELS = 5;           // number of models to include in ensemble
+
+// -------------------------------- Visualization -------------------------------- 
+// Default visualization palette used in Pasquarella et al. 2017, 2018
+
+var MIN = -4;
+var MAX = 0;
+var PALETTE = ['red', 'orange', 'yellow', 'blue'];
+var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var THRESHOLD = -1.5;
 
 // -------------------------------- Baseline Info -------------------------------- 
 
@@ -71,16 +81,6 @@ var OUTPUT_PROPERTIES = ee.Dictionary({
       'n_models': N_MODELS,
       'state': STATE
   });
-
-// -------------------------------- Visualization -------------------------------- 
-// Default visualization palette used in Pasquarella et al. 2017, 2018
-
-var MIN = -4;
-var MAX = 0;
-var PALETTE = ['red', 'orange', 'yellow', 'blue'];
-var viz = {min: MIN, max: MAX, palette: PALETTE};
-
-var THRESHOLD = -2;
 
 // -------------------------------- Monitoring Setup -------------------------------- 
 

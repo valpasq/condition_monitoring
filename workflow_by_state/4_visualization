@@ -18,7 +18,7 @@ var FINAL_PRODUCTS = imageCollection2;
 var START_ASSESS = 2010;
 var END_ASSESS = 2020;
 
-var THRESHOLD = -2;
+var THRESHOLD = -1.5;
 
 // -------------------- VISUALIZATION SETUP -------------------
 

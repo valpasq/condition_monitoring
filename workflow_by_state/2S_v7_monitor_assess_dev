@@ -237,7 +237,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .set(OUTPUT_PROPERTIES);
     });
 
-/////////////
+// ---------------------------------------
 var combinePaths = function(image) {
   var mean = image.select('score_mean');
   var variance = image.select('score_stddev').pow(2);
@@ -251,7 +251,6 @@ var combinePaths = function(image) {
     .reproject(OUTPUT_CRS, null, 30);
 };
 
-// Get total number of observations per pixel
 var total_obs = avg_dev_per_path.select(DEPENDENT + '_count')
     .reduce('sum')
     .reproject(OUTPUT_CRS, null, 30);

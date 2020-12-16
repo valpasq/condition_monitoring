@@ -38,10 +38,6 @@ var years = images
 var num_years = years.size().getInfo();
 print(years);
 
-// Min score over assessment years
-// var min_score = images.select('weighted_mean').min();
-// Map.addLayer(min_score, {min:-10, max: 0, palette:['black', 'white']}, 'min score');
-
 // Loop over years to add each product to Map
 for(var year = 0; year < num_years; year++){
   var year_value = years.get(year);

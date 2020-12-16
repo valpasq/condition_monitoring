@@ -16,7 +16,7 @@ var geometry = /* color: #d63000 */ee.Geometry.Point([-78.09836515096319, 41.464
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '7-1';
+var VERSION = '8-0';
 
 var ROOT = 'projects/sites-project/';
 var BASELINES = 'baselines_v7-0_by_state';

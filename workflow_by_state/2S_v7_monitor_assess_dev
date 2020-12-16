@@ -17,9 +17,9 @@ var VERSION = '8-0';
 var ROOT = 'projects/sites-project/';
 var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
-var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_monitoring/';
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 
-var STATE = 'MA';
+var STATE = 'NY';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 

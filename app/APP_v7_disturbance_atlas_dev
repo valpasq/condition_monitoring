@@ -97,17 +97,38 @@ var select = ui.Select({
     
     var assessment = images
       .filterMetadata('monitor_year', 'equals', SELECT_LIST[key])
-      .mosaic()
-      .select('score_weighted');
+      .mosaic();
+      // .select('score_weighted');
+    
+    // var score_disp = assessment
+    //     .focal_mean(30, 'circle', 'meters', 1);
+    
+    // var thresh_mask = score_disp.lte(THRESHOLD);
+    // score_disp = score_disp.updateMask(thresh_mask);
+    
+    // map.addLayer(score_disp, viz, 'Condition score', true);
     
     var score_disp = assessment
-        .focal_mean(30, 'circle', 'meters', 1);
-    
-    var thresh_mask = score_disp.lte(THRESHOLD);
+    .focal_mean(30, 'circle', 'meters', 1);
+  
+    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
     score_disp = score_disp.updateMask(thresh_mask);
+  
+    var confidence_scale = ee.Image(1)
+      .divide(score_disp.select('weighted_stddev').add(1))
+      .pow(0.6)
+      .subtract(0.5).multiply(7)
+      .tanh()
+      .add(1).multiply(0.5);
+  
+    var score_mean_viz_alpha = score_disp.select('weighted_mean')
+        .visualize(viz)
+        .toUint8()
+        .updateMask(thresh_mask.multiply(confidence_scale));
     
-    map.addLayer(score_disp, viz, 'Condition score', true);
-    
+    map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+    // Map.addLayer(score_disp, {}, 'hidden', false);
+      
     redraw();
     
 }});

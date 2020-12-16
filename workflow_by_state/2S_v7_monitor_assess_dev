@@ -251,11 +251,11 @@ var combinePaths = function(image) {
     .reproject(OUTPUT_CRS, null, 30);
 };
 
+var weighted = avg_dev_per_path.map(combinePaths);
+
 var total_obs = avg_dev_per_path.select(DEPENDENT + '_count')
     .reduce('sum')
     .reproject(OUTPUT_CRS, null, 30);
-
-var weighted = avg_dev_per_path.map(combinePaths);
 
 var final_mean = ee.Image(weighted.select('mean_wt')
     .reduce('sum')

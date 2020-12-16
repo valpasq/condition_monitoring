@@ -16,9 +16,10 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | generated per Path and are exported to an Image Collection. 
 
 // --------------------------------- Imports & Outputs --------------------------------- 
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
+
 
 var VERSION = '7-0';
-var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var ROOT = 'projects/sites-project/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';

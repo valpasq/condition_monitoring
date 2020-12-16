@@ -15,7 +15,7 @@ var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp']; // Co
 var preprocess457 = function(image) {
   var mask1 = image.select(['pixel_qa']).eq(66) // Clear land
               .or(image.select(['pixel_qa']).eq(68)); // Clear water
-  var mask2 = image.mask().reduce(ee.Reducer.min());
+  var mask2 = image.mask().reduce('min');
   var mask3 = image.select(['B1', 'B2', 'B3', 'B4',  'B5',  'B7']).gt(0).and(
             image.select(['B1', 'B2', 'B3', 'B4',  'B5',  'B7']).lt(10000))
             .reduce('min');

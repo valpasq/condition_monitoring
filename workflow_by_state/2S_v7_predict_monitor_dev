@@ -257,7 +257,7 @@ for(var path = path_start; path <= path_stop; path++) {
   
   var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + DEPENDENT;
 
-  print(image);
+  // print(image);
   
   Export.image.toAsset({
     image: image,

@@ -275,16 +275,15 @@ for(var path = path_start; path <= path_stop; path++) {
 
   Map.addLayer(score_disp, {}, '(hidden)', false);
 
+  // c = (1 / (1 + s))^0.6;
+  // c = (TanH(7*(c - 0.5)) + 1)*0.5;
   var confidence_scale = ee.Image(1)
       .divide(score_disp.select('score_stddev').add(1))
       .pow(0.6)
       .subtract(0.5).multiply(7)
       .tanh()
       .add(1).multiply(0.5);
-      
-  // c = (1 / (1 + s))^0.6;
-  // c = (TanH(7*(c - 0.5)) + 1)*0.5;
-  
+
   // Threshold masking
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD);
 

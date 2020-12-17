@@ -40,7 +40,7 @@ var N_MODELS = 5;           // number of models to include in ensemble
 var MAX_STDDEV = 5;         // maximum allowable standard deviation to include scores in weighted average
 
 // -------------------------------- Visualization -------------------------------- 
-// Default visualization palette used in Pasquarella et al. 2017, 2018
+// Default palette used in Pasquarella et al. 2017, 2018
 
 var MIN = -4;
 var MAX = 0;

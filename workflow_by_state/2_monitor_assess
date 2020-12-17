@@ -9,7 +9,9 @@ var geometry = /* color: #d63000 */ee.Geometry.MultiPoint(
 // | 
 // | [valpasq@bu.edu], 2020
 // |
-// |
+// | This script generates condition scores for each acquisition date
+// | within the specified monitoring period and averages across dates
+// | and Landsat WRS2 Paths. 
 
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');

@@ -311,7 +311,7 @@ Map.setOptions('SATELLITE');
 Export.image.toAsset({
   image: final_img,
   description: 'result_' + YEAR + '_' + STATE,
-  assetId: OUTPUT_COLLECTION + YEAR + '_' + STATE,
+  assetId: OUTPUT_COLLECTION + MONITOR_START + '_' + MONITOR_END + '_' + STATE,
   region: broad_geo_footprint,
   crs: OUTPUT_CRS,
   scale: 30,

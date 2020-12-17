@@ -25,6 +25,8 @@ var STATE = 'RI';
 
 var OUTPUT_CRS = 'EPSG:5070';
 
+var MAX_STDDEV = 5;
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
 var YEAR = 2016;            // Monitoring year

@@ -60,11 +60,6 @@ for(var year = 0; year < num_years; year++){
     .subtract(0.5).multiply(7)
     .tanh()
     .add(1).multiply(0.5);
-  
-  // var confidence_scale = ee.Image(1)
-  //   .subtract(score_disp.select('weighted_stddev')
-  //   .divide(score_disp.select('weighted_mean')
-  //   .multiply(-1)));
 
   var score_mean_viz_alpha = score_disp.select('weighted_mean')
       .visualize(viz)

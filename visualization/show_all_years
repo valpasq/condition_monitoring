@@ -16,8 +16,8 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_
 
 var FINAL_PRODUCTS = imageCollection;
 
-var START_ASSESS = 2020;
-var END_ASSESS = 2020;
+var START_ASSESS = 2016;
+var END_ASSESS = 2016;
 
 // -------------------- VISUALIZATION SETUP -------------------
 
@@ -61,6 +61,11 @@ for(var year = 0; year < num_years; year++){
     .subtract(0.5).multiply(7)
     .tanh()
     .add(1).multiply(0.5);
+  
+  // var confidence_scale = ee.Image(1)
+  //   .subtract(score_disp.select('weighted_stddev')
+  //   .divide(score_disp.select('weighted_mean')
+  //   .multiply(-1)));
 
   var score_mean_viz_alpha = score_disp.select('weighted_mean')
       .visualize(viz)

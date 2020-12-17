@@ -27,8 +27,6 @@ var STATE = 'MA';
 
 var OUTPUT_CRS = 'EPSG:5070';
 
-var MAX_STDDEV = 5;
-
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
 var YEAR = 2020;            // Monitoring year
@@ -39,6 +37,8 @@ var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND
 var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs
 
 var N_MODELS = 5;           // number of models to include in ensemble
+
+var MAX_STDDEV = 5;         // maximum allowable standard deviation to include scores in weighted average
 
 // -------------------------------- Visualization -------------------------------- 
 // Default visualization palette used in Pasquarella et al. 2017, 2018

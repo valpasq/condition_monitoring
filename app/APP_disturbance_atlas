@@ -1,8 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection2 = ee.ImageCollection("projects/sites-project/baselines_v7-1_by_state_products");
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var images = imageCollection2;
+var images = imageCollection;
 
 // -----------------------------
 var MIN = -4;
@@ -10,7 +10,7 @@ var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-var THRESHOLD = -2;
+var THRESHOLD = -1.5;
 
 var SELECT_LIST = {
   '2010': 2010, 
@@ -96,7 +96,9 @@ var select = ui.Select({
     
     var assessment = images
       .filterMetadata('monitor_year', 'equals', SELECT_LIST[key])
-      .mosaic();
+      .mosaic()
+    
+    // assessment = assessment.updateMask(assessment.select('total_nobs').gt(1));
     
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
@@ -124,7 +126,9 @@ var select = ui.Select({
         .updateMask(thresh_mask.multiply(confidence_scale));
     
     map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+    map.addLayer(score_disp, {}, 'weighted score', false);
       
+    
     redraw();
     
 }});

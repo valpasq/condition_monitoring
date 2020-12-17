@@ -21,7 +21,7 @@ var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products/';
 
-var STATE = 'RI';
+var STATE = 'PA';
 
 var OUTPUT_CRS = 'EPSG:5070';
 
@@ -29,7 +29,7 @@ var MAX_STDDEV = 5;
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2016;            // Monitoring year
+var YEAR = 2010;            // Monitoring year
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '09-30';      // Date to end monitoring
 
@@ -239,7 +239,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .copyProperties(model_image, ['WRS_PATH']));
       
       score_image = score_image
-          .updateMask(score_image.select('score_stddev').lte(5));
+          .updateMask(score_image.select('score_stddev').lte(MAX_STDDEV));
 
       return score_image.reproject(model_image.projection())
           .set(OUTPUT_PROPERTIES);

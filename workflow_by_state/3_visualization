@@ -73,7 +73,7 @@ for(var year = 0; year < num_years; year++){
   
 }
 
-// ----------------------- MAP STYLING ------------------------
+// ----------------------- Map Styling ------------------------
  
 var style = {
   'Figure': [{

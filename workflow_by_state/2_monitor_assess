@@ -307,11 +307,13 @@ Map.addLayer(score_disp, {}, 'hidden', false);
 
 Map.setOptions('SATELLITE');
 
+var asset_name = MONITOR_START + '_' + MONITOR_END + '_' + STATE;
+
 // Export final product for full study area
 Export.image.toAsset({
   image: final_img,
-  description: 'result_' + YEAR + '_' + STATE,
-  assetId: OUTPUT_COLLECTION + MONITOR_START + '_' + MONITOR_END + '_' + STATE,
+  description: 'result_' + asset_name,
+  assetId: OUTPUT_COLLECTION + asset_name,
   region: broad_geo_footprint,
   crs: OUTPUT_CRS,
   scale: 30,

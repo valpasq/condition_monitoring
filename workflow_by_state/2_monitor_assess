@@ -235,6 +235,9 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .addBands(scores_stddev)
           .addBands(obs_nobs)
           .copyProperties(model_image, ['WRS_PATH']));
+      
+      score_image = score_image
+          .updateMask(score_image.select('score_stddev').lte(5));
 
       return score_image.reproject(model_image.projection())
           .set(OUTPUT_PROPERTIES);

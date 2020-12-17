@@ -16,8 +16,8 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_
 
 var FINAL_PRODUCTS = imageCollection;
 
-var START_ASSESS = 2016;
-var END_ASSESS = 2016;
+var START_ASSESS = 2020;
+var END_ASSESS = 2020;
 
 // -------------------- VISUALIZATION SETUP -------------------
 

@@ -28,7 +28,7 @@ var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var THRESHOLD = -2;
 
-// ----------------------- GET RESULTS ------------------------
+// ----------------------- Map Results ------------------------
 
 var images = FINAL_PRODUCTS
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)

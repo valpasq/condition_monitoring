@@ -11,15 +11,15 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_
 // | This script is used to add spatially smoothed and thresholded 
 // | products to the map. All years added at once.
 
-// -------------------- IMAGE COLLECTION ---------------------
+// -------------------- Image Collection ---------------------
 
 var FINAL_PRODUCTS = imageCollection;
 
 var START_ASSESS = 2010;
 var END_ASSESS = 2020;
 
-// -------------------------------- Visualization -------------------------------- 
-// Default visualization palette used in Pasquarella et al. 2017, 2018
+// ---------------------- Visualization ---------------------- 
+// Default palette used in Pasquarella et al. 2017, 2018
 
 var MIN = -4;
 var MAX = 0;

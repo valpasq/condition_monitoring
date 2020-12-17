@@ -31,8 +31,8 @@ var STATE = 'MO';
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 1986;  // Starts 01-01
-var END_YEAR = 1990;   // Year to stop
+var START_YEAR = 1987;  // Starts 01-01
+var END_YEAR = 1991;   // Year to stop
 var WINDOW = 5;
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)

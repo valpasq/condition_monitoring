@@ -10,7 +10,8 @@ var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-var THRESHOLD = -1.5;
+var THRESHOLD = -2;
+var MIN_NOBS = 3;
 
 var SELECT_LIST = {
   '2010': 2010, 
@@ -105,6 +106,10 @@ var select = ui.Select({
   
     var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
     score_disp = score_disp.updateMask(thresh_mask);
+    
+    var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
+    score_disp = score_disp.updateMask(nobs_mask);
+    
     
     // c = (1 / (1 + s))^0.6;
     // c = (TanH(7*(c - 0.5)) + 1)*0.5;

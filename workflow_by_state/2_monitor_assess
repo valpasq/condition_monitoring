@@ -179,6 +179,20 @@ var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
   return monitorC;
 };
 
+// Function to combine results across Paths
+var combinePaths = function(image) {
+  var mean = image.select('score_mean');
+  var variance = image.select('score_stddev').pow(2);
+  var nobs = image.select(DEPENDENT + '_count');
+ 
+  var weighted_mean = mean.multiply(nobs).rename('mean_wt');
+  var weighted_var = variance.multiply(nobs).rename('var_wt');
+ 
+  return image.addBands(weighted_mean)
+    .addBands(weighted_var)
+    .reproject(OUTPUT_CRS, null, 30);
+};
+
 // --------------------------------- PREDICT ---------------------------------- 
 
 var all_observations = monitorTS(
@@ -247,19 +261,6 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
     });
 
 // --------------------------------- Combine Results ---------------------------------- 
-
-var combinePaths = function(image) {
-  var mean = image.select('score_mean');
-  var variance = image.select('score_stddev').pow(2);
-  var nobs = image.select(DEPENDENT + '_count');
- 
-  var weighted_mean = mean.multiply(nobs).rename('mean_wt');
-  var weighted_var = variance.multiply(nobs).rename('var_wt');
- 
-  return image.addBands(weighted_mean)
-    .addBands(weighted_var)
-    .reproject(OUTPUT_CRS, null, 30);
-};
 
 var weighted = avg_dev_per_path.map(combinePaths);
 

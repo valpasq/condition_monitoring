@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_by_state_products");
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var images = imageCollection;
@@ -11,6 +11,7 @@ var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var THRESHOLD = -2;
+var MIN_NOBS = 3;
 
 var SELECT_LIST = {
   '2010': 2010, 
@@ -97,15 +98,36 @@ var select = ui.Select({
     var assessment = images
       .filterMetadata('monitor_year', 'equals', SELECT_LIST[key])
       .mosaic()
-      .select('score_weighted');
+    
+    // assessment = assessment.updateMask(assessment.select('total_nobs').gt(1));
     
     var score_disp = assessment
-        .focal_mean(30, 'circle', 'meters', 1);
-    
-    var thresh_mask = score_disp.lte(THRESHOLD);
+      .focal_mean(30, 'circle', 'meters', 1);
+  
+    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
     score_disp = score_disp.updateMask(thresh_mask);
     
-    map.addLayer(score_disp, viz, 'Condition score', true);
+    var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
+    score_disp = score_disp.updateMask(nobs_mask);
+    
+    
+    // c = (1 / (1 + s))^0.6;
+    // c = (TanH(7*(c - 0.5)) + 1)*0.5;
+    var confidence_scale = ee.Image(1)
+      .divide(score_disp.select('weighted_stddev').add(1))
+      .pow(0.6)
+      .subtract(0.5).multiply(7)
+      .tanh()
+      .add(1).multiply(0.5);
+  
+    var score_mean_viz_alpha = score_disp.select('weighted_mean')
+        .visualize(viz)
+        .toUint8()
+        .updateMask(thresh_mask.multiply(confidence_scale));
+    
+    map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+    map.addLayer(score_disp, {}, '(hidden)', false);
+      
     
     redraw();
     
@@ -158,7 +180,6 @@ function redraw() {
   map.setOptions(null, style);
   map.setOptions('SATELLITE');
   map.style().set({cursor:'crosshair'});
-
   
 }
 

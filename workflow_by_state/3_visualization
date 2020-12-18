@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_by_state_products");
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -11,23 +11,24 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v7-0_
 // | This script is used to add spatially smoothed and thresholded 
 // | products to the map. All years added at once.
 
-// -------------------- IMAGE COLLECTION ---------------------
+// -------------------- Image Collection ---------------------
 
 var FINAL_PRODUCTS = imageCollection;
 
 var START_ASSESS = 2010;
 var END_ASSESS = 2020;
 
-var THRESHOLD = -2;
-
-// -------------------- VISUALIZATION SETUP -------------------
+// ---------------------- Visualization ---------------------- 
+// Default palette used in Pasquarella et al. 2017, 2018
 
 var MIN = -4;
 var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-// ----------------------- GET RESULTS ------------------------
+var THRESHOLD = -2;
+
+// ----------------------- Map Results ------------------------
 
 var images = FINAL_PRODUCTS
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
@@ -38,32 +39,41 @@ var years = images
 var num_years = years.size().getInfo();
 print(years);
 
-// Min score over assessment years
-var min_score = images.select('score_weighted').min();
-Map.addLayer(min_score, {min:-10, max: 0, palette:['black', 'white']}, 'min score');
-
 // Loop over years to add each product to Map
 for(var year = 0; year < num_years; year++){
   var year_value = years.get(year);
   
   var disp_img = images
       .filterMetadata('monitor_year', 'equals', year_value)
-      .mosaic()
-      .select('score_weighted');
-  
+      .mosaic();
+      
   var score_disp = disp_img
-    .focal_mean(30, 'circle', 'meters', 1);
-    
-  var thresh_mask = score_disp.lte(THRESHOLD);
+      .focal_mean(30, 'circle', 'meters', 1);
+  
+  var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
   score_disp = score_disp.updateMask(thresh_mask);
+
+  // c = (1 / (1 + s))^0.6;
+  // c = (TanH(7*(c - 0.5)) + 1)*0.5;
+  var confidence_scale = ee.Image(1)
+    .divide(score_disp.select('weighted_stddev').add(1))
+    .pow(0.6)
+    .subtract(0.5).multiply(7)
+    .tanh()
+    .add(1).multiply(0.5);
+
+  var score_mean_viz_alpha = score_disp.select('weighted_mean')
+      .visualize(viz)
+      .toUint8()
+      .updateMask(thresh_mask.multiply(confidence_scale));
   
   var year_str = year_value.getInfo();
   
-  Map.addLayer(score_disp, viz, 'score ' + year_str, true, 0.5);
-
+  Map.addLayer(score_mean_viz_alpha, {}, 'score ' + year_str, true);
+  
 }
 
-// ----------------------- MAP STYLING ------------------------
+// ----------------------- Map Styling ------------------------
  
 var style = {
   'Figure': [{
@@ -73,4 +83,4 @@ var style = {
 };
 
 Map.setOptions(null, style);
-// Map.setOptions('SATELLITE');
+Map.setOptions('SATELLITE');

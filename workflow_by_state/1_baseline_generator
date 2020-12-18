@@ -16,22 +16,23 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | generated per Path and are exported to an Image Collection. 
 
 // --------------------------------- Imports & Outputs --------------------------------- 
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
+
 
 var VERSION = '7-0';
-var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var ROOT = 'projects/sites-project/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
-var STATE = 'WI';
+var STATE = 'MO';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 1985;  // Starts 01-01
-var END_YEAR = 2019;   // Year to stop
+var START_YEAR = 1987;  // Starts 01-01
+var END_YEAR = 1992;   // Year to stop
 var WINDOW = 5;
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)

@@ -246,7 +246,8 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .set(OUTPUT_PROPERTIES);
     });
 
-// ---------------------------------------
+// --------------------------------- Combine Results ---------------------------------- 
+
 var combinePaths = function(image) {
   var mean = image.select('score_mean');
   var variance = image.select('score_stddev').pow(2);

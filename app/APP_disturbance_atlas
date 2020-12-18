@@ -184,5 +184,5 @@ function redraw() {
 }
 
 // Initialize map
-map.add(makeLegend(PALETTE))
-redraw()
+map.add(makeLegend(PALETTE));
+redraw();

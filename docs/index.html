@@ -302,20 +302,8 @@
 
 
   <li class="md-nav__item">
-    <a href="monitoring/" class="md-nav__link">
-      Monitoring
-    </a>
-  </li>
-
-        
-          
-          
-          
-
-
-  <li class="md-nav__item">
     <a href="assessment/" class="md-nav__link">
-      Assessment
+      Monitoring & Assessment
     </a>
   </li>
 
@@ -434,21 +422,20 @@
 <p>Earth Engine users can add this repository with Reader access <a href="https://code.earthengine.google.com/?accept_repo=users/valeriepasquarella/condition_monitoring">here</a>.</p>
 <p>The scripts in this repository include:</p>
 <ul>
-<li><code>workflow_by_state/</code><ul>
-<li><code>1S_v7_baseline_generator</code> - Generate harmonic baseline models using fixed-length moving window (default: 5-year models)</li>
-<li><code>2S_v7_predict_monitor</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30)</li>
-<li><code>3S_v7_assessments_combine</code> - Combine results across orbital Paths</li>
-<li><code>4S_v7_visualization</code> - Spatially smooth and threshold for visualization</li>
+<li><code>app/</code><ul>
+<li><code>APP_disturbance_atlas</code> - Interactive mapping app with select by year</li>
 </ul>
 </li>
-<li><code>app/</code><ul>
-<li><code>APP_v7_disturbance_atlas</code> - Interactive mapping App with select by year</li>
+<li><code>workflow_by_state/</code><ul>
+<li><code>1_baseline_generator</code> - Generate harmonic baseline models using fixed-length moving window (default: 5-year models)</li>
+<li><code>2_monitor_assess</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across orbital Paths</li>
+<li><code>3_visualization</code> - Spatially smooth and threshold for visualization</li>
 </ul>
 </li>
 <li><code>utils.js</code> - Utility functions shared across scripts</li>
 </ul>
 <p>While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas.</p>
-<p><em>Note: Current scripts have been developed and tested for US State geographies, and example products are available for a selection of Northeastern states within USFS Region 9.</em></p>
+<p><em>Note: Current scripts have been developed and tested for US State geographies, and example products are available for select Northeastern states within USFS Region 9.</em></p>
                 
               
               

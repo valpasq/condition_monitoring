@@ -20,7 +20,7 @@
     
     
       
-        <title>Assessment - Harmonic condition monitoring</title>
+        <title>Monitoring & Assessment - Harmonic condition monitoring</title>
       
     
     
@@ -101,7 +101,7 @@
           </span>
           <span class="md-header-nav__topic md-ellipsis">
             
-              Assessment
+              Monitoring & Assessment
             
           </span>
         </div>
@@ -257,18 +257,6 @@
           
           
 
-
-  <li class="md-nav__item">
-    <a href="../monitoring/" class="md-nav__link">
-      Monitoring
-    </a>
-  </li>
-
-        
-          
-          
-          
-
   
 
 
@@ -278,12 +266,12 @@
     
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
-        Assessment
+        Monitoring & Assessment
         <span class="md-nav__icon md-icon"></span>
       </label>
     
     <a href="./" class="md-nav__link md-nav__link--active">
-      Assessment
+      Monitoring & Assessment
     </a>
     
       
@@ -305,8 +293,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#assessment-parameters" class="md-nav__link">
-    Assessment Parameters
+  <a href="#monitoring-parameters" class="md-nav__link">
+    Monitoring parameters
   </a>
   
 </li>
@@ -400,8 +388,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#assessment-parameters" class="md-nav__link">
-    Assessment Parameters
+  <a href="#monitoring-parameters" class="md-nav__link">
+    Monitoring parameters
   </a>
   
 </li>
@@ -419,11 +407,11 @@
               
                 
                 
-                  <h1>Assessment</h1>
+                  <h1>Monitoring & Assessment</h1>
                 
-                <p>This script reads in monitoring results for individual Paths and generates a final wall-to-wall assessment product, resulting in a single map per year per state. Scores in Path overlap zones are combined by weighting based on number of observations (acquisitions) in the monitoring period.  </p>
+                <p>This script reads a collection of baseline models and generates predictions and condition assessment scores by WRS2 Path for a user-specified monitoring period.</p>
 <h2 id="output-specifications">Output specifications<a class="headerlink" href="#output-specifications" title="Permanent link">&para;</a></h2>
-<p>Final assessment products are generated for the full coverage of the state ROI and are exported to specified Image Collection.</p>
+<p>Monitoring results are generated per ROI (US state) and are exported to a specified Image Collection. Condition scores are calculated using the last N baseline models for each acquisition date, and the resulting scores are averaged over all acquisition dates in the monitoring period. Scores in Path overlap zones are combined by weighting based on number of observations (acquisitions) in the monitoring period, resulting in a single map per year per state.</p>
 <table>
 <thead>
 <tr>
@@ -434,23 +422,23 @@
 <tbody>
 <tr>
 <td>VERSION</td>
-<td align="left">current version, <code>7-0</code></td>
+<td align="left">current version, <code>8-0</code></td>
 </tr>
 <tr>
 <td>ROOT</td>
 <td align="left">user repository folder</td>
 </tr>
 <tr>
-<td>RESULTS_COLLECTION</td>
-<td align="left">monitoring results Image Collection</td>
+<td>BASELINES</td>
+<td align="left">baselines Image Collection</td>
 </tr>
 <tr>
 <td>OUTPUT_COLLECTION</td>
-<td align="left">new assessment output Image Collection</td>
+<td align="left">new monitoring output Image Collection</td>
 </tr>
 <tr>
 <td>STATE</td>
-<td align="left">USPS abbrev, e.g. <code>MA</code></td>
+<td align="left">USPS abbrev. e.g. <code>MA</code></td>
 </tr>
 <tr>
 <td>OUTPUT_CRS</td>
@@ -458,8 +446,8 @@
 </tr>
 </tbody>
 </table>
-<h2 id="assessment-parameters">Assessment Parameters<a class="headerlink" href="#assessment-parameters" title="Permanent link">&para;</a></h2>
-<p>The following parameters are used to generate monitoring results. Note: spectral index (DEPENDENT) is determined from baseline asset metadata.</p>
+<h2 id="monitoring-parameters">Monitoring parameters<a class="headerlink" href="#monitoring-parameters" title="Permanent link">&para;</a></h2>
+<p>The following parameters are used to generate monitoring results. Final assessment products are generated for the full coverage of the state ROI and are exported to specified Image Collection. Note: spectral index (DEPENDENT) and harmonic frequencies (HARMONICS) are determined from baseline asset metadata.</p>
 <table>
 <thead>
 <tr>
@@ -471,28 +459,46 @@
 </thead>
 <tbody>
 <tr>
-<td>START_ASSESS</td>
-<td align="center">int</td>
-<td align="center"><code>2010</code></td>
-<td align="left">first year to generate assessment for</td>
-</tr>
-<tr>
-<td>END_ASSESS</td>
-<td align="center">int</td>
+<td>YEAR</td>
+<td align="center">string</td>
 <td align="center"><code>2020</code></td>
-<td align="left">last year to generate assessment for</td>
+<td align="left">monitoring year</td>
 </tr>
 <tr>
-<td>MIN_MONITOR_NOBS</td>
+<td>DAY_START</td>
+<td align="center">string</td>
+<td align="center"><code>'05-01'</code></td>
+<td align="left">start of monitoring period</td>
+</tr>
+<tr>
+<td>DAY_END</td>
+<td align="center">string</td>
+<td align="center"><code>'09-30'</code></td>
+<td align="left">end of monitoring period</td>
+</tr>
+<tr>
+<td>CC_THRESH</td>
 <td align="center">int</td>
-<td align="center"><code>3</code></td>
-<td align="left">min num obs for valid monitoring</td>
+<td align="center"><code>80</code></td>
+<td align="left">maximum CLOUD_COVER_LAND filtering</td>
 </tr>
 <tr>
-<td>MIN_RMSE_SCORE</td>
+<td>OBS_MIN</td>
+<td align="center">int</td>
+<td align="center"><code>30</code></td>
+<td align="left">exclude baselines with too few obs.</td>
+</tr>
+<tr>
+<td>N_MODELS</td>
+<td align="center">int</td>
+<td align="center"><code>5</code></td>
+<td align="left">number of models to ensemble</td>
+</tr>
+<tr>
+<td>MAX_STDDEV</td>
 <td align="center">int</td>
 <td align="center"><code>-10</code></td>
-<td align="left">min average RMSE (for Path)</td>
+<td align="left">max allowable per Path stddev</td>
 </tr>
 </tbody>
 </table>
@@ -514,7 +520,7 @@
     <div class="md-footer-nav">
       <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
         
-          <a href="../monitoring/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+          <a href="../baselines/" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
             <div class="md-footer-nav__button md-icon">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
             </div>
@@ -523,7 +529,7 @@
                 <span class="md-footer-nav__direction">
                   Previous
                 </span>
-                Monitoring
+                Baseline generator
               </div>
             </div>
           </a>

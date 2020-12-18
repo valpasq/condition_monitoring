@@ -23,12 +23,12 @@ var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_annual/';
 
-var STATE = 'NY';
+var STATE = 'VT';
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2010;            // Monitoring year
+var YEAR = 2020;            // Monitoring year
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '09-30';      // Date to end monitoring
 

@@ -71,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#output-specifications" class="md-skip">
+        <a href="#2_monitor_assess" class="md-skip">
           Skip to content
         </a>
       
@@ -264,6 +264,8 @@
     
     <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
+      
+    
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
         Monitoring & Assessment
@@ -277,6 +279,8 @@
       
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -295,6 +299,13 @@
         <li class="md-nav__item">
   <a href="#monitoring-parameters" class="md-nav__link">
     Monitoring parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    Results
   </a>
   
 </li>
@@ -373,6 +384,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -394,6 +407,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    Results
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -407,11 +427,10 @@
               
                 
                 
-                  <h1>Monitoring & Assessment</h1>
-                
-                <p>This script reads a collection of baseline models and generates predictions and condition assessment scores by WRS2 Path for a user-specified monitoring period.</p>
+                <h1 id="2_monitor_assess"><code>2_monitor_assess</code><a class="headerlink" href="#2_monitor_assess" title="Permanent link">&para;</a></h1>
+<p>This script reads a collection of baseline models and produces a condition assessment layer for the specified monitoring period for a Region of Interest (e.g. US state).</p>
 <h2 id="output-specifications">Output specifications<a class="headerlink" href="#output-specifications" title="Permanent link">&para;</a></h2>
-<p>Monitoring results are generated per ROI (US state) and are exported to a specified Image Collection. Condition scores are calculated using the last N baseline models for each acquisition date, and the resulting scores are averaged over all acquisition dates in the monitoring period. Scores in Path overlap zones are combined by weighting based on number of observations (acquisitions) in the monitoring period, resulting in a single map per year per state.</p>
+<p>Monitoring results are generated for an ROI and final assessment layer is exported to a specified Image Collection.</p>
 <table>
 <thead>
 <tr>
@@ -438,7 +457,7 @@
 </tr>
 <tr>
 <td>STATE</td>
-<td align="left">USPS abbrev. e.g. <code>MA</code></td>
+<td align="left">USPS state abbreviation e.g. <code>MA</code></td>
 </tr>
 <tr>
 <td>OUTPUT_CRS</td>
@@ -447,7 +466,7 @@
 </tbody>
 </table>
 <h2 id="monitoring-parameters">Monitoring parameters<a class="headerlink" href="#monitoring-parameters" title="Permanent link">&para;</a></h2>
-<p>The following parameters are used to generate monitoring results. Final assessment products are generated for the full coverage of the state ROI and are exported to specified Image Collection. Note: spectral index (DEPENDENT) and harmonic frequencies (HARMONICS) are determined from baseline asset metadata.</p>
+<p>Condition scores are calculated using the last <em>n</em> baseline models for each acquisition date, and the resulting scores are averaged over all acquisition dates in the monitoring period. Scores in Path overlap zones are combined by weighting based on number of observations (acquisitions) in the monitoring period, resulting in a single map per year per state. Note: spectral index (DEPENDENT) and harmonic frequencies (HARMONICS) are determined from baseline asset metadata. The following parameters are used to generate monitoring results:</p>
 <table>
 <thead>
 <tr>
@@ -462,31 +481,31 @@
 <td>YEAR</td>
 <td align="center">string</td>
 <td align="center"><code>2020</code></td>
-<td align="left">monitoring year</td>
+<td align="left">monitoring year (YYYY)</td>
 </tr>
 <tr>
 <td>DAY_START</td>
 <td align="center">string</td>
 <td align="center"><code>'05-01'</code></td>
-<td align="left">start of monitoring period</td>
+<td align="left">start of monitoring period (MM-DD)</td>
 </tr>
 <tr>
 <td>DAY_END</td>
 <td align="center">string</td>
 <td align="center"><code>'09-30'</code></td>
-<td align="left">end of monitoring period</td>
+<td align="left">end of monitoring period (MM-DD)</td>
 </tr>
 <tr>
 <td>CC_THRESH</td>
 <td align="center">int</td>
 <td align="center"><code>80</code></td>
-<td align="left">maximum CLOUD_COVER_LAND filtering</td>
+<td align="left">maximum CLOUD_COVER_LAND for monitoring images</td>
 </tr>
 <tr>
 <td>OBS_MIN</td>
 <td align="center">int</td>
 <td align="center"><code>30</code></td>
-<td align="left">exclude baselines with too few obs.</td>
+<td align="left">exclude baselines with low number of observations</td>
 </tr>
 <tr>
 <td>N_MODELS</td>
@@ -497,8 +516,44 @@
 <tr>
 <td>MAX_STDDEV</td>
 <td align="center">int</td>
-<td align="center"><code>-10</code></td>
-<td align="left">max allowable per Path stddev</td>
+<td align="center"><code>5</code></td>
+<td align="left">max allowable per Path standard deviation</td>
+</tr>
+</tbody>
+</table>
+<h2 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
+<p>Condition assessment products include Path-integrated mean (weighted_mean) and standard deviation (weighted_standard) of condition scores, as well as the number of  observations during the monitoring period (total_nobs).</p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th align="center">Name</th>
+<th align="center">Type</th>
+<th align="center">CRS</th>
+<th align="center">Nominal Scale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td align="center">weighted_mean</td>
+<td align="center">double</td>
+<td align="center">EPSG:5070</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>1</td>
+<td align="center">weighted_stddev</td>
+<td align="center">double</td>
+<td align="center">EPSG:5070</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>2</td>
+<td align="center">total_nobs</td>
+<td align="center">signed int64</td>
+<td align="center">EPSG:5070</td>
+<td align="center">30</td>
 </tr>
 </tbody>
 </table>

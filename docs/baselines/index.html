@@ -71,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#output-specifications" class="md-skip">
+        <a href="#1_baseline_generator" class="md-skip">
           Skip to content
         </a>
       
@@ -252,6 +252,8 @@
     
     <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
     
+      
+    
     
       <label class="md-nav__link md-nav__link--active" for="__toc">
         Baseline generator
@@ -265,6 +267,8 @@
       
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
+  
+    
   
   
     <label class="md-nav__title" for="__toc">
@@ -283,6 +287,13 @@
         <li class="md-nav__item">
   <a href="#model-parameters" class="md-nav__link">
     Model parameters
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    Results
   </a>
   
 </li>
@@ -373,6 +384,8 @@
 <nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
+    
+  
   
     <label class="md-nav__title" for="__toc">
       <span class="md-nav__icon md-icon"></span>
@@ -394,6 +407,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#results" class="md-nav__link">
+    Results
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -407,11 +427,10 @@
               
                 
                 
-                  <h1>Baseline generator</h1>
-                
-                <p>This script generates harmonic baseline models for a user-specified Region of Interest, e.g. US State. </p>
+                <h1 id="1_baseline_generator"><code>1_baseline_generator</code><a class="headerlink" href="#1_baseline_generator" title="Permanent link">&para;</a></h1>
+<p>This script generates a collection of harmonic baseline models for a user-specified Region of Interest, e.g. US State.</p>
 <h2 id="output-specifications">Output specifications<a class="headerlink" href="#output-specifications" title="Permanent link">&para;</a></h2>
-<p>Baseline models are generated per Path and are exported to specified Image Collection. Current implementation exports Path imagery clipped to a US State boundary based on the <a href="https://developers.google.com/earth-engine/datasets/catalog/TIGER_2018_States">TIGER: US Census States 2018 dataset</a>. Specify state using two-letter USPS code, e.g. <code>'MA'</code> for Massachusetts.</p>
+<p>Baseline models are generated per Path and are exported to specified Earth Engine Image Collection. The current implementation exports Path-based results clipped to a US State boundary from the <a href="https://developers.google.com/earth-engine/datasets/catalog/TIGER_2018_States">TIGER: US Census States 2018 dataset</a>, with states specified using their two-letter USPS code, e.g. <code>'MA'</code> for Massachusetts.</p>
 <table>
 <thead>
 <tr>
@@ -439,7 +458,8 @@
 </tbody>
 </table>
 <h2 id="model-parameters">Model parameters<a class="headerlink" href="#model-parameters" title="Permanent link">&para;</a></h2>
-<p>The following parameters are used to configure the baseline model runs.</p>
+<p>Baseline models are fit to univariate time series of all high-quality Landsat observations. Though any band, index or transform can be used as inputs, testing has shown that vegetation indices, such as Tasseled Cap Greenness, are best suited for a harmonic modeling approach.  </p>
+<p>The following parameters are used to configure the baseline model runs:</p>
 <table>
 <thead>
 <tr>
@@ -491,6 +511,78 @@
 <td align="center">int</td>
 <td align="center"><code>80</code></td>
 <td align="left">maximum CLOUD_COVER_LAND filtering</td>
+</tr>
+</tbody>
+</table>
+<h2 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
+<p>Output images include harmonic regression terms, specifically the intercept (constant), slope (t), and two pairs of sine and cosine coefficients, as well as the model Root Mean Squared Error (rmse) and number of observations (nobs) used in model fitting. All results retain the UTM zone of Landsat inputs and have a 30m nominal pixel scale.</p>
+<p>Example output:</p>
+<table>
+<thead>
+<tr>
+<th>Index</th>
+<th align="center">Name</th>
+<th align="center">Type</th>
+<th align="center">CRS</th>
+<th align="center">Nominal Scale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td align="center">constant</td>
+<td align="center">double</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>1</td>
+<td align="center">t</td>
+<td align="center">double</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>2</td>
+<td align="center">cos_1</td>
+<td align="center">double</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>3</td>
+<td align="center">cos_3</td>
+<td align="center">double</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>4</td>
+<td align="center">sin_1</td>
+<td align="center">double</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>5</td>
+<td align="center">sin_3</td>
+<td align="center">double</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>6</td>
+<td align="center">rmse</td>
+<td align="center">double</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>7</td>
+<td align="center">nobs</td>
+<td align="center">unsigned int32</td>
+<td align="center">EPSG:32619</td>
+<td align="center">30</td>
 </tr>
 </tbody>
 </table>

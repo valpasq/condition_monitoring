@@ -28,9 +28,9 @@ var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2020;            // Monitoring year
-var DAY_START = '09-01';    // Date to start monitoring
-var DAY_END = '09-30';      // Date to end monitoring
+var YEAR = 2015;            // Monitoring year
+var DAY_START = '05-01';    // Date to start monitoring
+var DAY_END = '05-30';      // Date to end monitoring
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs

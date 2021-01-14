@@ -116,9 +116,9 @@ function makeLegend(palette) {
     
   var labelPanel = ui.Panel({
       widgets: [
-        ui.Label('Decrease', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('Less Green', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
         ui.Label(' ', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
-        ui.Label('Increase', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
+        ui.Label('More Green', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
       ],
       layout: ui.Panel.Layout.flow('horizontal'),
       style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});

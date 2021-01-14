@@ -11,8 +11,8 @@ var images = v8_0
 
 // -----------------------------
 var MIN = -4;
-var MAX = 0;
-var PALETTE = ['red', 'orange', 'yellow', 'blue'];
+var MAX = 4;
+var PALETTE = ['red', 'orange', 'white', 'yellowgreen', 'green'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var THRESHOLD = -1.5;
@@ -92,8 +92,8 @@ function ColorBar(palette) {
       bbox: [0, 0, 1, 0.1],
       dimensions: '100x10',
       format: 'png',
-      min: 1,
-      max: 0,
+      min: 0,
+      max: 1,
       palette: palette,
     },
     style: {stretch: 'horizontal', margin: '2px 2px'},
@@ -115,9 +115,9 @@ function makeLegend(palette) {
     
   var labelPanel = ui.Panel({
       widgets: [
-        ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
-        ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
-        ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
+        ui.Label('Decrease', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label(' ', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('Increase', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
       ],
       layout: ui.Panel.Layout.flow('horizontal'),
       style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
@@ -145,7 +145,7 @@ var select = ui.Select({
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
+    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD).or(score_disp.select('weighted_mean').gte(THRESHOLD*-1));
     score_disp = score_disp.updateMask(thresh_mask);
     
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);

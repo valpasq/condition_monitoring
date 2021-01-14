@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
-    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly");
+    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly"),
+    v8_0_monthly = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_monthly");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var example = ee.Geometry.Point([-72.17448, 42.53966]);

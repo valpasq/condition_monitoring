@@ -193,8 +193,14 @@ select.style().set('stretch', 'horizontal');
 /////////////////////
 
 // Set a callback function for when the user clicks the map.
+var dirtyMap = false;
 map.onClick(function(coords) {
+  if(dirtyMap === false){
+    map.add(panel_ts);
+    dirtyMap = true;
+  }
   
+  panel_ts.clear();
   // Find Path Row
   var pgeo = ee.Geometry.Point([coords.lon, coords.lat]);
 
@@ -211,15 +217,30 @@ map.onClick(function(coords) {
   var chart = ui.Chart.image.series(ee.ImageCollection(images).select(['lower', 'weighted_mean', 'upper']), point, ee.Reducer.first(), 30) 
                 .setOptions({
                   vAxis: {'title': 'condition score'},
-                  colors: ['red', 'blue', 'orange'],
-                  lineWidth: 0,
-                  pointSize: 4,
+                  series: {
+                    0: {
+                      color: 'grey',
+                      lineWidth: 2, 
+                      pointSize: 0
+                    },
+                    1: {
+                      color: 'silver',
+                      lineWidth: 2,
+                      pointSize: 0
+                    },
+                    2: {
+                      color: 'black',
+                      lineWidth: 2,
+                      pointSize: 3
+                    }
+                  },
+                  // colors: ['grey', 'silver', 'black'],
+                  // lineWidth: 2,
+                  // pointSize: 2,
                 });
 
   
-  // Add charts and labels to panel
-  // panel_ts.widgets().set(2, ui.Label('Monitoring Period', visLabels));
-  map.add(panel_ts)
+  // Add chart to panel
   panel_ts.add(chart);
 
 

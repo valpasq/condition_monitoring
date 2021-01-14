@@ -1,0 +1,188 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+
+var images = imageCollection;
+
+// -----------------------------
+var MIN = -4;
+var MAX = 0;
+var PALETTE = ['red', 'orange', 'yellow', 'blue'];
+var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var THRESHOLD = -2;
+var MIN_NOBS = 3;
+
+var SELECT_LIST = {
+  '2010': 2010, 
+  '2011': 2011,
+  '2012': 2012,
+  '2013': 2013,
+  '2014': 2014,
+  '2015': 2015,
+  '2016': 2016,
+  '2017': 2017,
+  '2018': 2018,
+  '2019': 2019,
+  '2020': 2020
+}
+
+var STATES = ee.FeatureCollection('TIGER/2018/States');
+
+// ------------------------------------------
+// Set up UI Panel
+var map = ui.Map();
+var panel = ui.Panel({
+    style: {
+      width: '200px',
+      height: '80px',
+      position: 'top-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+  
+// Create colorbar for legend.
+function ColorBar(palette) {
+  return ui.Thumbnail({
+    image: ee.Image.pixelLonLat().select(0),
+    params: {
+      bbox: [0, 0, 1, 0.1],
+      dimensions: '100x10',
+      format: 'png',
+      min: 1,
+      max: 0,
+      palette: palette,
+    },
+    style: {stretch: 'horizontal', margin: '2px 2px'},
+  });
+}
+
+// Build legend
+function makeLegend(palette) {
+  var legendTitle = ui.Label({
+    value: 'Detected Change in Greenness',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '12px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+    
+  var labelPanel = ui.Panel({
+      widgets: [
+        ui.Label('Normal', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('Moderate', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('Large', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
+      ],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
+  
+  return ui.Panel({
+    widgets: [legendTitle, ColorBar(palette), labelPanel],
+    style: {position: 'bottom-right',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+}
+
+
+var select = ui.Select({
+  items: Object.keys(SELECT_LIST),
+  onChange: function(key) {
+    map.layers().reset();
+
+    select.style().set('stretch', 'horizontal');
+    
+    var assessment = images
+      .filterMetadata('monitor_year', 'equals', SELECT_LIST[key])
+      .mosaic()
+    
+    // assessment = assessment.updateMask(assessment.select('total_nobs').gt(1));
+    
+    var score_disp = assessment
+      .focal_mean(30, 'circle', 'meters', 1);
+  
+    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
+    score_disp = score_disp.updateMask(thresh_mask);
+    
+    var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
+    score_disp = score_disp.updateMask(nobs_mask);
+    
+    
+    // c = (1 / (1 + s))^0.6;
+    // c = (TanH(7*(c - 0.5)) + 1)*0.5;
+    var confidence_scale = ee.Image(1)
+      .divide(score_disp.select('weighted_stddev').add(1))
+      .pow(0.6)
+      .subtract(0.5).multiply(7)
+      .tanh()
+      .add(1).multiply(0.5);
+  
+    var score_mean_viz_alpha = score_disp.select('weighted_mean')
+        .visualize(viz)
+        .toUint8()
+        .updateMask(thresh_mask.multiply(confidence_scale));
+    
+    map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+    map.addLayer(score_disp, {}, '(hidden)', false);
+      
+    
+    redraw();
+    
+}});
+
+var panel_title = ui.Label({
+    value: '🔎 Year of disturbance:',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '12px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+
+select.setPlaceholder('Select a year')
+select.style().set('stretch', 'horizontal')
+
+panel.add(panel_title).add(select)
+ui.root.clear();
+ui.root.add(map.add(panel));
+
+var states_list = images.aggregate_array('state')
+    .distinct()
+    .getInfo();
+    
+var states_display = STATES.filter(
+    ee.Filter.inList('STUSPS', states_list)); 
+    
+var state_outlines = ee.Image().byte().paint({
+    featureCollection: states_display,
+    color: 1,
+    width: 1
+  });  
+    
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Function to redraw "base" layers 
+function redraw() {
+
+  map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries')
+  
+  map.setOptions(null, style);
+  map.setOptions('SATELLITE');
+  map.style().set({cursor:'crosshair'});
+  
+}
+
+// Initialize map
+map.add(makeLegend(PALETTE));
+redraw();

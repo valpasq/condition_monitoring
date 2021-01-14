@@ -216,7 +216,10 @@ map.onClick(function(coords) {
   // Create charts
   var chart = ui.Chart.image.series(ee.ImageCollection(images).select(['lower', 'weighted_mean', 'upper']), point, ee.Reducer.first(), 30) 
                 .setOptions({
-                  vAxis: {'title': 'condition score'},
+                  vAxis: {
+                    title: 'condition score',
+                    viewWindow: {min: -5, max: 5}
+                  },
                   series: {
                     0: {
                       color: 'grey',

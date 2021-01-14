@@ -213,7 +213,6 @@ map.onClick(function(coords) {
   // Add a pixel outline to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
   map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
- 
   
   // Create charts
   var chart = ui.Chart.image.series(ee.ImageCollection(images).select(['lower', 'weighted_mean', 'upper']), point, ee.Reducer.first(), 30) 

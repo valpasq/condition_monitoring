@@ -220,7 +220,7 @@ map.onClick(function(coords) {
                 .setOptions({
                   vAxis: {
                     title: 'condition score',
-                    viewWindow: {min: -5, max: 5}
+                    viewWindow: {min: -5, max: 5},
                   },
                   series: {
                     0: {

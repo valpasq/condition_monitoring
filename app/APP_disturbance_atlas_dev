@@ -1,10 +1,12 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
+var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
+    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
-var images = imageCollection
+var images = v8_0
     .filterMetadata('state', 'equals', 'MA');
 
+var example = ee.Geometry.Point([-72.17448, 42.53966]);
 // -----------------------------
 var MIN = -4;
 var MAX = 0;
@@ -179,6 +181,12 @@ var state_outlines = ee.Image().byte().paint({
     color: 1,
     width: 1
   });  
+
+// var plot_outlines = ee.Image().byte().paint({
+//     featureCollection: hf_sites,
+//     color: 1,
+//     width: 1
+//   });  
     
 
 var style = {
@@ -191,7 +199,9 @@ var style = {
 // Function to redraw "base" layers 
 function redraw() {
 
-  map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries')
+  map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
+  // map.addLayer(plot_outlines, {palette: 'white'}, 'HF sites');
+  map.addLayer(example)
   
   map.setOptions(null, style);
   map.setOptions('SATELLITE');

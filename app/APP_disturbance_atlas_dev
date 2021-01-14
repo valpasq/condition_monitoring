@@ -230,7 +230,7 @@ map.onClick(function(coords) {
                     },
                     2: {
                       color: 'black',
-                      lineWidth: 2,
+                      lineWidth: 0,
                       pointSize: 3
                     }
                   },

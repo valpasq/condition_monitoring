@@ -234,9 +234,6 @@ map.onClick(function(coords) {
                       pointSize: 3
                     }
                   },
-                  // colors: ['grey', 'silver', 'black'],
-                  // lineWidth: 2,
-                  // pointSize: 2,
                 });
 
   

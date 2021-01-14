@@ -12,7 +12,7 @@ var images = v8_0
 // -----------------------------
 var MIN = -4;
 var MAX = 4;
-var PALETTE = ['red', 'orange', 'white', 'yellowgreen', 'green'];
+var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var THRESHOLD = -1.5;

@@ -1,7 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
     v8_0_monthly = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_monthly"),
-    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly");
+    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly"),
+    table = ee.FeatureCollection("users/valeriepasquarella/REG09_IDS_damageareas_prj_shp");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var example = ee.Geometry.Point([-72.17448, 42.53966]);
@@ -140,7 +141,7 @@ var select = ui.Select({
     
     var assessment = images
       .filterMetadata('monitor_year', 'equals', SELECT_LIST[key])
-      .mosaic()
+      .mosaic();
     
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);

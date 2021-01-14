@@ -142,8 +142,6 @@ var select = ui.Select({
       .filterMetadata('monitor_year', 'equals', SELECT_LIST[key])
       .mosaic()
     
-    // assessment = assessment.updateMask(assessment.select('total_nobs').gt(1));
-    
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   

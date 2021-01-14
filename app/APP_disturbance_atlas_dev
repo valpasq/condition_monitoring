@@ -225,13 +225,15 @@ map.onClick(function(coords) {
                       labelInLegend: '-1σ',
                       color: 'grey',
                       lineWidth: 2, 
-                      pointSize: 0
+                      pointSize: 0,
+                      curveType: 'function'
                     },
                     1: {
                       labelInLegend: '+1σ',
                       color: 'silver',
                       lineWidth: 2,
-                      pointSize: 0
+                      pointSize: 0,
+                      curveType: 'function'
                     },
                     2: {
                       labelInLegend: 'mean',

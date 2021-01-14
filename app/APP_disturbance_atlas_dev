@@ -169,7 +169,6 @@ var select = ui.Select({
     
     map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
     map.addLayer(score_disp, {}, '(hidden)', false);
-      
     
     redraw();
     

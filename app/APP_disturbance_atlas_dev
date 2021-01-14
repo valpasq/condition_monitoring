@@ -222,16 +222,19 @@ map.onClick(function(coords) {
                   },
                   series: {
                     0: {
+                      labelInLegend: '+1σ',
                       color: 'grey',
                       lineWidth: 2, 
                       pointSize: 0
                     },
                     1: {
+                      labelInLegend: '-1σ',
                       color: 'silver',
                       lineWidth: 2,
                       pointSize: 0
                     },
                     2: {
+                      labelInLegend: 'mean',
                       color: 'black',
                       lineWidth: 0,
                       pointSize: 3

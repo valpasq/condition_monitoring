@@ -213,6 +213,7 @@ map.onClick(function(coords) {
   // Add a pixel outline to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
   
+  
   // Create charts
   var chart = ui.Chart.image.series(ee.ImageCollection(images).select(['lower', 'weighted_mean', 'upper']), point, ee.Reducer.first(), 30) 
                 .setOptions({
@@ -282,8 +283,7 @@ var style = {
 function redraw() {
 
   map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
-  // map.addLayer(plot_outlines, {palette: 'white'}, 'HF sites');
-  map.addLayer(example);
+  map.addLayer(example, {}, 'roi');
   
   map.setOptions(null, style);
   map.setOptions('SATELLITE');

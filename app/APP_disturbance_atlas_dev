@@ -3,10 +3,10 @@ var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_pr
     hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
+var example = ee.Geometry.Point([-72.17448, 42.53966]);
+
 var images = v8_0
     .filterMetadata('state', 'equals', 'MA');
-
-var example = ee.Geometry.Point([-72.17448, 42.53966]);
 
 // -----------------------------
 var MIN = -4;
@@ -49,6 +49,20 @@ var SELECT_LIST = {
 var STATES = ee.FeatureCollection('TIGER/2018/States');
 
 // ------------------------------------------
+// Add range info for visualization
+var get_range = function(img) {
+  var mean = img.select('weighted_mean');
+  var stddev = img.select('weighted_stddev');
+  var lower = mean.subtract(stddev).rename('lower');
+  var upper = mean.add(stddev).rename('upper');
+  
+  return img.addBands(lower).addBands(upper);
+  
+};
+
+images = images.map(get_range);
+
+// ------------------------------------------
 // Set up UI Panel
 var map = ui.Map();
 var panel = ui.Panel({
@@ -56,6 +70,15 @@ var panel = ui.Panel({
       width: '200px',
       height: '80px',
       position: 'top-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+
+var panel_ts = ui.Panel({
+    style: {
+      width: '600px',
+      height: '230px',
+      position: 'bottom-left',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
@@ -163,10 +186,49 @@ var panel_title = ui.Label({
     }
     });
 
-select.setPlaceholder('Select a year')
-select.style().set('stretch', 'horizontal')
+select.setPlaceholder('Select a year');
+select.style().set('stretch', 'horizontal');
 
-panel.add(panel_title).add(select)
+
+/////////////////////
+
+// Set a callback function for when the user clicks the map.
+map.onClick(function(coords) {
+  
+  // Find Path Row
+  var pgeo = ee.Geometry.Point([coords.lon, coords.lat]);
+
+  // Create or update the location label (the second widget in the panel)
+  var location = 'Lon: ' + coords.lon.toFixed(2) + ' ' +
+                 'Lat: ' + coords.lat.toFixed(2)
+     
+  // panel.widgets().set(1, ui.Label(location));
+
+  // Add a pixel outline to the map where the user clicked.
+  var point = ee.Geometry.Point(coords.lon, coords.lat);
+  
+  // Create charts
+  var chart = ui.Chart.image.series(ee.ImageCollection(images).select(['lower', 'weighted_mean', 'upper']), point, ee.Reducer.first(), 30) 
+                .setOptions({
+                  vAxis: {'title': 'condition score'},
+                  colors: ['red', 'blue', 'orange'],
+                  lineWidth: 0,
+                  pointSize: 4,
+                });
+
+  
+  // Add charts and labels to panel
+  // panel_ts.widgets().set(2, ui.Label('Monitoring Period', visLabels));
+  map.add(panel_ts)
+  panel_ts.add(chart);
+
+
+});
+
+////////////////////////
+
+
+panel.add(panel_title).add(select);
 ui.root.clear();
 ui.root.add(map.add(panel));
 
@@ -183,13 +245,6 @@ var state_outlines = ee.Image().byte().paint({
     width: 1
   });  
 
-// var plot_outlines = ee.Image().byte().paint({
-//     featureCollection: hf_sites,
-//     color: 1,
-//     width: 1
-//   });  
-    
-
 var style = {
   'Figure': [{
       featureType: 'all',
@@ -202,7 +257,7 @@ function redraw() {
 
   map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
   // map.addLayer(plot_outlines, {palette: 'white'}, 'HF sites');
-  map.addLayer(example)
+  map.addLayer(example);
   
   map.setOptions(null, style);
   map.setOptions('SATELLITE');

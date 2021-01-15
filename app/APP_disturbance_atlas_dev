@@ -45,7 +45,7 @@ images = images.map(get_range);
 var map = ui.Map();
 var panel = ui.Panel({
     style: {
-      width: '200px',
+      width: '250px',
       height: '80px',
       position: 'top-left',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
@@ -108,8 +108,16 @@ function makeLegend(palette) {
 }
 
 
-var select = ui.Select({
-  items: Object.keys(SELECT_LIST),
+// var select = ui.Select({
+//   items: Object.keys(SELECT_LIST),
+var select = ui.Slider({
+  min: START_YEAR,
+  max: END_YEAR,
+  value: END_YEAR,
+  step: 1,
+  style: {
+    backgroundColor: 'rgba(255, 255, 255, 0)'
+  },
   onChange: function(key) {
     map.layers().reset();
 
@@ -161,7 +169,7 @@ var panel_title = ui.Label({
     }
     });
 
-select.setPlaceholder('Select a year');
+// select.setPlaceholder('Select a year');
 select.style().set('stretch', 'horizontal');
 
 

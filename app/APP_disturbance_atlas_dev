@@ -46,7 +46,7 @@ var map = ui.Map();
 var panel = ui.Panel({
     style: {
       width: '250px',
-      height: '80px',
+      height: '70px',
       position: 'top-left',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
@@ -158,10 +158,10 @@ var select = ui.Slider({
 }});
 
 var panel_title = ui.Label({
-    value: '🔎 Year of disturbance:',
+    value: '🔎 Select year:',
     style: {
       fontWeight: 'bold',
-      fontSize: '12px',
+      fontSize: '13px',
       margin: '0 0 2px 0',
       padding: '0',
       backgroundColor: 'rgba(255, 255, 255, 0)'

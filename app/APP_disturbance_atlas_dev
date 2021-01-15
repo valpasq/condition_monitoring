@@ -3,7 +3,9 @@ var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_pr
     hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly"),
     geometry = /* color: #d63000 */ee.Geometry.MultiPoint(
         [[-72.21046448779315, 42.50971428655252],
-         [-72.17452889876255, 42.539548730406665]]);
+         [-72.17452889876255, 42.539548730406665],
+         [-72.18296519536905, 42.52870425007141],
+         [-72.16939811620708, 42.53609158785712]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var STATES = ee.FeatureCollection('TIGER/2018/States');
 

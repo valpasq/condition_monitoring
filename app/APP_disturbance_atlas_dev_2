@@ -1,9 +1,12 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// -----------------------------
+//  Results collection
 var images = v8_0;
 
 // -----------------------------
+//  Visualization parameters
 var MIN = -4;
 var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
@@ -16,6 +19,7 @@ var START_YEAR = 1995;
 var END_YEAR = 2020;
 
 // ------------------------------------------
+// Get state outlines and style
 var STATES = ee.FeatureCollection('TIGER/2018/States');
 
 var states_list = images.aggregate_array('state')
@@ -31,9 +35,8 @@ var state_outlines = ee.Image().byte().paint({
     width: 1
   }); 
   
-
 // ------------------------------------------
-// Add range info for visualization
+// Add range info for charting
 var get_range = function(img) {
   var mean = img.select('weighted_mean');
   var stddev = img.select('weighted_stddev');
@@ -94,7 +97,7 @@ function makeLegend(palette) {
 }
 
 // ----------------------------------
-// Set up UI Panel
+// Set up UI Panel - Select year
 var panel = ui.Panel({
     style: {
       width: '250px',
@@ -114,15 +117,6 @@ var panel_title = ui.Label({
       backgroundColor: 'rgba(255, 255, 255, 0)'
     }
     });
-
-var panel_ts = ui.Panel({
-    style: {
-      width: '600px',
-      height: '230px',
-      position: 'bottom-left',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)'
-    }
-  });
 
 var select = ui.Slider({
   min: START_YEAR,
@@ -175,7 +169,16 @@ var select = ui.Slider({
 
 select.style().set('stretch', 'horizontal');
 
-/////////////////////
+// ----------------------------------
+// Set up UI Panel - Time series chart
+var panel_ts = ui.Panel({
+    style: {
+      width: '600px',
+      height: '230px',
+      position: 'bottom-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
 
 // Set a callback function for when the user clicks the map.
 var dirtyMap = false;
@@ -238,7 +241,6 @@ Map.onClick(function(coords) {
 
 });
 
-////////////////////////
 
 panel.add(panel_title).add(select);
 ui.root.clear();

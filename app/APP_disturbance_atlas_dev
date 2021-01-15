@@ -64,6 +64,7 @@ var get_range = function(img) {
 
 images = images.map(get_range);
 
+
 // ------------------------------------------
 // Set up UI Panel
 var map = ui.Map();

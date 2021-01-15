@@ -42,7 +42,6 @@ images = images.map(get_range);
 
 // ------------------------------------------
 // Set up UI Panel
-var map = ui.Map();
 var panel = ui.Panel({
     style: {
       width: '250px',
@@ -108,8 +107,6 @@ function makeLegend(palette) {
 }
 
 
-// var select = ui.Select({
-//   items: Object.keys(SELECT_LIST),
 var select = ui.Slider({
   min: START_YEAR,
   max: END_YEAR,
@@ -168,7 +165,6 @@ var panel_title = ui.Label({
     }
     });
 
-// select.setPlaceholder('Select a year');
 select.style().set('stretch', 'horizontal');
 
 
@@ -176,9 +172,9 @@ select.style().set('stretch', 'horizontal');
 
 // Set a callback function for when the user clicks the map.
 var dirtyMap = false;
-map.onClick(function(coords) {
+Map.onClick(function(coords) {
   if(dirtyMap === false){
-    map.add(panel_ts);
+    Map.add(panel_ts);
     dirtyMap = true;
   }
   
@@ -192,7 +188,7 @@ map.onClick(function(coords) {
      
   // Add a pixel outline to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
-  map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
+  Map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
   
   var state_code = ee.Feature(STATES.filterBounds(point).first())
       .get('STUSPS');
@@ -244,7 +240,7 @@ map.onClick(function(coords) {
 
 panel.add(panel_title).add(select);
 ui.root.clear();
-ui.root.add(map.add(panel));
+ui.root.add(Map.add(panel));
 
 var states_list = images.aggregate_array('state')
     .distinct()
@@ -269,15 +265,15 @@ var style = {
 // Function to redraw "base" layers 
 function redraw() {
 
-  map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
-  map.addLayer(example, {}, 'roi');
+  Map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
+  Map.addLayer(example, {}, 'roi');
   
-  map.setOptions(null, style);
-  map.setOptions('SATELLITE');
-  map.style().set({cursor:'crosshair'});
+  Map.setOptions(null, style);
+  Map.setOptions('SATELLITE');
+  Map.style().set({cursor:'crosshair'});
   
 }
 
 // Initialize map
-map.add(makeLegend(PALETTE));
+Map.add(makeLegend(PALETTE));
 redraw();

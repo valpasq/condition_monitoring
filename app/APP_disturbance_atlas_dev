@@ -4,9 +4,7 @@ var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_pr
 
 var example = ee.Geometry.Point([-72.17448, 42.53966]);
 
-var images = v8_0
-    // .filterMetadata('state', 'equals', 'MA');
-print(images);
+var images = v8_0;
 
 // -----------------------------
 var MIN = -4;
@@ -46,7 +44,6 @@ var SELECT_LIST = {
   '2020': 2020
 };
 
-print(ee.Dictionary(SELECT_LIST).keys())
 var STATES = ee.FeatureCollection('TIGER/2018/States');
 
 // ------------------------------------------
@@ -218,14 +215,19 @@ map.onClick(function(coords) {
   var location = 'Lon: ' + coords.lon.toFixed(2) + ' ' +
                  'Lat: ' + coords.lat.toFixed(2)
      
-  // panel.widgets().set(1, ui.Label(location));
-
   // Add a pixel outline to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
   map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
   
+  var state_code = ee.Feature(STATES.filterBounds(point).first())
+      .get('STUSPS');
+  
+  var series = ee.ImageCollection(images)
+      .select(['lower', 'weighted_mean', 'upper'])
+      .filterMetadata('state', 'equals', state_code);
+
   // Create charts
-  var chart = ui.Chart.image.series(ee.ImageCollection(images).select(['lower', 'weighted_mean', 'upper']), point, ee.Reducer.first(), 30) 
+  var chart = ui.Chart.image.series(series, point, ee.Reducer.first(), 30) 
                 .setOptions({
                   vAxis: {
                     title: 'condition score',

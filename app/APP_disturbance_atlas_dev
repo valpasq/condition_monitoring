@@ -8,7 +8,7 @@ var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_pr
 var example = ee.Geometry.Point([-72.17448, 42.53966]);
 
 var images = v8_0
-    .filterMetadata('state', 'equals', 'MA');
+    // .filterMetadata('state', 'equals', 'MA');
 
 // -----------------------------
 var MIN = -4;

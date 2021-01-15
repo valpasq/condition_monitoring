@@ -190,7 +190,7 @@ Map.onClick(function(coords) {
      
   // Add a pixel outline to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
-  Map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
+  Map.layers().set(4, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
   
   var state_code = ee.Feature(STATES.filterBounds(point).first())
       .get('STUSPS');

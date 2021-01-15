@@ -1,14 +1,12 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
-    v8_0_monthly = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_monthly"),
-    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly"),
-    table = ee.FeatureCollection("users/valeriepasquarella/REG09_IDS_damageareas_prj_shp");
+var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 
 var example = ee.Geometry.Point([-72.17448, 42.53966]);
 
 var images = v8_0
     // .filterMetadata('state', 'equals', 'MA');
+print(images);
 
 // -----------------------------
 var MIN = -4;
@@ -46,8 +44,9 @@ var SELECT_LIST = {
   '2018': 2018,
   '2019': 2019,
   '2020': 2020
-}
+};
 
+print(ee.Dictionary(SELECT_LIST).keys())
 var STATES = ee.FeatureCollection('TIGER/2018/States');
 
 // ------------------------------------------
@@ -64,6 +63,17 @@ var get_range = function(img) {
 
 images = images.map(get_range);
 
+
+// var make_mosaics = function(year) {
+//     var group = images
+//       .filterMetadata('monitor_year', 'equals', year);
+//     var mosaic = group.mosaic();
+//     return mosaic;
+// };
+
+// images = ee.ImageCollection.fromImages(
+//   ee.Dictionary(SELECT_LIST).keys().map(make_mosaics));
+// print(images);
 
 // ------------------------------------------
 // Set up UI Panel

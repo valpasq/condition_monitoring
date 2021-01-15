@@ -110,7 +110,7 @@ function makeLegend(palette) {
 var select = ui.Slider({
   min: START_YEAR,
   max: END_YEAR,
-  value: END_YEAR,
+  value: START_YEAR,
   step: 1,
   style: {
     backgroundColor: 'rgba(255, 255, 255, 0)'

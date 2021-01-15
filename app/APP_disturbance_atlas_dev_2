@@ -241,7 +241,7 @@ Map.onClick(function(coords) {
 
 });
 
-
+// Add panels to Map
 panel.add(panel_title).add(select);
 ui.root.clear();
 ui.root.add(Map.add(panel));

@@ -1,0 +1,274 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+var STATES = ee.FeatureCollection('TIGER/2018/States');
+var images = v8_0;
+
+// -----------------------------
+var MIN = -4;
+var MAX = 4;
+var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
+var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var THRESHOLD = -1.5;
+var MIN_NOBS = 3;
+
+var START_YEAR = 1995;
+var END_YEAR = 2020;
+
+
+// ------------------------------------------
+// Add range info for visualization
+var get_range = function(img) {
+  var mean = img.select('weighted_mean');
+  var stddev = img.select('weighted_stddev');
+  var lower = mean.subtract(stddev).rename('lower');
+  var upper = mean.add(stddev).rename('upper');
+  
+  return img.addBands(lower).addBands(upper);
+  
+};
+
+images = images.map(get_range);
+
+// ------------------------------------------
+// Create colorbar for legend.
+function ColorBar(palette) {
+  return ui.Thumbnail({
+    image: ee.Image.pixelLonLat().select(0),
+    params: {
+      bbox: [0, 0, 1, 0.1],
+      dimensions: '100x10',
+      format: 'png',
+      min: 0,
+      max: 1,
+      palette: palette,
+    },
+    style: {stretch: 'horizontal', margin: '2px 2px'},
+  });
+}
+
+// Build legend
+function makeLegend(palette) {
+  var legendTitle = ui.Label({
+    value: 'Detected Change in Greenness',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '12px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+    
+  var labelPanel = ui.Panel({
+      widgets: [
+        ui.Label('Less Green', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label(' ', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('More Green', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
+      ],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
+  
+  return ui.Panel({
+    widgets: [legendTitle, ColorBar(palette), labelPanel],
+    style: {position: 'bottom-right',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+}
+
+// ----------------------------------
+// Set up UI Panel
+var panel = ui.Panel({
+    style: {
+      width: '250px',
+      height: '70px',
+      position: 'top-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+  
+var panel_title = ui.Label({
+    value: '🔎 Select year:',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '14px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+
+var panel_ts = ui.Panel({
+    style: {
+      width: '600px',
+      height: '230px',
+      position: 'bottom-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+
+var select = ui.Slider({
+  min: START_YEAR,
+  max: END_YEAR,
+  value: START_YEAR,
+  step: 1,
+  style: {
+    backgroundColor: 'rgba(255, 255, 255, 0)',
+    fontFamily: 'sans-serif',
+    fontWeight: 'bold'
+  },
+  onChange: function(key) {
+    Map.layers().reset();
+
+    select.style().set('stretch', 'horizontal');
+    
+    var assessment = images
+      .filterMetadata('monitor_year', 'equals', key)
+      .mosaic();
+    
+    var score_disp = assessment
+      .focal_mean(30, 'circle', 'meters', 1);
+  
+    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD).or(score_disp.select('weighted_mean').gte(THRESHOLD*-1));
+    score_disp = score_disp.updateMask(thresh_mask);
+    
+    var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
+    score_disp = score_disp.updateMask(nobs_mask);
+    
+    // c = (1 / (1 + s))^0.6;
+    // c = (TanH(7*(c - 0.5)) + 1)*0.5;
+    var confidence_scale = ee.Image(1)
+      .divide(score_disp.select('weighted_stddev').add(1))
+      .pow(0.6)
+      .subtract(0.5).multiply(7)
+      .tanh()
+      .add(1).multiply(0.5);
+  
+    var score_mean_viz_alpha = score_disp.select('weighted_mean')
+        .visualize(viz)
+        .toUint8()
+        .updateMask(thresh_mask.multiply(confidence_scale));
+    
+    Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+    Map.addLayer(score_disp, {}, '(hidden)', false);
+    
+    redraw();
+    
+}});
+
+select.style().set('stretch', 'horizontal');
+
+/////////////////////
+
+// Set a callback function for when the user clicks the map.
+var dirtyMap = false;
+Map.onClick(function(coords) {
+  if(dirtyMap === false){
+    Map.add(panel_ts);
+    dirtyMap = true;
+  }
+  
+  panel_ts.clear();
+  
+  var pgeo = ee.Geometry.Point([coords.lon, coords.lat]);
+
+  // Add a point to the map where the user clicked.
+  var point = ee.Geometry.Point(coords.lon, coords.lat);
+  Map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
+  
+  var state_code = ee.Feature(STATES.filterBounds(point).first())
+      .get('STUSPS');
+  
+  var series = ee.ImageCollection(images)
+      .select(['lower', 'weighted_mean', 'upper'])
+      .filterMetadata('state', 'equals', state_code);
+
+  // Create charts
+  var chart = ui.Chart.image.series(series, point, ee.Reducer.first(), 30) 
+                .setOptions({
+                  vAxis: {
+                    title: 'condition score',
+                    viewWindow: {min: -5, max: 5},
+                  },
+                  series: {
+                    0: {
+                      labelInLegend: '-1σ',
+                      color: 'grey',
+                      lineWidth: 2, 
+                      pointSize: 0,
+                      curveType: 'function'
+                    },
+                    1: {
+                      labelInLegend: '+1σ',
+                      color: 'silver',
+                      lineWidth: 2,
+                      pointSize: 0,
+                      curveType: 'function'
+                    },
+                    2: {
+                      labelInLegend: 'mean',
+                      color: 'black',
+                      lineWidth: 0,
+                      pointSize: 3
+                    }
+                  },
+                });
+
+  
+  // Add chart to panel
+  panel_ts.add(chart);
+
+
+});
+
+////////////////////////
+
+panel.add(panel_title).add(select);
+ui.root.clear();
+ui.root.add(Map.add(panel));
+
+var states_list = images.aggregate_array('state')
+    .distinct()
+    .getInfo();
+    
+var states_display = STATES.filter(
+    ee.Filter.inList('STUSPS', states_list)); 
+    
+var state_outlines = ee.Image().byte().paint({
+    featureCollection: states_display,
+    color: 1,
+    width: 1
+  }); 
+  
+  
+var plot_outlines = ee.Image().byte().paint({
+    featureCollection: ee.FeatureCollection(hf_sites),
+    color: 1,
+    width: 2
+  });
+
+var style = {
+  'Figure': [{
+      featureType: 'all',
+      stylers: [{ color: '#000000'}]
+  }]
+};
+
+// Function to redraw "base" layers 
+function redraw() {
+
+  Map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
+  Map.addLayer(plot_outlines, {palette: 'black'}, 'HF plots');
+  Map.addLayer(example, {}, 'roi');
+  
+  Map.setOptions(null, style);
+  Map.setOptions('SATELLITE');
+  Map.style().set({cursor:'crosshair'});
+  
+}
+
+// Initialize map
+Map.add(makeLegend(PALETTE));
+redraw();

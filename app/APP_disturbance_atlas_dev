@@ -113,7 +113,9 @@ var select = ui.Slider({
   value: START_YEAR,
   step: 1,
   style: {
-    backgroundColor: 'rgba(255, 255, 255, 0)'
+    backgroundColor: 'rgba(255, 255, 255, 0)',
+    fontFamily: 'sans-serif',
+    fontWeight: 'bold'
   },
   onChange: function(key) {
     Map.layers().reset();
@@ -158,7 +160,7 @@ var panel_title = ui.Label({
     value: '🔎 Select year:',
     style: {
       fontWeight: 'bold',
-      fontSize: '13px',
+      fontSize: '14px',
       margin: '0 0 2px 0',
       padding: '0',
       backgroundColor: 'rgba(255, 255, 255, 0)'

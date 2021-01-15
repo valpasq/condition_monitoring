@@ -40,17 +40,6 @@ var get_range = function(img) {
 images = images.map(get_range);
 
 
-// var make_mosaics = function(year) {
-//     var group = images
-//       .filterMetadata('monitor_year', 'equals', year);
-//     var mosaic = group.mosaic();
-//     return mosaic;
-// };
-
-// images = ee.ImageCollection.fromImages(
-//   ee.Dictionary(SELECT_LIST).keys().map(make_mosaics));
-// print(images);
-
 // ------------------------------------------
 // Set up UI Panel
 var map = ui.Map();

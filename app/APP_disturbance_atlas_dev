@@ -1,9 +1,11 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
-    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly");
+    hf_sites = ee.FeatureCollection("users/valeriepasquarella/HF_researchsites_poly"),
+    geometry = /* color: #d63000 */ee.Geometry.MultiPoint(
+        [[-72.21046448779315, 42.50971428655252],
+         [-72.17452889876255, 42.539548730406665]]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 var STATES = ee.FeatureCollection('TIGER/2018/States');
-var example = ee.Geometry.Point([-72.17448, 42.53966]);
 
 var images = v8_0;
 
@@ -190,7 +192,7 @@ Map.onClick(function(coords) {
      
   // Add a pixel outline to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
-  Map.layers().set(4, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
+  Map.layers().set(3, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
   
   var state_code = ee.Feature(STATES.filterBounds(point).first())
       .get('STUSPS');
@@ -276,7 +278,6 @@ function redraw() {
 
   Map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
   Map.addLayer(plot_outlines, {palette: 'black'}, 'HF plots');
-  Map.addLayer(example, {}, 'roi');
   
   Map.setOptions(null, style);
   Map.setOptions('SATELLITE');

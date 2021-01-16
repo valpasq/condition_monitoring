@@ -37,7 +37,6 @@ var years = images
     .aggregate_array('monitor_year')
     .distinct();
 var num_years = years.size().getInfo();
-print(years);
 
 // Loop over years to add each product to Map
 for(var year = 0; year < num_years; year++){

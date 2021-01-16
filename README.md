@@ -30,7 +30,7 @@ _Note: Current scripts have been developed and tested for US State geographies, 
 ___
 
 ## Products
-As proof of concept, we have piloted the harmonic baseline monitoring workflow for a selection of Northeastern states within USFS Region 9 and generated annual change assessments for 2010-2020 using a May 1 through September 30 monitoring period.
+As proof of concept, we have piloted the harmonic baseline monitoring workflow for a selection of Northeastern states within USFS Region 9 and generated annual change assessments for 1995-2020 using a May 1 through September 30 monitoring period.
 
 To view these preliminary results, visit our [Vegetation Disturbance Atlas App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-disturbance-atlas).
 

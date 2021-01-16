@@ -15,7 +15,7 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_
 
 var FINAL_PRODUCTS = imageCollection;
 
-var START_ASSESS = 2010;
+var START_ASSESS = 1995;
 var END_ASSESS = 2020;
 
 // ---------------------- Visualization ---------------------- 
@@ -26,7 +26,7 @@ var MAX = 0;
 var PALETTE = ['red', 'orange', 'yellow', 'blue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-var THRESHOLD = -2;
+var THRESHOLD = -1.5;
 
 // ----------------------- Map Results ------------------------
 

@@ -18,13 +18,14 @@ var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_monthly/';
 
-var STATE = 'RI';
+// var STATE = 'CT';
+var STATE = 'CT';
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var START_YEAR = 2009;
-var END_YEAR = 2010;
+var START_YEAR = 1995;
+var END_YEAR = 2009;
 
 var DAY_START = '09-01';    // Date to start monitoring
 var DAY_END = '09-30';      // Date to end monitoring

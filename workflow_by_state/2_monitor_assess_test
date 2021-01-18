@@ -192,7 +192,7 @@ var combinePaths = function(image) {
 
 var all_observations = monitorTS(
     broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
-Map.addLayer(all_observations.count(), {min:0, max:5})
+Map.addLayer(all_observations.reduce('count'), {min:0, max:7});
 
 var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
         baseline_coeffs_by_path,

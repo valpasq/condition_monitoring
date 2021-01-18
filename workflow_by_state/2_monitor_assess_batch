@@ -21,7 +21,7 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_mon
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var STATES = ['NJ', 'PA'];
+var STATES = ['NY', 'NH', 'VY', 'NY'];
 
 var START_YEAR = 1995;
 var END_YEAR = 2009;

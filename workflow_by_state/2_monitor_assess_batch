@@ -1,0 +1,319 @@
+// |
+// | Landsat Time Series Harmonic Condition Assessment -- 
+// | Monitoring & Assessment
+// | 
+// | [valpasq@bu.edu], 2020
+// |
+// | This script generates condition scores for each acquisition date
+// | within the specified monitoring period and averages across dates
+// | and Landsat WRS2 Paths. Results are output by ROI (e.g. US state).
+
+// ---------------------------------- Imports & Outputs ---------------------------------- 
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
+
+var VERSION = '8-0';
+
+var ROOT = 'projects/sites-project/';
+var BASELINES = 'baselines_v7-0_by_state';
+var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_monthly/';
+
+var STATE = 'RI';
+var OUTPUT_CRS = 'EPSG:5070';
+
+// -------------------------------- Monitoring Parameters --------------------------------- 
+
+var YEAR = 2009;            // Monitoring year
+var DAY_START = '09-01';    // Date to start monitoring
+var DAY_END = '09-30';      // Date to end monitoring
+
+var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
+var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs
+
+var N_MODELS = 5;           // number of models to include in ensemble
+
+var MAX_STDDEV = 5;         // maximum allowable standard deviation to include scores in weighted average
+
+// -------------------------------- Visualization -------------------------------- 
+// Default palette used in Pasquarella et al. 2017, 2018
+
+var MIN = -4;
+var MAX = 0;
+var PALETTE = ['red', 'orange', 'yellow', 'blue'];
+var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var THRESHOLD = -2;
+
+// -------------------------------- Baseline Info -------------------------------- 
+
+var DEPENDENT = BASELINES_COLLECTION.first()
+    .get('spectral_band').getInfo();
+    
+var HARMONICS = BASELINES_COLLECTION.first()
+    .get('harmonics').getInfo();
+
+// ------------------------------ Modeling Constants -------------------------------- 
+
+var MONITOR_START = YEAR + '-' + DAY_START;
+var MONITOR_END = YEAR + '-' + DAY_END;
+
+if (HARMONICS == 'h13') {
+  var HARMONIC_FREQUENCIES = ee.List([1,3]);
+} else if (HARMONICS == 'h12') {
+  var HARMONIC_FREQUENCIES = ee.List([1,2]);
+}
+
+var COS_NAMES = utils.getNames('cos_', HARMONIC_FREQUENCIES);
+var SIN_NAMES = utils.getNames('sin_', HARMONIC_FREQUENCIES);
+
+var INDEPENDENTS = ee.List(['constant', 't']).cat(COS_NAMES).cat(SIN_NAMES);
+    
+var ADD_HARMONICS_FN = utils.addHarmonicsFnFactory(
+    HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES);
+    
+var OUTPUT_PROPERTIES = ee.Dictionary({
+      'system:time_start': ee.Date(MONITOR_START).millis(),
+      'system:time_end': ee.Date(MONITOR_END).millis(),
+      'spectral_band': DEPENDENT,
+      'monitor_year': YEAR,
+      'monitor_start': MONITOR_START,
+      'monitor_end': MONITOR_END,
+      'n_models': N_MODELS,
+      'state': STATE
+  });
+
+// -------------------------------- Monitoring Setup -------------------------------- 
+
+// Get baselines
+var baselines_for_state = BASELINES_COLLECTION
+    .filterMetadata('state', 'equals', STATE)
+    .filter(ee.Filter.rangeContains('year_end', YEAR - N_MODELS, YEAR - 1));
+
+// Get WRS2 paths
+var paths = ee.FeatureCollection(baselines_for_state
+    .aggregate_array('WRS_PATH')
+    .distinct()
+    .map(function(path) {
+          return ee.Feature(null, {'WRS_PATH': path})
+        }));
+
+// All baselines will have a footprint that cover our entire study area.
+var broad_geo_footprint = baselines_for_state.first().geometry();
+
+var baselines_by_path = ee.FeatureCollection(
+    ee.Join.saveAll('baselines').apply(
+        paths, 
+        baselines_for_state, 
+        ee.Filter.equals({
+            leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
+
+var baseline_coeffs_by_path = ee.ImageCollection(
+    baselines_by_path.map(function(f) {
+          var baselines = ee.ImageCollection.fromImages(f.get('baselines'));
+          var reference_proj = baselines.first().projection();
+          return baselines
+              .toArrayPerBand()
+              .reproject(reference_proj)
+              .set('WRS_PATH', f.get('WRS_PATH'));
+        }));    
+
+// ---------------------------------- Functions ---------------------------------- 
+
+// Function to build monitoring collection
+var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
+  
+// Get Landsat 5 imagery
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end)  
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess457);
+    
+  // Get Landsat 7 imagery
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess457);
+
+  // Get  Landsat 8 imagery
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess8); 
+
+  // FINAL LTS COLLECTION
+  var collection = collection5.merge(collection7).merge(collection8)
+      .map(function(image) {return image.set({
+          'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+          'WRS_PATH': image.get('WRS_PATH')});
+      })
+      .map(utils.addCloudScore)
+      .map(utils.maskCloudScore) 
+      .map(utils.spectralTransformsFnFactory(dependent))
+      .sort('system:time_start');
+      
+  // ENDLAP FILTERING
+  var acquisitions = collection.aggregate_array('SENSING_TIME').distinct();
+  
+  // Take mean for each acquisition date (Path)
+  var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
+    var date = ee.Date(d);
+    var date2 = date.advance(24, 'hour');
+    var path = collection.filterDate(date, date2).first().get('WRS_PATH');
+    
+    return collection.filterDate(date, date2).mean()
+      .set({
+        'system:time_start': date.millis(), 
+        'WRS_PATH': path
+      });
+  }));
+  
+  // Return image collection for monitoring period
+  return monitorC;
+};
+
+// Function to combine results across Paths
+var combinePaths = function(image) {
+  var mean = image.select('score_mean');
+  var variance = image.select('score_stddev').pow(2);
+  var nobs = image.select(DEPENDENT + '_count');
+ 
+  var weighted_mean = mean.multiply(nobs).rename('mean_wt');
+  var weighted_var = variance.multiply(nobs).rename('var_wt');
+ 
+  return image.addBands(weighted_mean)
+    .addBands(weighted_var)
+    .reproject(OUTPUT_CRS, null, 30);
+};
+
+// --------------------------------- PREDICT ---------------------------------- 
+
+var all_observations = monitorTS(
+    broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
+
+var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
+        baseline_coeffs_by_path,
+        all_observations,
+        ee.Filter.equals({
+            leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
+
+var avg_dev_per_path = obs_to_paths.map(function(model_image) {
+      var model = model_image;
+      var observations = ee.ImageCollection.fromImages(
+          model_image.get('observed'));
+          
+      var obs_nobs = observations.reduce('count').toUint8();
+          
+      var model_rmse = model_image.select('rmse');
+      
+      var predict_fn = utils.addPredictionFnFactory(INDEPENDENTS, model);
+      var scores = observations.map(function(observed_image) {
+            // Note we don't use the actual bands from the observed_image here.
+            var terms = 
+                ADD_HARMONICS_FN(
+                    utils.addTime(utils.addConstant(observed_image)));
+            
+            var predictions = predict_fn(terms).select('prediction');
+
+            var residuals = observed_image.subtract(predictions);
+            var rmse_scores = residuals.divide(model_rmse);
+
+            return rmse_scores.toFloat();
+          }).map(function(observed_image) {
+            return observed_image.unmask(
+                ee.Image(ee.Array([], ee.PixelType.float())));
+          });
+      
+      var scores_flat = scores.toArrayPerBand();
+      var scores_flat_mask = scores_flat.arrayLength(0).neq(0);
+      
+      scores_flat = scores_flat.updateMask(scores_flat_mask);
+      
+      var scores_mean = scores_flat
+          .arrayReduce(ee.Reducer.mean(), [0])
+          .arrayGet([0])
+          .rename('score_mean')
+          .toFloat();
+          
+      var scores_stddev = scores_flat
+          .arrayReduce(ee.Reducer.stdDev(), [0])
+          .arrayGet([0])
+          .rename('score_stddev')
+          .toFloat();
+      
+      var score_image = ee.Image(scores_mean
+          .addBands(scores_stddev)
+          .addBands(obs_nobs)
+          .copyProperties(model_image, ['WRS_PATH']));
+      
+      score_image = score_image
+          .updateMask(score_image.select('score_stddev').lte(MAX_STDDEV));
+
+      return score_image.reproject(model_image.projection())
+          .set(OUTPUT_PROPERTIES);
+    });
+
+// --------------------------------- Combine Results ---------------------------------- 
+
+var weighted = avg_dev_per_path.map(combinePaths);
+
+var total_obs = avg_dev_per_path.select(DEPENDENT + '_count')
+    .reduce('sum')
+    .reproject(OUTPUT_CRS, null, 30);
+
+var final_mean = ee.Image(weighted.select('mean_wt')
+    .reduce('sum')
+    .divide(total_obs));
+  
+var final_stddev = ee.Image(weighted.select('var_wt')
+    .reduce('sum')
+    .divide(total_obs)
+    .sqrt());
+
+var final_img = ee.Image(final_mean.addBands(final_stddev)
+    .addBands(total_obs)
+    .rename(['weighted_mean', 'weighted_stddev', 'total_nobs'])
+    .setMulti(OUTPUT_PROPERTIES));
+    // .copyProperties(avg_dev_per_path.first(), null, ['WRS_PATH']))
+
+var score_disp = final_img
+    .focal_mean(30, 'circle', 'meters', 1);
+
+var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
+score_disp = score_disp.updateMask(thresh_mask);
+
+// c = (1 / (1 + s))^0.6;
+// c = (TanH(7*(c - 0.5)) + 1)*0.5;
+var confidence_scale = ee.Image(1)
+    .divide(score_disp.select('weighted_stddev').add(1))
+    .pow(0.6)
+    .subtract(0.5).multiply(7)
+    .tanh()
+    .add(1).multiply(0.5);
+
+var score_mean_viz_alpha = score_disp.select('weighted_mean')
+    .visualize(viz)
+    .toUint8()
+    .updateMask(thresh_mask.multiply(confidence_scale));
+
+Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+Map.addLayer(score_disp, {}, 'hidden', false);
+
+Map.setOptions('SATELLITE');
+
+var asset_name = YEAR + '_' + DAY_START + '_' + DAY_END + '_' + STATE;
+
+// Export final product for full study area
+Export.image.toAsset({
+  image: final_img,
+  description: 'result_' + asset_name,
+  assetId: OUTPUT_COLLECTION + asset_name,
+  region: broad_geo_footprint,
+  crs: OUTPUT_CRS,
+  scale: 30,
+  maxPixels: 1e13,
+});
+
+// print(final_img)

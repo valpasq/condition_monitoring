@@ -55,9 +55,6 @@ var HARMONICS = BASELINES_COLLECTION.first()
 
 // ------------------------------ Modeling Constants -------------------------------- 
 
-var MONITOR_START = YEAR + '-' + DAY_START;
-var MONITOR_END = YEAR + '-' + DAY_END;
-
 if (HARMONICS == 'h13') {
   var HARMONIC_FREQUENCIES = ee.List([1,3]);
 } else if (HARMONICS == 'h12') {
@@ -71,52 +68,6 @@ var INDEPENDENTS = ee.List(['constant', 't']).cat(COS_NAMES).cat(SIN_NAMES);
     
 var ADD_HARMONICS_FN = utils.addHarmonicsFnFactory(
     HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES);
-    
-var OUTPUT_PROPERTIES = ee.Dictionary({
-      'system:time_start': ee.Date(MONITOR_START).millis(),
-      'system:time_end': ee.Date(MONITOR_END).millis(),
-      'spectral_band': DEPENDENT,
-      'monitor_year': YEAR,
-      'monitor_start': MONITOR_START,
-      'monitor_end': MONITOR_END,
-      'n_models': N_MODELS,
-      'state': STATE
-  });
-
-// -------------------------------- Monitoring Setup -------------------------------- 
-
-// Get baselines
-var baselines_for_state = BASELINES_COLLECTION
-    .filterMetadata('state', 'equals', STATE)
-    .filter(ee.Filter.rangeContains('year_end', YEAR - N_MODELS, YEAR - 1));
-
-// Get WRS2 paths
-var paths = ee.FeatureCollection(baselines_for_state
-    .aggregate_array('WRS_PATH')
-    .distinct()
-    .map(function(path) {
-          return ee.Feature(null, {'WRS_PATH': path})
-        }));
-
-// All baselines will have a footprint that cover our entire study area.
-var broad_geo_footprint = baselines_for_state.first().geometry();
-
-var baselines_by_path = ee.FeatureCollection(
-    ee.Join.saveAll('baselines').apply(
-        paths, 
-        baselines_for_state, 
-        ee.Filter.equals({
-            leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
-
-var baseline_coeffs_by_path = ee.ImageCollection(
-    baselines_by_path.map(function(f) {
-          var baselines = ee.ImageCollection.fromImages(f.get('baselines'));
-          var reference_proj = baselines.first().projection();
-          return baselines
-              .toArrayPerBand()
-              .reproject(reference_proj)
-              .set('WRS_PATH', f.get('WRS_PATH'));
-        }));    
 
 // ---------------------------------- Functions ---------------------------------- 
 
@@ -190,6 +141,52 @@ var combinePaths = function(image) {
 };
 
 // --------------------------------- PREDICT ---------------------------------- 
+var MONITOR_START = YEAR + '-' + DAY_START;
+var MONITOR_END = YEAR + '-' + DAY_END;
+
+var OUTPUT_PROPERTIES = ee.Dictionary({
+      'system:time_start': ee.Date(MONITOR_START).millis(),
+      'system:time_end': ee.Date(MONITOR_END).millis(),
+      'spectral_band': DEPENDENT,
+      'monitor_year': YEAR,
+      'monitor_start': MONITOR_START,
+      'monitor_end': MONITOR_END,
+      'n_models': N_MODELS,
+      'state': STATE
+  });
+
+// Get baselines
+var baselines_for_state = BASELINES_COLLECTION
+    .filterMetadata('state', 'equals', STATE)
+    .filter(ee.Filter.rangeContains('year_end', YEAR - N_MODELS, YEAR - 1));
+
+// Get WRS2 paths
+var paths = ee.FeatureCollection(baselines_for_state
+    .aggregate_array('WRS_PATH')
+    .distinct()
+    .map(function(path) {
+          return ee.Feature(null, {'WRS_PATH': path});
+        }));
+
+// All baselines will have a footprint that cover our entire study area.
+var broad_geo_footprint = baselines_for_state.first().geometry();
+
+var baselines_by_path = ee.FeatureCollection(
+    ee.Join.saveAll('baselines').apply(
+        paths, 
+        baselines_for_state, 
+        ee.Filter.equals({
+            leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
+
+var baseline_coeffs_by_path = ee.ImageCollection(
+    baselines_by_path.map(function(f) {
+          var baselines = ee.ImageCollection.fromImages(f.get('baselines'));
+          var reference_proj = baselines.first().projection();
+          return baselines
+              .toArrayPerBand()
+              .reproject(reference_proj)
+              .set('WRS_PATH', f.get('WRS_PATH'));
+        }));    
 
 var all_observations = monitorTS(
     broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
@@ -304,17 +301,17 @@ Map.addLayer(score_disp, {}, 'hidden', false);
 
 Map.setOptions('SATELLITE');
 
-var asset_name = YEAR + '_' + DAY_START + '_' + DAY_END + '_' + STATE;
+// var asset_name = YEAR + '_' + DAY_START + '_' + DAY_END + '_' + STATE;
 
 // Export final product for full study area
-Export.image.toAsset({
-  image: final_img,
-  description: 'result_' + asset_name,
-  assetId: OUTPUT_COLLECTION + asset_name,
-  region: broad_geo_footprint,
-  crs: OUTPUT_CRS,
-  scale: 30,
-  maxPixels: 1e13,
-});
+// Export.image.toAsset({
+//   image: final_img,
+//   description: 'result_' + asset_name,
+//   assetId: OUTPUT_COLLECTION + asset_name,
+//   region: broad_geo_footprint,
+//   crs: OUTPUT_CRS,
+//   scale: 30,
+//   maxPixels: 1e13,
+// });
 
 // print(final_img)

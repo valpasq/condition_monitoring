@@ -192,7 +192,7 @@ var combinePaths = function(image) {
 
 var all_observations = monitorTS(
     broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
-Map.addLayer(all_observations.reduce('count'), {min:0, max:7});
+// Map.addLayer(all_observations.reduce('count'), {min:0, max:7});
 
 var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
         baseline_coeffs_by_path,
@@ -259,10 +259,12 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
 // --------------------------------- Combine Results ---------------------------------- 
 
 var weighted = avg_dev_per_path.map(combinePaths);
+// Map.addLayer(avg_dev_per_path.select('tcg_count'));
 
 var total_obs = avg_dev_per_path.select(DEPENDENT + '_count')
     .reduce('sum')
     .reproject(OUTPUT_CRS, null, 30);
+// Map.addLayer(total_obs, {min:0, max:7});
 
 var final_mean = ee.Image(weighted.select('mean_wt')
     .reduce('sum')

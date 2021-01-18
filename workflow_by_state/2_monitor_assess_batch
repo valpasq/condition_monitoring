@@ -174,7 +174,7 @@ for (var state_index in STATES) {
         .aggregate_array('WRS_PATH')
         .distinct()
         .map(function(path) {
-              return ee.Feature(null, {'WRS_PATH': path})
+              return ee.Feature(null, {'WRS_PATH': path});
             }));
     
     // All baselines will have a footprint that cover our entire study area.

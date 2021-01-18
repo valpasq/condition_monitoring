@@ -21,13 +21,13 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_mon
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var STATES = ['NY', 'NH', 'VY', 'NY'];
+var STATES = ['NY', 'NH', 'VT', 'ME'];
 
 var START_YEAR = 1995;
 var END_YEAR = 2009;
 
-var DAY_START = '05-01';    // Date to start monitoring
-var DAY_END = '05-31';      // Date to end monitoring
+var DAY_START = '06-01';    // Date to start monitoring
+var DAY_END = '06-30';      // Date to end monitoring
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs

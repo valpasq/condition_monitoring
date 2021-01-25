@@ -4,7 +4,11 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_
     geometry = 
     /* color: #d63000 */
     /* shown: false */
-    ee.Geometry.Point([-72.01014465573894, 41.77000879194535]);
+    ee.Geometry.Point([-72.01014465573894, 41.77000879194535]),
+    geometry2 = 
+    /* color: #98ff00 */
+    /* shown: false */
+    ee.Geometry.Point([-72.21173485439202, 42.110120280384315]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -20,8 +24,8 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_
 
 var FINAL_PRODUCTS = imageCollection;
 
-var START_ASSESS = 2016;
-var END_ASSESS = 2016;
+var START_ASSESS = 2011;
+var END_ASSESS = 2011;
 
 // ---------------------- Visualization ---------------------- 
 // Default palette used in Pasquarella et al. 2017, 2018
@@ -57,7 +61,7 @@ for(var year = 0; year < num_years; year++){
       .mosaic();
       
   var score_disp = disp_img
-      // .focal_mean(30, 'circle', 'meters', 1);
+      .focal_mean(30, 'circle', 'meters', 1);
   
   var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD)
       .or(score_disp.select('weighted_mean').gte(THRESHOLD*-1));
@@ -83,12 +87,12 @@ for(var year = 0; year < num_years; year++){
   
 }
 
-var MODIS_example = MODIS.filterDate('2016-07-01', '2016-07-15')
+var MODIS_example = MODIS.filterDate(START_ASSESS + '-07-01', START_ASSESS + '-07-15')
     .first().select('NDVI')
     .reproject('EPSG:5070', null, 250);
     
 print(MODIS_example);
-Map.addLayer(MODIS_example, {min:1000, max:9000, palette: ['white', 'gold', 'darkgreen']}, 'MODIS 16-day NDVI 250m');
+Map.addLayer(MODIS_example, {min:0, max:10000}, 'MODIS 16-day NDVI 250m', false);
 
 // ----------------------- Map Styling ------------------------
  
@@ -101,4 +105,4 @@ var style = {
 
 Map.setOptions(null, style);
 Map.setOptions('SATELLITE');
-Map.centerObject(geometry, 14);
+Map.centerObject(geometry2, 13);

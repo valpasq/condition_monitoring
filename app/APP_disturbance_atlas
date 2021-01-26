@@ -1,5 +1,9 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
+var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
+    geometry = 
+    /* color: #0b4a8b */
+    /* shown: false */
+    ee.Geometry.Point([-71.67984826491355, 42.028821268660536]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
 //  Results collection
@@ -261,8 +265,8 @@ function redraw() {
   Map.setOptions(null, style);
   Map.setOptions('SATELLITE');
   Map.style().set({cursor:'crosshair'});
-  Map.setCenter(-72.21173485439202,42.110120280384315, 14);
-  
+  // Map.setCenter(-72.21173485439202,42.110120280384315, 14);
+  Map.setCenter(-71.67984826491355,42.028821268660536, 12);
 }
 
 // Initialize map

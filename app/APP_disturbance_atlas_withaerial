@@ -168,8 +168,9 @@ var select = ui.Slider({
     if (key < 2020) {
       var aerial_display = aerial
           .filterMetadata('SURVEY_YEA', 'equals', key);
+      Map.addLayer(aerial_display, {color: 'white'}, 'aerial survey data');
+      
     }
-    Map.addLayer(aerial_display);
     
     redraw();
     

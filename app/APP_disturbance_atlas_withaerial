@@ -141,7 +141,8 @@ var select = ui.Slider({
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD).or(score_disp.select('weighted_mean').gte(THRESHOLD*-1));
+    var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD)
+        .or(score_disp.select('weighted_mean').gte(THRESHOLD*-1));
     score_disp = score_disp.updateMask(thresh_mask);
     
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);

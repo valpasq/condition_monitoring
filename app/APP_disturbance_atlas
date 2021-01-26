@@ -261,6 +261,7 @@ function redraw() {
   Map.setOptions(null, style);
   Map.setOptions('SATELLITE');
   Map.style().set({cursor:'crosshair'});
+  Map.setCenter(-72.21173485439202,42.110120280384315, 14);
   
 }
 

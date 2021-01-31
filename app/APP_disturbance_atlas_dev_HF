@@ -266,7 +266,7 @@ function redraw() {
   Map.setOptions(null, style);
   Map.setOptions('SATELLITE');
   Map.style().set({cursor:'crosshair'});
-  Map.addLayer(table);
+  Map.addLayer(table, {}, 'HF research sites');
   
 }
 

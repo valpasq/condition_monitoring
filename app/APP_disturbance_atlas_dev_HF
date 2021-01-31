@@ -266,8 +266,6 @@ function redraw() {
   Map.setOptions(null, style);
   Map.setOptions('SATELLITE');
   Map.style().set({cursor:'crosshair'});
-  // Map.setCenter(-72.21173485439202,42.110120280384315, 14);
-  // Map.setCenter(-71.67984826491355,42.028821268660536, 12);
   Map.addLayer(table);
   
 }

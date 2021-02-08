@@ -130,13 +130,16 @@ var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
 var combinePaths = function(image) {
   var mean = image.select('score_mean');
   var variance = image.select('score_stddev').pow(2);
+  var value = image.select(DEPENDENT + '_mean');
   var nobs = image.select(DEPENDENT + '_count');
  
   var weighted_mean = mean.multiply(nobs).rename('mean_wt');
   var weighted_var = variance.multiply(nobs).rename('var_wt');
+  var weighted_val = value.multiply(nobs).rename('val_wt');
  
   return image.addBands(weighted_mean)
     .addBands(weighted_var)
+    .addBands(weighted_val)
     .reproject(OUTPUT_CRS, null, 30);
 };
 
@@ -244,6 +247,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
       var score_image = ee.Image(scores_mean
           .addBands(scores_stddev)
           .addBands(obs_nobs)
+          .addBands(observations.reduce('mean'))
           .copyProperties(model_image, ['WRS_PATH']));
       
       score_image = score_image
@@ -270,9 +274,15 @@ var final_stddev = ee.Image(weighted.select('var_wt')
     .divide(total_obs)
     .sqrt());
 
-var final_img = ee.Image(final_mean.addBands(final_stddev)
+var final_val = ee.Image(weighted.select('val_wt')
+    .reduce('sum')
+    .divide(total_obs));
+
+var final_img = ee.Image(final_mean
+    .addBands(final_stddev)
     .addBands(total_obs)
-    .rename(['weighted_mean', 'weighted_stddev', 'total_nobs'])
+    .addBands(final_val)
+    .rename(['weighted_mean', 'weighted_stddev', 'total_nobs', 'weighted_value'])
     .setMulti(OUTPUT_PROPERTIES));
     // .copyProperties(avg_dev_per_path.first(), null, ['WRS_PATH']))
 

@@ -22,6 +22,8 @@ var MIN_NOBS = 3;
 var START_YEAR = 1995;
 var END_YEAR = 2020;
 
+var GSW_MASK = true;
+
 // ------------------------------------------
 // Get state outlines and style
 var STATES = ee.FeatureCollection('TIGER/2018/States');
@@ -38,7 +40,14 @@ var state_outlines = ee.Image().byte().paint({
     color: 1,
     width: 1
   }); 
-  
+
+// ------------------------------------------
+// Get Global Surface Water Mapping Layers for masking
+var GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater");
+var OCCURRENCE_THRESH = 95;
+var water_mask = GSW.select('occurrence')
+    .gte(OCCURRENCE_THRESH).unmask().not();
+
 // ------------------------------------------
 // Add range info for charting
 var get_range = function(img) {
@@ -149,6 +158,10 @@ var select = ui.Slider({
     
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
     score_disp = score_disp.updateMask(nobs_mask);
+    
+    if (GSW_MASK === true) {
+      score_disp = score_disp.updateMask(water_mask);
+    }
     
     // c = (1 / (1 + s))^0.6;
     // c = (TanH(7*(c - 0.5)) + 1)*0.5;
@@ -265,8 +278,7 @@ function redraw() {
   Map.setOptions(null, style);
   Map.setOptions('SATELLITE');
   Map.style().set({cursor:'crosshair'});
-  // Map.setCenter(-72.21173485439202,42.110120280384315, 14);
-  Map.setCenter(-71.67984826491355,42.028821268660536, 12);
+
 }
 
 // Initialize map

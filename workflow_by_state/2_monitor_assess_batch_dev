@@ -321,8 +321,8 @@ for (var state_index in STATES) {
         .addBands(value_wt_mean)
         .addBands(value_wt_stddev)
         .addBands(total_obs)
-        .rename(['score_wt_mean', 'score_wt_stddev', 
-                'value_wt_mean', 'value_wt_stddev', 
+        .rename(['score_mean', 'score_stddev', 
+                DEPENDENT + '_mean', DEPENDENT + '_stddev', 
                 'total_nobs'])
         .setMulti(OUTPUT_PROPERTIES));
     

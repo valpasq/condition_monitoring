@@ -321,7 +321,9 @@ for (var state_index in STATES) {
         .addBands(value_wt_mean)
         .addBands(value_wt_stddev)
         .addBands(total_obs)
-        .rename(['score_wt_mean', 'score_wt_stddev', 'value_wt_mean', 'value_wt_stddev', 'total_nobs'])
+        .rename(['score_wt_mean', 'score_wt_stddev', 
+                'value_wt_mean', 'value_wt_stddev', 
+                'total_nobs'])
         .setMulti(OUTPUT_PROPERTIES));
     
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;

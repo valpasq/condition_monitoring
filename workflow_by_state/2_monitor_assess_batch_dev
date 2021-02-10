@@ -289,7 +289,8 @@ for (var state_index in STATES) {
     
     var weighted = avg_dev_per_path.map(combinePaths);
     
-    var total_obs = avg_dev_per_path.select(DEPENDENT + '_count')
+    var total_obs = avg_dev_per_path
+        .select(DEPENDENT + '_count')
         .reduce('sum')
         .reproject(OUTPUT_CRS, null, 30);
     

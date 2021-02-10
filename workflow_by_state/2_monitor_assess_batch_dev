@@ -138,7 +138,7 @@ var combinePaths = function(image) {
       .rename('score_mean_scaled');
       
   var score_variance = image
-      .select('score_stddev').pow(2)
+      .select('score_variance')
       .multiply(nobs)
       .rename('score_variance_scaled');
       
@@ -262,9 +262,9 @@ for (var state_index in STATES) {
               .toFloat();
               
           var scores_stddev = scores_flat
-              .arrayReduce(ee.Reducer.stdDev(), [0])
+              .arrayReduce(ee.Reducer.variance(), [0])
               .arrayGet([0])
-              .rename('score_stddev')
+              .rename('score_variance')
               .toFloat();
           
           var score_image = ee.Image(scores_mean

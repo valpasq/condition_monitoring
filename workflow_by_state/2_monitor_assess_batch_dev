@@ -130,21 +130,36 @@ var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
 
 // Function to combine results across Paths
 var combinePaths = function(image) {
-  var score_mean = image.select('score_mean');
-  var score_variance = image.select('score_stddev').pow(2);
-  var value_mean = image.select(DEPENDENT + '_mean');
-  var value_variance = image.select(DEPENDENT + '_stddev').pow(2);
   var nobs = image.select(DEPENDENT + '_count');
  
-  var weighted_mean = mean.multiply(nobs).rename('score_mean');
-  var weighted_var = variance.multiply(nobs).rename('score_stddev');
-  var weighted_val = value.multiply(nobs).rename(DEPENDENT + '_mean');
-  var weighted_val = value.multiply(nobs).rename(DEPENDENT + '_mean');
+  var score_mean = image
+      .select('score_mean')
+      .multiply(nobs)
+      .rename('score_mean_scaled');
+      
+  var score_variance = image
+      .select('score_stddev').pow(2)
+      .multiply(nobs)
+      .rename('score_variance_scaled');
+      
+  var value_mean = image
+      .select(DEPENDENT + '_mean')
+      .multiply(nobs)
+      .rename(DEPENDENT + '_mean_scaled');
+      
+  var value_variance = image
+      .select(DEPENDENT + '_variance')
+      .multiply(nobs)
+      .rename(DEPENDENT + '_variance_scaled');
+  
+  // var weighted_mean = mean.multiply(nobs).rename('score_mean');
+  // var weighted_var = variance.multiply(nobs).rename('score_stddev');
+  // var weighted_val = value.multiply(nobs).rename(DEPENDENT + '_mean');
  
- 
-  return image.addBands(weighted_mean)
-    .addBands(weighted_var)
-    .addBands(weighted_val)
+  return image.addBands(score_mean)
+    .addBands(score_variance)
+    .addBands(value_mean)
+    .addBands(value_variance)
     .reproject(OUTPUT_CRS, null, 30);
 };
 
@@ -260,6 +275,7 @@ for (var state_index in STATES) {
               .addBands(scores_stddev)
               .addBands(obs_nobs)
               .addBands(observations.reduce('mean'))
+              .addBands(observations.reduce('variance'))
               .copyProperties(model_image, ['WRS_PATH']));
           
           score_image = score_image
@@ -277,27 +293,39 @@ for (var state_index in STATES) {
         .reduce('sum')
         .reproject(OUTPUT_CRS, null, 30);
     
-    var final_mean = ee.Image(weighted.select('mean_wt')
+    var score_wt_mean = ee.Image(weighted
+        .select('score_mean_scaled')
         .reduce('sum')
         .divide(total_obs));
       
-    var final_stddev = ee.Image(weighted.select('var_wt')
+    var score_wt_stddev = ee.Image(weighted
+        .select('score_variance_scaled')
         .reduce('sum')
         .divide(total_obs)
         .sqrt());
         
-    var final_val = ee.Image(weighted.select('val_wt')
-    .reduce('sum')
-    .divide(total_obs));
+    var value_wt_mean = ee.Image(weighted
+        .select(DEPENDENT + '_mean_scaled')
+        .reduce('sum')
+        .divide(total_obs));
     
-    var final_img = ee.Image(final_mean.addBands(final_stddev)
+    var value_wt_stddev = ee.Image(weighted
+        .select(DEPENDENT + '_variance_scaled')
+        .reduce('sum')
+        .divide(total_obs)
+        .sqrt());
+    
+    var final_img = ee.Image(score_wt_mean
+        .addBands(score_wt_stddev)
+        .addBands(value_wt_mean)
+        .addBands(value_wt_stddev)
         .addBands(total_obs)
-        .addBands(final_val)
-        .rename(['weighted_mean', 'weighted_stddev', 'total_nobs', 'weighted_value'])
-           .setMulti(OUTPUT_PROPERTIES));
-        // .copyProperties(avg_dev_per_path.first(), null, ['WRS_PATH']))
-  
+        .rename(['score_wt_mean', 'score_wt_stddev', 'value_wt_mean', 'value_wt_stddev', 'total_nobs'])
+        .setMulti(OUTPUT_PROPERTIES));
+    
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
+    
+    Map.addLayer(final_img);
     
     // Export final product for full study area
     Export.image.toAsset({

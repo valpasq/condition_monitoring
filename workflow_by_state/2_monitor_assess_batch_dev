@@ -261,21 +261,22 @@ for (var state_index in STATES) {
               .rename('score_mean')
               .toFloat();
               
-          var scores_stddev = scores_flat
+          var scores_variance = scores_flat
               .arrayReduce(ee.Reducer.variance(), [0])
               .arrayGet([0])
               .rename('score_variance')
               .toFloat();
           
           var score_image = ee.Image(scores_mean
-              .addBands(scores_stddev)
+              .addBands(scores_variance)
               .addBands(obs_nobs)
               .addBands(observations.reduce('mean'))
               .addBands(observations.reduce('variance'))
               .copyProperties(model_image, ['WRS_PATH']));
           
           score_image = score_image
-              .updateMask(score_image.select('score_stddev').lte(MAX_STDDEV));
+              .updateMask(score_image
+                  .select('score_variance').lte(MAX_STDDEV*MAX_STDDEV));
     
           return score_image.reproject(model_image.projection())
               .set(OUTPUT_PROPERTIES);

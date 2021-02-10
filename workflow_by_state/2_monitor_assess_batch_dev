@@ -152,10 +152,6 @@ var combinePaths = function(image) {
       .multiply(nobs)
       .rename(DEPENDENT + '_variance_scaled');
   
-  // var weighted_mean = mean.multiply(nobs).rename('score_mean');
-  // var weighted_var = variance.multiply(nobs).rename('score_stddev');
-  // var weighted_val = value.multiply(nobs).rename(DEPENDENT + '_mean');
- 
   return image.addBands(score_mean)
     .addBands(score_variance)
     .addBands(value_mean)

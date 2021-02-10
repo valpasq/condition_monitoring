@@ -175,13 +175,13 @@ var spectralTransformsFnFactory = function(dependent) {
     return indexImg
       .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
   };
-}
+};
 
 
 var addHarmonicsFnFactory = function(freqs, cosNames, sinNames) {
   return function(image) {
     // Make an image of frequencies.
-    var frequencies = ee.Image.constant(freqs)
+    var frequencies = ee.Image.constant(freqs);
     // This band should represent time in radians.
     var time = ee.Image(image).select('t');
     // Get the cosine terms.
@@ -198,14 +198,14 @@ var addPredictionFnFactory = function(independents, model) {
     var prediction = image.select(independents)
       .multiply(model.select(independents))
       .reduce(ee.Reducer.sum().forEachElement())
-      .rename('prediction')
-    var rmse = model.select('rmse').rename('rmse')
-    var nobs = model.select('nobs').rename('nobs')
-    var t = model.select('t').rename('trend')
+      .rename('prediction');
+    var rmse = model.select('rmse').rename('rmse');
+    var nobs = model.select('nobs').rename('nobs');
+    var t = model.select('t').rename('trend');
     return image.addBands(prediction)
         .addBands(rmse).addBands(nobs).addBands(t);
   };
-}
+};
 
 
 // -------------------------------- Export -------------------------------- 

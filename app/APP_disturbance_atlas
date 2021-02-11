@@ -22,7 +22,7 @@ var MIN_NOBS = 3;
 var START_YEAR = 1995;
 var END_YEAR = 2020;
 
-var GSW_MASK = 'on';
+var GSW_MASK = 'on'; // set to 'on' to apply GSW mask
 
 // ------------------------------------------
 // Get state outlines and style

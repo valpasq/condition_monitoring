@@ -22,7 +22,7 @@ var MIN_NOBS = 3;
 var START_YEAR = 1995;
 var END_YEAR = 2020;
 
-var GSW_MASK = true;
+var GSW_MASK = 'on';
 
 // ------------------------------------------
 // Get state outlines and style
@@ -159,7 +159,7 @@ var select = ui.Slider({
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
     score_disp = score_disp.updateMask(nobs_mask);
     
-    if (GSW_MASK === true) {
+    if (GSW_MASK === 'on') {
       score_disp = score_disp.updateMask(water_mask);
     }
     

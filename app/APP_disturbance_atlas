@@ -255,7 +255,6 @@ Map.onClick(function(coords) {
   // Add chart to panel
   panel_ts.add(chart);
 
-
 });
 
 // Add panels to Map

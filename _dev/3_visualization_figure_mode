@@ -2,7 +2,7 @@
 var states = ee.FeatureCollection("TIGER/2018/States"),
     annual = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
     monthly = ee.ImageCollection("projects/sites-project/baselines_v8-1_by_state_products_monthly"),
-    geometry = /* color: #ffffff */ee.Geometry.Point([-71.88747270033834, 42.171091989824966]),
+    geometry = /* color: #ffffff */ee.Geometry.Point([-71.63890702651021, 42.03647149636891]),
     annual_w_tcg = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |

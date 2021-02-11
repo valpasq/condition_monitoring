@@ -39,11 +39,11 @@ var MAX_STDDEV = 5;         // maximum allowable standard deviation to include s
 // Default palette used in Pasquarella et al. 2017, 2018
 
 var MIN = -4;
-var MAX = 0;
-var PALETTE = ['red', 'orange', 'yellow', 'blue'];
+var MAX = 4;
+var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-var THRESHOLD = -2;
+var THRESHOLD = -1.5;
 
 // -------------------------------- Baseline Info -------------------------------- 
 

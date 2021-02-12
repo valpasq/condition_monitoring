@@ -2,7 +2,7 @@
 var states = ee.FeatureCollection("TIGER/2018/States"),
     annual = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
     monthly = ee.ImageCollection("projects/sites-project/baselines_v8-1_by_state_products_monthly"),
-    geometry = /* color: #ffffff */ee.Geometry.Point([-71.63890702651021, 42.03647149636891]),
+    geometry = /* color: #ffffff */ee.Geometry.Point([-71.65306909010884, 42.03143520001809]),
     annual_w_tcg = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
@@ -118,6 +118,7 @@ var disp_img = images
       
 var score_disp = disp_img
     .focal_mean(30, 'circle', 'meters', 1);
+    // .focal_mean(150, 'square', 'meters', 1);
 
 var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD)
     .or(score_disp.select('score_mean').gte(THRESHOLD*-1));

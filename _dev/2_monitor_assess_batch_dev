@@ -21,7 +21,7 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_ann
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var STATES = ['MA'];
+var STATES = ['MA', 'CT', 'RI'];
 
 var START_YEAR = 1995;
 var END_YEAR = 2020;
@@ -325,8 +325,6 @@ for (var state_index in STATES) {
                 DEPENDENT + '_mean', DEPENDENT + '_stddev', 
                 'total_nobs'])
         .setMulti(OUTPUT_PROPERTIES));
-    
-    print(final_img)
     
     Map.addLayer(final_img);
     

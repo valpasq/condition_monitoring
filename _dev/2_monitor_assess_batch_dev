@@ -228,7 +228,7 @@ for (var state_index in STATES) {
           var observations = ee.ImageCollection.fromImages(
               model_image.get('observed'));
               
-          var obs_nobs = observations.reduce('count').toUint8();
+          var obs_nobs = observations.reduce('count');
               
           var model_rmse = model_image.select('rmse');
           
@@ -244,7 +244,7 @@ for (var state_index in STATES) {
                 var residuals = observed_image.subtract(predictions);
                 var rmse_scores = residuals.divide(model_rmse);
     
-                return rmse_scores.toFloat();
+                return rmse_scores;
               }).map(function(observed_image) {
                 return observed_image.unmask(
                     ee.Image(ee.Array([], ee.PixelType.float())));
@@ -258,14 +258,12 @@ for (var state_index in STATES) {
           var scores_mean = scores_flat
               .arrayReduce(ee.Reducer.mean(), [0])
               .arrayGet([0])
-              .rename('score_mean')
-              .toFloat();
+              .rename('score_mean');
               
           var scores_variance = scores_flat
               .arrayReduce(ee.Reducer.variance(), [0])
               .arrayGet([0])
-              .rename('score_variance')
-              .toFloat();
+              .rename('score_variance');
           
           var score_image = ee.Image(scores_mean
               .addBands(scores_variance)
@@ -276,7 +274,7 @@ for (var state_index in STATES) {
           
           score_image = score_image
               .updateMask(score_image
-                  .select('score_variance').lte(MAX_STDDEV*MAX_STDDEV));
+              .select('score_variance').lte(MAX_STDDEV*MAX_STDDEV));
     
           return score_image.reproject(model_image.projection())
               .set(OUTPUT_PROPERTIES);
@@ -289,29 +287,34 @@ for (var state_index in STATES) {
     var total_obs = avg_dev_per_path
         .select(DEPENDENT + '_count')
         .reduce('sum')
-        .reproject(OUTPUT_CRS, null, 30);
+        .reproject(OUTPUT_CRS, null, 30)
+        .toUint8();
     
     var score_wt_mean = ee.Image(weighted
         .select('score_mean_scaled')
         .reduce('sum')
-        .divide(total_obs));
+        .divide(total_obs))
+        .toFloat();
       
     var score_wt_stddev = ee.Image(weighted
         .select('score_variance_scaled')
         .reduce('sum')
         .divide(total_obs)
-        .sqrt());
+        .sqrt())
+        .toFloat();
         
     var value_wt_mean = ee.Image(weighted
         .select(DEPENDENT + '_mean_scaled')
         .reduce('sum')
-        .divide(total_obs));
+        .divide(total_obs))
+        .toFloat();
     
     var value_wt_stddev = ee.Image(weighted
         .select(DEPENDENT + '_variance_scaled')
         .reduce('sum')
         .divide(total_obs)
-        .sqrt());
+        .sqrt())
+        .toFloat();
     
     var final_img = ee.Image(score_wt_mean
         .addBands(score_wt_stddev)
@@ -323,9 +326,11 @@ for (var state_index in STATES) {
                 'total_nobs'])
         .setMulti(OUTPUT_PROPERTIES));
     
-    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
+    print(final_img)
     
     Map.addLayer(final_img);
+    
+    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     
     // Export final product for full study area
     Export.image.toAsset({

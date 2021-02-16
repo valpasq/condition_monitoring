@@ -174,7 +174,7 @@ var select = ui.Slider({
     // c = (1 / (1 + s))^0.6;
     // c = (TanH(7*(c - 0.5)) + 1)*0.5;
     var confidence_scale = ee.Image(1)
-      .divide(score_disp.select(SCORE_STDDEV_BAND).add(1))
+      .divide(score_disp.select(STDDEV_BAND).add(1))
       .pow(0.6)
       .subtract(0.5).multiply(7)
       .tanh()
@@ -186,7 +186,6 @@ var select = ui.Slider({
         .updateMask(thresh_mask.multiply(confidence_scale));
     
     Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
-    Map.addLayer(score_disp, {}, '(hidden)', false);
     
     redraw();
     
@@ -247,7 +246,7 @@ Map.onClick(function(coords) {
 
   // Add a point to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
-  Map.layers().set(3, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
+  Map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
   
   var state_code = ee.Feature(STATES.filterBounds(point).first())
       .get('STUSPS');

@@ -115,7 +115,7 @@ function makeLegend(palette) {
 // Set up UI Panel - Select year
 var panel = ui.Panel({
     style: {
-      width: '250px',
+      width: '300px',
       position: 'top-left',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }

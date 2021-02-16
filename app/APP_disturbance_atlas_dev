@@ -265,29 +265,29 @@ Map.onClick(function(coords) {
                     title: 'condition score',
                     viewWindow: {min: -5, max: 5},
                   },
-               series: {
-                  0: {
-                      labelInLegend: '-1σ',
-                      color: 'grey',
-                      lineWidth: 2, 
-                      pointSize: 0,
-                      curveType: 'function'
-                  },
-                  1: {
-                      labelInLegend: 'mean',
-                      color: 'black',
-                      lineWidth: 0,
-                      pointSize: 3
-                  },
-                  2: {
-                      labelInLegend: '+1σ',
-                      color: 'silver',
-                      lineWidth: 2,
-                      pointSize: 0,
-                      curveType: 'function'
-                  }
-                },
-              });
+                  series: {
+                      0: {
+                          labelInLegend: '-1σ',
+                          color: 'grey',
+                          lineWidth: 2, 
+                          pointSize: 0,
+                          curveType: 'function'
+                      },
+                      1: {
+                          labelInLegend: 'mean',
+                          color: 'black',
+                          lineWidth: 0,
+                          pointSize: 3
+                      },
+                      2: {
+                          labelInLegend: '+1σ',
+                          color: 'silver',
+                          lineWidth: 2,
+                          pointSize: 0,
+                          curveType: 'function'
+                      }
+                    },
+                  });
 
   
   // Add chart to panel

@@ -23,7 +23,7 @@ var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
-var YEAR = 2016;            // Monitoring year
+var YEAR = 2020;            // Monitoring year
 
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '10-01';      // Date to end monitoring
@@ -254,7 +254,9 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
       score_image = score_image
           .updateMask(score_image.select('score_stddev').lte(MAX_STDDEV));
 
-      return score_image.reproject(model_image.projection())
+      return score_image
+          // .reproject(model_image.projection())
+          .reproject(OUTPUT_CRS, null, 30)
           .set(OUTPUT_PROPERTIES);
     });
 
@@ -263,8 +265,7 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
 var weighted = avg_dev_per_path.map(combinePaths);
 
 var total_obs = avg_dev_per_path.select(DEPENDENT + '_count')
-    .reduce('sum')
-    .reproject(OUTPUT_CRS, null, 30);
+    .reduce('sum');
 
 var final_mean = ee.Image(weighted.select('mean_wt')
     .reduce('sum')
@@ -288,9 +289,10 @@ var final_img = ee.Image(final_mean
     // .copyProperties(avg_dev_per_path.first(), null, ['WRS_PATH']))
 
 var score_disp = final_img
-    .focal_mean(30, 'circle', 'meters', 1);
+    // .focal_mean(30, 'circle', 'meters', 1);
 
-var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
+var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD)
+    .or(score_disp.select('weighted_mean').gte(THRESHOLD * -1));
 score_disp = score_disp.updateMask(thresh_mask);
 
 // c = (1 / (1 + s))^0.6;

@@ -14,9 +14,9 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '8-3';
+var VERSION = '9-0';
 
-var ROOT = 'projects/sites-project/';
+var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 

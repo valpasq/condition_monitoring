@@ -280,6 +280,13 @@ function redraw() {
 
 }
 
+var for_more = ui.Label('For more: https://valpasq.github.io/condition_monitoring/', { 
+      margin: '0px 0px', 
+      backgroundColor: 'rgba(255, 255, 255, 0)', 
+      fontSize: '12px'
+    });
+
+    
 // Initialize map
 Map.add(makeLegend(PALETTE));
 redraw();

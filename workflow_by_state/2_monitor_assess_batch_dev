@@ -16,11 +16,11 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var VERSION = '9-0';
 
-var ROOT = 'projects/sites-project/condition_monitoring/';
-var BASELINES = 'baselines_v8-0_by_state';
+var ROOT = 'projects/sites-project/';
+var BASELINES = 'baselines_v7-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 
-var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_annual/';
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_annual/';
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
@@ -282,7 +282,7 @@ for (var state_index in STATES) {
               .select('score_variance').lte(MAX_STDDEV*MAX_STDDEV));
     
           return score_image
-              // .reproject(model_image.projection())
+              .reproject(model_image.projection())
               .set(OUTPUT_PROPERTIES);
         });
     

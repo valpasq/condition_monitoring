@@ -1,3 +1,6 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var table = ee.FeatureCollection("TIGER/2018/States");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
 // | Monitoring & Assessment
@@ -11,7 +14,7 @@
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '8-2';
+var VERSION = '8-3';
 
 var ROOT = 'projects/sites-project/';
 var BASELINES = 'baselines_v7-0_by_state';
@@ -165,6 +168,10 @@ for (var state_index in STATES) {
   
   for(var year = START_YEAR; year <= END_YEAR; year++){
     
+    var roi = ee.FeatureCollection(table)
+      .filterMetadata('STUSPS', 'equals', state)
+      .geometry().dissolve();
+  
     var MONITOR_START = year + '-' + DAY_START;
     var MONITOR_END = year + '-' + DAY_END;
       
@@ -323,6 +330,7 @@ for (var state_index in STATES) {
                 DEPENDENT + '_mean', DEPENDENT + '_stddev', 
                 'total_nobs'])
         .reproject(OUTPUT_CRS, null, 30)
+        .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
     
     Map.addLayer(final_img.select('score_mean'));

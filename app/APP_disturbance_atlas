@@ -1,6 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
-    v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual"),
+var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual"),
     geometry = 
     /* color: #0b4a8b */
     /* shown: false */
@@ -9,6 +8,9 @@ var v8_0 = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_pr
 // -----------------------------
 //  Results collection
 var images = v8_2;
+
+var SCORE_MEAN_BAND = 'score_mean';
+var SCORE_STDDEV_BAND = 'score_stddev';
 
 // -----------------------------
 //  Visualization parameters
@@ -52,8 +54,8 @@ var water_mask = GSW.select('occurrence')
 // ------------------------------------------
 // Add range info for charting
 var get_range = function(img) {
-  var mean = img.select('score_mean');
-  var stddev = img.select('score_stddev');
+  var mean = img.select(SCORE_MEAN_BAND);
+  var stddev = img.select(SCORE_STDDEV_BAND);
   var lower = mean.subtract(stddev).rename('lower');
   var upper = mean.add(stddev).rename('upper');
   
@@ -154,8 +156,8 @@ var select = ui.Slider({
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD)
-        .or(score_disp.select('score_mean').gte(THRESHOLD*-1));
+    var thresh_mask = score_disp.select(SCORE_MEAN_BAND).lte(THRESHOLD)
+        .or(score_disp.select(SCORE_MEAN_BAND).gte(THRESHOLD*-1));
     score_disp = score_disp.updateMask(thresh_mask);
     
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
@@ -168,13 +170,13 @@ var select = ui.Slider({
     // c = (1 / (1 + s))^0.6;
     // c = (TanH(7*(c - 0.5)) + 1)*0.5;
     var confidence_scale = ee.Image(1)
-      .divide(score_disp.select('score_stddev').add(1))
+      .divide(score_disp.select(SCORE_STDDEV_BAND).add(1))
       .pow(0.6)
       .subtract(0.5).multiply(7)
       .tanh()
       .add(1).multiply(0.5);
   
-    var score_mean_viz_alpha = score_disp.select('score_mean')
+    var score_mean_viz_alpha = score_disp.select(SCORE_MEAN_BAND)
         .visualize(viz)
         .toUint8()
         .updateMask(thresh_mask.multiply(confidence_scale));
@@ -219,7 +221,7 @@ Map.onClick(function(coords) {
       .get('STUSPS');
   
   var series = ee.ImageCollection(images)
-      .select(['lower', 'score_mean', 'upper'])
+      .select(['lower', SCORE_MEAN_BAND, 'upper'])
       .filterMetadata('state', 'equals', state_code);
 
   // Create charts

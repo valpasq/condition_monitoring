@@ -111,32 +111,7 @@ function makeLegend(palette) {
   });
 }
 
-// ----------------------------------
-// Set up UI Panel - Select year
-var panel = ui.Panel({
-    style: {
-      width: '300px',
-      position: 'top-left',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)'
-    }
-  });
-
-var button_container = ui.Panel({
-        layout: ui.Panel.Layout.flow('horizontal'),
-        style: { backgroundColor: 'rgba(255, 255, 255, 0)' },
-    });
-
-var panel_title = ui.Label({
-    value: '🔎 Select year:',
-    style: {
-      fontWeight: 'bold',
-      fontSize: '14px',
-      margin: '0 0 2px 0',
-      padding: '0',
-      backgroundColor: 'rgba(255, 255, 255, 0)'
-    }
-    });
-    
+// Function to draw map layer
 var draw_map_fn = function(year) {
     var assessment = images
       .filterMetadata('monitor_year', 'equals', year)
@@ -173,6 +148,38 @@ var draw_map_fn = function(year) {
   return score_mean_viz_alpha;
 };
 
+// Function to redraw "base" layers 
+function redraw() {
+  Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
+}
+
+
+// ----------------------------------
+// Set up UI Panel - Select year
+var panel = ui.Panel({
+    style: {
+      width: '300px',
+      position: 'top-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+
+var button_container = ui.Panel({
+        layout: ui.Panel.Layout.flow('horizontal'),
+        style: { backgroundColor: 'rgba(255, 255, 255, 0)' },
+    });
+
+var panel_title = ui.Label({
+    value: '🔎 Select year:',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '14px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+
 var select = ui.Slider({
   min: START_YEAR,
   max: END_YEAR,
@@ -184,11 +191,7 @@ var select = ui.Slider({
     fontWeight: 'bold'
   },
   onChange: function(key) {
-    Map.layers().reset();
-    redraw();
-    
-    var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + END_YEAR);
-    
+    var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + key);
     Map.layers().set(1, disp_layer);
 }});
 
@@ -307,12 +310,9 @@ Map.style().set({cursor:'crosshair'});
 // Initialize map
 Map.add(makeLegend(PALETTE));
 
-// Function to redraw "base" layers 
-function redraw() {
-  Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
-}
-
+// Draw base layers
 redraw();
 
+// Add most recent result to Map
 var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR), {}, 'Mean condition score ' + END_YEAR);
 Map.layers().set(1, init_layer);

@@ -205,6 +205,8 @@ score_button.onClick(function() {
   var STDDEV_BAND = 'score_stddev';
 });
 
+
+
 // score button
 var tcg_button = ui.Button('TCG');
 tcg_button.onClick(function() {

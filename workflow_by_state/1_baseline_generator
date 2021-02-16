@@ -167,12 +167,12 @@ if (TS == 'full') {
 
 // Merge pre-processed Landsat 5, 7 and 8 collections
 var collection = collection5
-    .merge(collection7)
-    .merge(collection8)
-    .map(utils.addCloudScore)
-    .map(utils.maskCloudScore) // mask based on simple cloud score
-    .map(utils.spectralTransformsFnFactory(DEPENDENT))
-    .sort('system:time_start');
+      .merge(collection7)
+      .merge(collection8)
+      .map(utils.addCloudScore)
+      .map(utils.maskCloudScore) // mask based on simple cloud score
+      .map(utils.spectralTransformsFnFactory(DEPENDENT))
+      .sort('system:time_start');
   
 
 // Moving window baseline estimation

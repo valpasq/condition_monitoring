@@ -227,26 +227,26 @@ Map.onClick(function(coords) {
                     title: 'condition score',
                     viewWindow: {min: -5, max: 5},
                   },
-              series: {
+               series: {
                   0: {
                       labelInLegend: '-1σ',
                       color: 'grey',
-                      lineWidth: 1, 
-                      pointSize: 2,
+                      lineWidth: 2, 
+                      pointSize: 0,
                       curveType: 'function'
                   },
                   1: {
-                      labelInLegend: '+1σ',
-                      color: 'silver',
-                      lineWidth: 1,
-                      pointSize: 2,
-                      curveType: 'function'
-                  },
-                  2: {
                       labelInLegend: 'mean',
                       color: 'black',
                       lineWidth: 0,
-                      pointSize: 4
+                      pointSize: 3
+                  },
+                  2: {
+                      labelInLegend: '+1σ',
+                      color: 'silver',
+                      lineWidth: 2,
+                      pointSize: 0,
+                      curveType: 'function'
                   }
                 },
               });

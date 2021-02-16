@@ -130,7 +130,7 @@ var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
 };
 
 // Function to combine results across Paths
-var combinePaths = function(image) {
+var weight_paths = function(image) {
   var nobs = image.select(DEPENDENT + '_count');
  
   var score_mean = image
@@ -288,7 +288,7 @@ for (var state_index in STATES) {
     
     // --------------------------------- Combine Results ---------------------------------- 
     
-    var weighted = avg_dev_per_path.map(combinePaths);
+    var weighted = avg_dev_per_path.map(weight_paths);
     
     var total_obs = avg_dev_per_path
         .select(DEPENDENT + '_count')

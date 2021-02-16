@@ -106,11 +106,11 @@ var roi = ee.FeatureCollection(table)
 var scenes = wrs2.filterBounds(roi);
 
 // Get paths in study area
-var paths = scenes.aggregate_array('PATH').distinct().sort()
-print(paths)
+var paths = scenes.aggregate_array('PATH').distinct().sort();
+print(paths);
 
-var path_start = paths.get(0).getInfo()
-var path_stop = paths.get(-1).getInfo()
+var path_start = paths.get(0).getInfo();
+var path_stop = paths.get(-1).getInfo();
 
 // Select all available (full) versus limited L7 (16d) time series
 if (TS == 'full') {

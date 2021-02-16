@@ -148,8 +148,6 @@ var select = ui.Slider({
     fontWeight: 'bold'
   },
   onChange: function(key) {
-    // select.style().set('stretch', 'horizontal');
-    
     Map.layers().reset();
     redraw();
     
@@ -300,16 +298,16 @@ Map.onClick(function(coords) {
 ui.root.clear();
 ui.root.add(Map.add(panel));
 
-// Function to redraw "base" layers 
-function redraw() {
-  Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
-
-  Map.setOptions('Simple', {Simple: stylers.dark_mode});
-  Map.setOptions('SATELLITE');
-  Map.style().set({cursor:'crosshair'});
-
-}
+Map.setOptions('Simple', {Simple: stylers.dark_mode});
+Map.setOptions('SATELLITE');
+Map.style().set({cursor:'crosshair'});
 
 // Initialize map
 Map.add(makeLegend(PALETTE));
+
+// Function to redraw "base" layers 
+function redraw() {
+  Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
+}
+
 redraw();

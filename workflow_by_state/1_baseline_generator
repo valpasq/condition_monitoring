@@ -158,11 +158,11 @@ if (TS == 'full') {
   
   // Get Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
-    .filterBounds(roi)
-    .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
-    .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
-    .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-    .map(utils.preprocess8);
+      .filterBounds(roi)
+      .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
+      .map(utils.preprocess8);
 }
 
 // Merge pre-processed Landsat 5, 7 and 8 collections

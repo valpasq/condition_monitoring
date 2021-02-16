@@ -136,23 +136,10 @@ var panel_title = ui.Label({
       backgroundColor: 'rgba(255, 255, 255, 0)'
     }
     });
-
-var select = ui.Slider({
-  min: START_YEAR,
-  max: END_YEAR,
-  value: END_YEAR,
-  step: 1,
-  style: {
-    backgroundColor: 'rgba(255, 255, 255, 0)',
-    fontFamily: 'sans-serif',
-    fontWeight: 'bold'
-  },
-  onChange: function(key) {
-    Map.layers().reset();
-    redraw();
     
+var draw_map_fn = function(year) {
     var assessment = images
-      .filterMetadata('monitor_year', 'equals', key)
+      .filterMetadata('monitor_year', 'equals', year)
       .mosaic();
     
     var score_disp = assessment
@@ -182,8 +169,25 @@ var select = ui.Slider({
         .visualize(viz)
         .toUint8()
         .updateMask(thresh_mask.multiply(confidence_scale));
+  
+  return score_mean_viz_alpha;
+};
+
+var select = ui.Slider({
+  min: START_YEAR,
+  max: END_YEAR,
+  value: END_YEAR,
+  step: 1,
+  style: {
+    backgroundColor: 'rgba(255, 255, 255, 0)',
+    fontFamily: 'sans-serif',
+    fontWeight: 'bold'
+  },
+  onChange: function(key) {
+    Map.layers().reset();
+    redraw();
+    var score_mean_viz_alpha = draw_map_fn(key);
     
-   
     Map.layers().set(1, ui.Map.Layer(score_mean_viz_alpha, {}, 'Mean condition score ' + key, true));
     
     
@@ -310,3 +314,6 @@ function redraw() {
 }
 
 redraw();
+
+var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR), {}, 'Mean condition score ' + END_YEAR);
+Map.layers().set(1, init_layer);

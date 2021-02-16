@@ -188,9 +188,8 @@ var select = ui.Slider({
     redraw();
     
     var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + END_YEAR);
-    Map.layers().set(1, ui.Map.Layer(disp_layer, {}, 'Mean condition score ' + key, true));
     
-    
+    Map.layers().set(1, disp_layer);
 }});
 
 select.style().set('stretch', 'horizontal');

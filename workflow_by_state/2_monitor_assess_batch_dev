@@ -286,7 +286,6 @@ for (var state_index in STATES) {
     var total_obs = avg_dev_per_path
         .select(DEPENDENT + '_count')
         .reduce('sum')
-        .reproject(OUTPUT_CRS, null, 30)
         .toUint8();
     
     var score_wt_mean = ee.Image(weighted
@@ -323,6 +322,7 @@ for (var state_index in STATES) {
         .rename(['score_mean', 'score_stddev', 
                 DEPENDENT + '_mean', DEPENDENT + '_stddev', 
                 'total_nobs'])
+        .reproject(OUTPUT_CRS, null, 30)
         .setMulti(OUTPUT_PROPERTIES));
     
     Map.addLayer(final_img);

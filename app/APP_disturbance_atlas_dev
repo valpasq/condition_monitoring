@@ -2,6 +2,8 @@
 var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
+var stylers = require('users/valeriepasquarella/default:map_stylers');
+
 //  Results collection
 var images = v8_2;
 
@@ -299,19 +301,11 @@ Map.onClick(function(coords) {
 ui.root.clear();
 ui.root.add(Map.add(panel));
 
-// Add "Figure" basemap option (solid color)
-var style = {
-  'Figure': [{
-      featureType: 'all',
-      stylers: [{ color: '#000000'}]
-  }]
-};
-
 // Function to redraw "base" layers 
 function redraw() {
   Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
 
-  Map.setOptions(null, style);
+  Map.setOptions('Dark', {Dark: stylers.dark_mode});
   Map.setOptions('SATELLITE');
   Map.style().set({cursor:'crosshair'});
 

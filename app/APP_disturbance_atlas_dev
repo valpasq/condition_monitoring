@@ -63,8 +63,6 @@ var get_range = function(img) {
   
 };
 
-// images = images.map(get_range);
-
 // ------------------------------------------
 // Create colorbar for legend.
 function ColorBar(palette) {
@@ -149,7 +147,7 @@ var select = ui.Slider({
     fontWeight: 'bold'
   },
   onChange: function(key) {
-    select.style().set('stretch', 'horizontal');
+    // select.style().set('stretch', 'horizontal');
     
     Map.layers().reset();
     redraw();
@@ -205,8 +203,6 @@ score_button.onClick(function() {
   var STDDEV_BAND = 'score_stddev';
 });
 
-
-
 // tcg button
 var tcg_button = ui.Button('TCG');
 tcg_button.onClick(function() {
@@ -215,22 +211,26 @@ tcg_button.onClick(function() {
 });
 
 // reset button
-var reset_button = ui.Button('Clear');
+var reset_button = ui.Button('Clear Chart');
 reset_button.onClick(function() {
   Map.remove(panel_ts);
   redraw();
   dirtyMap = false;
 });
-button_container.add(score_button).add(tcg_button).add(reset_button);
 
-panel.add(panel_title).add(select).add(button_container);
+button_container
+    .add(score_button)
+    .add(tcg_button)
+    .add(reset_button);
+
+panel.add(panel_title).add(select);
 
 // ----------------------------------
 // Set up UI Panel - Time series chart
 var panel_ts = ui.Panel({
     style: {
       width: '600px',
-      height: '230px',
+      // height: '230px',
       position: 'bottom-left',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
@@ -292,7 +292,7 @@ Map.onClick(function(coords) {
 
   
   // Add chart to panel
-  panel_ts.add(chart);
+  panel_ts.add(chart).add(button_container);
 
 });
 

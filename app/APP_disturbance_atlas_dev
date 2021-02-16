@@ -191,7 +191,19 @@ var select = ui.Slider({
 
 select.style().set('stretch', 'horizontal');
 
+panel.add(panel_title).add(select);
 
+// ----------------------------------
+// Set up UI Panel - Time series chart
+var panel_ts = ui.Panel({
+    style: {
+      width: '600px',
+      // height: '230px',
+      position: 'bottom-left',
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+    }
+  });
+  
 var MEAN_BAND = 'score_mean';
 var STDDEV_BAND = 'score_stddev';
 
@@ -221,19 +233,6 @@ button_container
     .add(score_button)
     .add(tcg_button)
     .add(reset_button);
-
-panel.add(panel_title).add(select);
-
-// ----------------------------------
-// Set up UI Panel - Time series chart
-var panel_ts = ui.Panel({
-    style: {
-      width: '600px',
-      // height: '230px',
-      position: 'bottom-left',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)'
-    }
-  });
 
 // Set a callback function for when the user clicks the map.
 var dirtyMap = false;

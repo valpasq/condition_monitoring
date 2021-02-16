@@ -1,9 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual"),
-    geometry = 
-    /* color: #0b4a8b */
-    /* shown: false */
-    ee.Geometry.Point([-71.67984826491355, 42.028821268660536]);
+var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
 //  Results collection

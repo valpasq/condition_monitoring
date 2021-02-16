@@ -275,7 +275,7 @@ for (var state_index in STATES) {
               .select('score_variance').lte(MAX_STDDEV*MAX_STDDEV));
     
           return score_image
-              .reproject(model_image.projection())
+              // .reproject(model_image.projection())
               .set(OUTPUT_PROPERTIES);
         });
     

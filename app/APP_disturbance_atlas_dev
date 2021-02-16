@@ -5,9 +5,6 @@ var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_pr
 //  Results collection
 var images = v8_2;
 
-var SCORE_MEAN_BAND = 'score_mean';
-var SCORE_STDDEV_BAND = 'score_stddev';
-
 var for_more = ui.Label('For more: https://valpasq.github.io/condition_monitoring/', { 
       margin: '0px 0px', 
       backgroundColor: 'rgba(255, 255, 255, 0)', 
@@ -57,8 +54,8 @@ var water_mask = GSW.select('occurrence')
 // ------------------------------------------
 // Add range info for charting
 var get_range = function(img) {
-  var mean = img.select(SCORE_MEAN_BAND);
-  var stddev = img.select(SCORE_STDDEV_BAND);
+  var mean = img.select(MEAN_BAND);
+  var stddev = img.select(STDDEV_BAND);
   var lower = mean.subtract(stddev).rename('lower');
   var upper = mean.add(stddev).rename('upper');
   
@@ -66,7 +63,7 @@ var get_range = function(img) {
   
 };
 
-images = images.map(get_range);
+// images = images.map(get_range);
 
 // ------------------------------------------
 // Create colorbar for legend.
@@ -120,12 +117,16 @@ function makeLegend(palette) {
 var panel = ui.Panel({
     style: {
       width: '250px',
-      height: '70px',
       position: 'top-left',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
-  
+
+var button_container = ui.Panel({
+        layout: ui.Panel.Layout.flow('horizontal'),
+        style: { backgroundColor: 'rgba(255, 255, 255, 0)' },
+    });
+
 var panel_title = ui.Label({
     value: '🔎 Select year:',
     style: {
@@ -159,8 +160,8 @@ var select = ui.Slider({
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select(SCORE_MEAN_BAND).lte(THRESHOLD)
-        .or(score_disp.select(SCORE_MEAN_BAND).gte(THRESHOLD*-1));
+    var thresh_mask = score_disp.select(MEAN_BAND).lte(THRESHOLD)
+        .or(score_disp.select(MEAN_BAND).gte(THRESHOLD*-1));
     score_disp = score_disp.updateMask(thresh_mask);
     
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
@@ -179,7 +180,7 @@ var select = ui.Slider({
       .tanh()
       .add(1).multiply(0.5);
   
-    var score_mean_viz_alpha = score_disp.select(SCORE_MEAN_BAND)
+    var score_mean_viz_alpha = score_disp.select(MEAN_BAND)
         .visualize(viz)
         .toUint8()
         .updateMask(thresh_mask.multiply(confidence_scale));
@@ -192,6 +193,34 @@ var select = ui.Slider({
 }});
 
 select.style().set('stretch', 'horizontal');
+
+
+var MEAN_BAND = 'score_mean';
+var STDDEV_BAND = 'score_stddev';
+
+// score button
+var score_button = ui.Button('Score');
+score_button.onClick(function() {
+  var MEAN_BAND = 'score_mean';
+  var STDDEV_BAND = 'score_stddev';
+});
+
+// score button
+var tcg_button = ui.Button('TCG');
+tcg_button.onClick(function() {
+  var MEAN_BAND = 'tcg_mean';
+  var STDDEV_BAND = 'tcg_stddev';
+});
+
+// score button
+var reset_button = ui.Button('Reset');
+reset_button.onClick(function() {
+  Map.remove(panel_ts);
+  redraw();
+});
+button_container.add(score_button).add(tcg_button).add(reset_button);
+
+panel.add(panel_title).add(select).add(button_container);
 
 // ----------------------------------
 // Set up UI Panel - Time series chart
@@ -223,8 +252,8 @@ Map.onClick(function(coords) {
   var state_code = ee.Feature(STATES.filterBounds(point).first())
       .get('STUSPS');
   
-  var series = ee.ImageCollection(images)
-      .select(['lower', SCORE_MEAN_BAND, 'upper'])
+  var series = ee.ImageCollection(images.map(get_range))
+      .select(['lower', MEAN_BAND, 'upper'])
       .filterMetadata('state', 'equals', state_code);
 
   // Create charts
@@ -264,8 +293,6 @@ Map.onClick(function(coords) {
 
 });
 
-// Add panels to Map
-panel.add(panel_title).add(select);
 ui.root.clear();
 ui.root.add(Map.add(panel));
 

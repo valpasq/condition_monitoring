@@ -186,9 +186,9 @@ var select = ui.Slider({
   onChange: function(key) {
     Map.layers().reset();
     redraw();
-    var score_mean_viz_alpha = draw_map_fn(key);
     
-    Map.layers().set(1, ui.Map.Layer(score_mean_viz_alpha, {}, 'Mean condition score ' + key, true));
+    var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + END_YEAR);
+    Map.layers().set(1, ui.Map.Layer(disp_layer, {}, 'Mean condition score ' + key, true));
     
     
 }});

@@ -150,7 +150,8 @@ var select = ui.Slider({
   },
   onChange: function(key) {
     Map.layers().reset();
-
+    redraw();
+    
     select.style().set('stretch', 'horizontal');
     
     var assessment = images
@@ -185,9 +186,9 @@ var select = ui.Slider({
         .toUint8()
         .updateMask(thresh_mask.multiply(confidence_scale));
     
-    Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+    // Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+    Map.layers().set(1, ui.Map.Layer(score_mean_viz_alpha, {}, 'weighted score', true));
     
-    redraw();
     
 }});
 

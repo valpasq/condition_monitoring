@@ -327,7 +327,6 @@ for (var state_index in STATES) {
     
     Map.addLayer(final_img.select('score_mean'));
     
-    
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     
     // Export final product for full study area

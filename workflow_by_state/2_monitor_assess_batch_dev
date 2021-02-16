@@ -325,7 +325,8 @@ for (var state_index in STATES) {
         .reproject(OUTPUT_CRS, null, 30)
         .setMulti(OUTPUT_PROPERTIES));
     
-    Map.addLayer(final_img);
+    Map.addLayer(final_img.select('score_mean'));
+    
     
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     

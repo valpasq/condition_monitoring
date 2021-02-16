@@ -101,8 +101,8 @@ var getCoeffs = function(feature) {
 // ------------------------------------- Analysis -------------------------------------- 
 
 var roi = ee.FeatureCollection(table)
-  .filterMetadata('STUSPS', 'equals', STATE)
-  .geometry().dissolve().buffer(100);
+    .filterMetadata('STUSPS', 'equals', STATE)
+    .geometry().dissolve().buffer(100);
 
 // Get WRS2 scenes
 var scenes = wrs2.filterBounds(roi);

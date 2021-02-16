@@ -184,16 +184,16 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   
   // Dictionary for asset properties
   var outputProperties = ee.Dictionary({
-      'system:time_start': ee.Date(start+'-01-01').millis(),
-      'system:time_end': ee.Date(end+'-12-31').millis(),
-      'spectral_band': DEPENDENT,
-      'year_start': start,
-      'year_end': end,
-      'version': VERSION,
-      'harmonics': HARMONICS,
-      'time_series': TS,
-      'name': experiment_name,
-      'state': STATE
+        'system:time_start': ee.Date(start+'-01-01').millis(),
+        'system:time_end': ee.Date(end+'-12-31').millis(),
+        'spectral_band': DEPENDENT,
+        'year_start': start,
+        'year_end': end,
+        'version': VERSION,
+        'harmonics': HARMONICS,
+        'time_series': TS,
+        'name': experiment_name,
+        'state': STATE
   });
   
   // Filter full Landsat collection to moving window period
@@ -207,11 +207,11 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   secondary: collection_filt, 
   condition: ee.Filter.and(
     ee.Filter.equals({
-      leftField: 'PATH', 
-      rightField: 'WRS_PATH'
+        leftField: 'PATH', 
+        rightField: 'WRS_PATH'
     }), ee.Filter.equals({
-      leftField: 'ROW', 
-      rightField: 'WRS_ROW'
+        leftField: 'ROW', 
+        rightField: 'WRS_ROW'
     })
   )
   })
@@ -226,21 +226,21 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
     
   // Quality mosaic based on number of observations per pixel (endlap filter)
   var outputMosaic = ee.Image(images
-    .qualityMosaic('nobs')
-    .clip(roi)
-    .setMulti(outputProperties))
-    .set('WRS_PATH', path);
+      .qualityMosaic('nobs')
+      .clip(roi)
+      .setMulti(outputProperties))
+      .set('WRS_PATH', path);
     
   // Map.addLayer(outputMosaic.select('constant'));
   
   Export.image.toAsset({
-    image: outputMosaic,
-    description: DEPENDENT + '_' + start + '-' + end + '-' + path,
-    assetId: output_name + '_p' + path + '_' + STATE,
-    region: roi.bounds(),
-    crs: path_proj,
-    scale: 30,
-    maxPixels: 1e13,
+      image: outputMosaic,
+      description: DEPENDENT + '_' + start + '-' + end + '-' + path,
+      assetId: output_name + '_p' + path + '_' + STATE,
+      region: roi.bounds(),
+      crs: path_proj,
+      scale: 30,
+      maxPixels: 1e13,
   });
   }
 

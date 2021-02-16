@@ -187,7 +187,7 @@ var select = ui.Slider({
         .updateMask(thresh_mask.multiply(confidence_scale));
     
     // Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
-    Map.layers().set(1, ui.Map.Layer(score_mean_viz_alpha, {}, 'weighted score', true));
+    Map.layers().set(1, ui.Map.Layer(score_mean_viz_alpha, {}, 'Mean condition score ' + key, true));
     
     
 }});

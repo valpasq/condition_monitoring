@@ -137,10 +137,11 @@ var combinePaths = function(image) {
   var weighted_var = variance.multiply(nobs).rename('var_wt');
   var weighted_val = value.multiply(nobs).rename('val_wt');
  
-  return image.addBands(weighted_mean)
-    .addBands(weighted_var)
-    .addBands(weighted_val)
-    .reproject(OUTPUT_CRS, null, 30);
+  return image
+      .addBands(weighted_mean)
+      .addBands(weighted_var)
+      .addBands(weighted_val)
+      .reproject(OUTPUT_CRS, null, 30);
 };
 
 // --------------------------------- PREDICT ---------------------------------- 

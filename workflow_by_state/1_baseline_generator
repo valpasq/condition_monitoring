@@ -18,7 +18,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // --------------------------------- Imports & Outputs --------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '7-0';
+var VERSION = '8-0';
 
 var ROOT = 'projects/sites-project/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
@@ -100,7 +100,7 @@ var getCoeffs = function(feature) {
 
 var roi = ee.FeatureCollection(table)
   .filterMetadata('STUSPS', 'equals', STATE)
-  .geometry().dissolve();
+  .geometry().dissolve().buffer(100);
 
 // Get WRS2 scenes
 var scenes = wrs2.filterBounds(roi);
@@ -227,6 +227,8 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
     .setMulti(outputProperties))
     .set('WRS_PATH', path);
     
+  // Map.addLayer(outputMosaic.select('constant'));
+  
   Export.image.toAsset({
     image: outputMosaic,
     description: DEPENDENT + '_' + start + '-' + end + '-' + path,

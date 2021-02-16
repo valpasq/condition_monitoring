@@ -54,42 +54,44 @@ var INDEPENDENTS = ee.List(['constant', 't']).cat(COS_NAMES).cat(SIN_NAMES);
 // ---------------------------------- Functions ---------------------------------- 
 
 var getCoeffs = function(feature) {
-  var collectionScene = ee.ImageCollection.fromImages(feature.get('images'));
-  
-  // Calculate number of observations per pixel
-  var numObs = collectionScene.count().select(0).rename('nobs');
-  var crs = collectionScene.first().projection().crs();
-  
-  // Add constant, time, and coefficients
-  var harmonicLandsat = collectionScene.select(DEPENDENT)
-    .map(utils.addConstant)
-    .map(utils.addTime)
-    .map(utils.addHarmonicsFnFactory(HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES));
-    
-  // The output of the regression reduction is a 4x1 array image
-  var harmonicTrend = harmonicLandsat
-    .select(INDEPENDENTS.add(DEPENDENT))
-    .reduce(ee.Reducer.linearRegression(INDEPENDENTS.length(), 1));
-  
-  // Turn the array image into a multi-band image of coefficients
-  var harmonicTrendCoefficients = harmonicTrend.select('coefficients')
-    .arrayProject([0])
-    .arrayFlatten([INDEPENDENTS]);
-  
-  // Get RMSE from linearRegression result
-  var rmse = harmonicTrend.select('residuals')
-    .arrayProject([0])
-    .arrayFlatten([ee.List(['rmse'])]);
+    var collectionScene = ee.ImageCollection.fromImages(feature.get('images'));
 
-  harmonicTrendCoefficients = harmonicTrendCoefficients
-    .addBands([rmse, numObs])
-    .setDefaultProjection(crs);
+    // Calculate number of observations per pixel
+    var numObs = collectionScene.count().select(0).rename('nobs');
+    var crs = collectionScene.first().projection().crs();
     
+    // Add constant, time, and coefficients
+    var harmonicLandsat = collectionScene
+        .select(DEPENDENT)
+        .map(utils.addConstant)
+        .map(utils.addTime)
+        .map(utils.addHarmonicsFnFactory(HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES));
+      
+    // The output of the regression reduction is a 4x1 array image
+    var harmonicTrend = harmonicLandsat
+        .select(INDEPENDENTS.add(DEPENDENT))
+        .reduce(ee.Reducer.linearRegression(INDEPENDENTS.length(), 1));
     
-  var outputProperties = ee.Dictionary({
-    'WRS_PATH': feature.get('PATH'),
-    'crs': crs
-});
+    // Turn the array image into a multi-band image of coefficients
+    var harmonicTrendCoefficients = harmonicTrend
+        .select('coefficients')
+        .arrayProject([0])
+        .arrayFlatten([INDEPENDENTS]);
+    
+    // Get RMSE from linearRegression result
+    var rmse = harmonicTrend.select('residuals')
+        .arrayProject([0])
+        .arrayFlatten([ee.List(['rmse'])]);
+  
+    harmonicTrendCoefficients = harmonicTrendCoefficients
+        .addBands([rmse, numObs])
+        .setDefaultProjection(crs);
+      
+      
+    var outputProperties = ee.Dictionary({
+      'WRS_PATH': feature.get('PATH'),
+      'crs': crs
+  });
   
   return harmonicTrendCoefficients
     .setMulti(outputProperties);

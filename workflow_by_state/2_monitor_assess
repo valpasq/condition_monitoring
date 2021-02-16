@@ -255,8 +255,8 @@ var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           .updateMask(score_image.select('score_stddev').lte(MAX_STDDEV));
 
       return score_image
-          // .reproject(model_image.projection())
-          .reproject(OUTPUT_CRS, null, 30)
+          .reproject(model_image.projection())
+          // .reproject(OUTPUT_CRS, null, 30)
           .set(OUTPUT_PROPERTIES);
     });
 
@@ -284,10 +284,10 @@ var final_img = ee.Image(final_mean
     .addBands(final_stddev)
     .addBands(total_obs)
     .addBands(final_val)
+    .reproject(OUTPUT_CRS, null, 30)
     .rename(['weighted_mean', 'weighted_stddev', 'total_nobs', 'weighted_value'])
     .setMulti(OUTPUT_PROPERTIES));
-    // .copyProperties(avg_dev_per_path.first(), null, ['WRS_PATH']))
-
+  
 var score_disp = final_img
     // .focal_mean(30, 'circle', 'meters', 1);
 

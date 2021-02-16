@@ -213,7 +213,7 @@ tcg_button.onClick(function() {
 });
 
 // score button
-var reset_button = ui.Button('Reset');
+var reset_button = ui.Button('Clear');
 reset_button.onClick(function() {
   Map.remove(panel_ts);
   redraw();
@@ -306,7 +306,7 @@ var style = {
 
 // Function to redraw "base" layers 
 function redraw() {
-  Map.addLayer(state_outlines, {palette: 'gray'}, 'State boundaries');
+  Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
 
   Map.setOptions(null, style);
   Map.setOptions('SATELLITE');

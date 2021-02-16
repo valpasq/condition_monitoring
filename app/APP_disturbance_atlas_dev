@@ -148,12 +148,6 @@ var draw_map_fn = function(year) {
   return score_mean_viz_alpha;
 };
 
-// Function to redraw "base" layers 
-function redraw() {
-  Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
-}
-
-
 // ----------------------------------
 // Set up UI Panel - Select year
 var panel = ui.Panel({
@@ -231,7 +225,6 @@ tcg_button.onClick(function() {
 var reset_button = ui.Button('Clear Chart');
 reset_button.onClick(function() {
   Map.remove(panel_ts);
-  redraw();
   dirtyMap = false;
 });
 
@@ -310,8 +303,8 @@ Map.style().set({cursor:'crosshair'});
 // Initialize map
 Map.add(makeLegend(PALETTE));
 
-// Draw base layers
-redraw();
+// Add state boundaries
+Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
 
 // Add most recent result to Map
 var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR), {}, 'Mean condition score ' + END_YEAR);

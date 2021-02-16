@@ -141,7 +141,7 @@ var panel_title = ui.Label({
 var select = ui.Slider({
   min: START_YEAR,
   max: END_YEAR,
-  value: START_YEAR,
+  value: END_YEAR,
   step: 1,
   style: {
     backgroundColor: 'rgba(255, 255, 255, 0)',
@@ -149,10 +149,10 @@ var select = ui.Slider({
     fontWeight: 'bold'
   },
   onChange: function(key) {
+    select.style().set('stretch', 'horizontal');
+    
     Map.layers().reset();
     redraw();
-    
-    select.style().set('stretch', 'horizontal');
     
     var assessment = images
       .filterMetadata('monitor_year', 'equals', key)
@@ -161,8 +161,8 @@ var select = ui.Slider({
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select(MEAN_BAND).lte(THRESHOLD)
-        .or(score_disp.select(MEAN_BAND).gte(THRESHOLD*-1));
+    var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD)
+        .or(score_disp.select('score_mean').gte(THRESHOLD*-1));
     score_disp = score_disp.updateMask(thresh_mask);
     
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
@@ -175,18 +175,18 @@ var select = ui.Slider({
     // c = (1 / (1 + s))^0.6;
     // c = (TanH(7*(c - 0.5)) + 1)*0.5;
     var confidence_scale = ee.Image(1)
-      .divide(score_disp.select(STDDEV_BAND).add(1))
+      .divide(score_disp.select('score_stddev').add(1))
       .pow(0.6)
       .subtract(0.5).multiply(7)
       .tanh()
       .add(1).multiply(0.5);
   
-    var score_mean_viz_alpha = score_disp.select(MEAN_BAND)
+    var score_mean_viz_alpha = score_disp.select('score_mean')
         .visualize(viz)
         .toUint8()
         .updateMask(thresh_mask.multiply(confidence_scale));
     
-    // Map.addLayer(score_mean_viz_alpha, {}, 'weighted score', true);
+   
     Map.layers().set(1, ui.Map.Layer(score_mean_viz_alpha, {}, 'Mean condition score ' + key, true));
     
     
@@ -207,18 +207,19 @@ score_button.onClick(function() {
 
 
 
-// score button
+// tcg button
 var tcg_button = ui.Button('TCG');
 tcg_button.onClick(function() {
   var MEAN_BAND = 'tcg_mean';
   var STDDEV_BAND = 'tcg_stddev';
 });
 
-// score button
+// reset button
 var reset_button = ui.Button('Clear');
 reset_button.onClick(function() {
   Map.remove(panel_ts);
   redraw();
+  dirtyMap = false;
 });
 button_container.add(score_button).add(tcg_button).add(reset_button);
 

@@ -21,9 +21,9 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_ann
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var STATES = ['NH', 'VT', 'ME'];
+var STATES = ['MA'];
 
-var START_YEAR = 1995;
+var START_YEAR = 2018;
 var END_YEAR = 2020;
 
 var DAY_START = '05-01';    // Date to start monitoring

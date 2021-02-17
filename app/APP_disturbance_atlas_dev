@@ -50,7 +50,7 @@ var water_mask = GSW.select('occurrence')
 // Add range info for charting
 var get_range_fn_factory = function(prefix) {
   var MEAN_BAND = prefix + '_mean';
-  var STDDEV_BAND = predix + '_stddev'
+  var STDDEV_BAND = prefix + '_stddev';
   
   return function(img) {
   var mean = img.select(MEAN_BAND);
@@ -59,9 +59,13 @@ var get_range_fn_factory = function(prefix) {
   var upper = mean.add(stddev).rename(prefix + '_upper');
   
   return img.addBands(lower).addBands(upper);
-  }
+  };
   
 };
+
+var chart_collection = images.map(get_range_fn_factory('tcg'))
+    .map(get_range_fn_factory('score'));
+print(chart_collection);
 
 // ------------------------------------------
 // Create colorbar for legend.
@@ -174,18 +178,18 @@ var panel_title = ui.Label({
     });
 
 var select = ui.Slider({
-  min: START_YEAR,
-  max: END_YEAR,
-  value: END_YEAR,
-  step: 1,
-  style: {
-    backgroundColor: 'rgba(255, 255, 255, 0)',
-    fontFamily: 'sans-serif',
-    fontWeight: 'bold'
-  },
-  onChange: function(key) {
-    var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + key);
-    Map.layers().set(1, disp_layer);
+    min: START_YEAR,
+    max: END_YEAR,
+    value: END_YEAR,
+    step: 1,
+    style: {
+      backgroundColor: 'rgba(255, 255, 255, 0)',
+      fontFamily: 'sans-serif',
+      fontWeight: 'bold'
+    },
+    onChange: function(key) {
+        var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + key);
+        Map.layers().set(1, disp_layer);
 }});
 
 select.style().set('stretch', 'horizontal');
@@ -203,15 +207,15 @@ var panel_ts = ui.Panel({
     }
   });
   
-var MEAN_BAND = 'score_mean';
-var STDDEV_BAND = 'score_stddev';
+// var MEAN_BAND = 'score_mean';
+// var STDDEV_BAND = 'score_stddev';
 
 // BUTTONS ----------------------------------
 // Score button
 var score_button = ui.Button('Score');
 score_button.onClick(function() {
-  var MEAN_BAND = 'score_mean';
-  var STDDEV_BAND = 'score_stddev';
+  // var MEAN_BAND = 'score_mean';
+  // var STDDEV_BAND = 'score_stddev';
 });
 
 // TCG button
@@ -254,8 +258,8 @@ Map.onClick(function(coords) {
   var state_code = ee.Feature(STATES.filterBounds(point).first())
       .get('STUSPS');
   
-  var series = ee.ImageCollection(images.map(get_range))
-      .select(['lower', MEAN_BAND, 'upper'])
+  var series = ee.ImageCollection(chart_collection)
+      .select(['score_lower', 'score_mean', 'score_upper'])
       .filterMetadata('state', 'equals', state_code);
 
   // Create charts

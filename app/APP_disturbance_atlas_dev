@@ -157,17 +157,17 @@ var chart_collection = images.map(get_range_fn_factory('tcg'))
 // Set up UI Panel - Select year
 var panel = ui.Panel({
     style: {
-      width: '300px',
+      width: '280px',
       position: 'top-left',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
 
 var panel_title = ui.Label({
-    value: 'Vegetation Condition Change Explorer',
+    value: 'Condition Monitoring Explorer',
     style: {
       fontWeight: 'bold',
-      fontSize: '15px',
+      fontSize: '18px',
       margin: '0 0 2px 0',
       padding: '2',
       backgroundColor: 'rgba(255, 255, 255, 0)'
@@ -191,6 +191,7 @@ var select = ui.Slider({
     value: END_YEAR,
     step: 1,
     style: {
+      stretch: 'horizontal',
       backgroundColor: 'rgba(255, 255, 255, 0)',
       fontFamily: 'sans-serif',
       fontWeight: 'bold',
@@ -200,7 +201,6 @@ var select = ui.Slider({
         Map.layers().set(1, disp_layer);
 }});
 
-select.style().set('stretch', 'horizontal');
 panel.add(panel_title).add(panel_descrip).add(select);
 
 // ----------------------------------

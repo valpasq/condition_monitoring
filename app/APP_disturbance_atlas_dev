@@ -164,7 +164,7 @@ var panel = ui.Panel({
   });
 
 var panel_title = ui.Label({
-    value: '🔎 Select year:',
+    value: '🔎 Select map year:',
     style: {
       fontWeight: 'bold',
       fontSize: '14px',

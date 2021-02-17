@@ -259,7 +259,7 @@ score_button.onClick(function() {
 });
 
 // TCG button
-var tcg_button = ui.Button('TCG');
+var tcg_button = ui.Button('Greenness');
 tcg_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();
   

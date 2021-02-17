@@ -355,7 +355,7 @@ nobs_button.onClick(function() {
 // ----------------------------------
 // Reset button
 var reset_button = ui.Button({label: 'Clear Chart',
-    style: {color: 'navy', stretch: 'horizontal'}});
+    style: {color: 'black', stretch: 'horizontal'}});
 reset_button.onClick(function() {
   Map.remove(panel_ts);
   dirtyMap = false;

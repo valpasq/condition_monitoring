@@ -165,7 +165,10 @@ var panel = ui.Panel({
 
 var button_container = ui.Panel({
         layout: ui.Panel.Layout.flow('horizontal'),
-        style: { backgroundColor: 'rgba(255, 255, 255, 0)' },
+        style: {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            stretch: 'horizontal'
+        },
     });
 
 var panel_title = ui.Label({
@@ -218,8 +221,8 @@ var panel_ts = ui.Panel({
 
 // BUTTONS ----------------------------------
 // Score button
-var score_button = ui.Button({label: 'Score',
-    style: {color: 'black'}});
+var score_button = ui.Button({label: 'Condition score',
+    style: {color: 'black', stretch: 'horizontal'}});
 score_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();
   
@@ -266,7 +269,7 @@ score_button.onClick(function() {
 
 // TCG button
 var tcg_button = ui.Button({label: 'Greenness',
-    style: {color: 'black'}});
+    style: {color: 'black', stretch: 'horizontal'}});
 tcg_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();
   
@@ -312,7 +315,8 @@ tcg_button.onClick(function() {
 });
 
 // Number of Observations button
-var nobs_button = ui.Button('Observations');
+var nobs_button = ui.Button({label: 'Observations', 
+    style: {color: 'black', stretch:'horizontal'}});
 nobs_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();
   

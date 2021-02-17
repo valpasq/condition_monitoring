@@ -220,7 +220,7 @@ var button_container = ui.Panel({
         style: {
             width: '100px',
             backgroundColor: 'rgba(255, 255, 255, 0)',
-            stretch: 'horizontal'
+            stretch: 'both'
         },
     });
     
@@ -232,6 +232,19 @@ var chart_container = ui.Panel({
         },
     });
 
+
+var chart_descrip = ui.Label({
+    value: 'Chart options:',
+    style: {
+      textAlign: 'right',
+      fontWeight: 'bold',
+      fontSize: '13px',
+      margin: '8px 2px 2px 2px',
+      padding: '2',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+    
 // ----------------------------------
 // Score button
 var score_button = ui.Button({label: 'Score',
@@ -373,6 +386,7 @@ reset_button.onClick(function() {
 });
 
 button_container
+    .add(chart_descrip)
     .add(score_button)
     .add(tcg_button)
     .add(nobs_button)

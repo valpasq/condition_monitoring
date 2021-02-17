@@ -1,17 +1,13 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual");
+var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual"),
+    STATES = ee.FeatureCollection("TIGER/2018/States"),
+    GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
 var stylers = require('users/valeriepasquarella/default:map_stylers');
 
 //  Results collection
 var images = v8_2;
-
-// var for_more = ui.Label('For more: https://valpasq.github.io/condition_monitoring/', { 
-//       margin: '0px 0px', 
-//       backgroundColor: 'rgba(255, 255, 255, 0)', 
-//       fontSize: '12px'
-//     });
     
 // -----------------------------
 //  Visualization parameters
@@ -30,8 +26,6 @@ var GSW_MASK = 'on'; // set to 'on' to apply GSW mask
 
 // ------------------------------------------
 // Get state outlines and style
-var STATES = ee.FeatureCollection('TIGER/2018/States');
-
 var states_list = images.aggregate_array('state')
     .distinct()
     .getInfo();
@@ -47,8 +41,8 @@ var state_outlines = ee.Image().byte().paint({
 
 // ------------------------------------------
 // Get Global Surface Water Mapping Layers for masking
-var GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater");
 var OCCURRENCE_THRESH = 95;
+
 var water_mask = GSW.select('occurrence')
     .gte(OCCURRENCE_THRESH).unmask().not();
 

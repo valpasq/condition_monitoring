@@ -2,7 +2,8 @@
 var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual"),
     STATES = ee.FeatureCollection("TIGER/2018/States"),
     GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater"),
-    v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual");
+    v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
+    geometry = /* color: #d63000 */ee.Geometry.MultiPoint();
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
 var stylers = require('users/valeriepasquarella/default:map_stylers');
@@ -471,3 +472,5 @@ Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State bound
 // Add most recent result to Map
 var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR), {}, 'Mean condition score ' + END_YEAR);
 Map.layers().set(1, init_layer);
+
+Map.setCenter(-72.1278, 41.857, 8);

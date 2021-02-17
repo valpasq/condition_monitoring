@@ -164,12 +164,23 @@ var panel = ui.Panel({
   });
 
 var panel_title = ui.Label({
-    value: '🔎 Select map year:',
+    value: 'Vegetation Condition Change Explorer',
     style: {
       fontWeight: 'bold',
-      fontSize: '14px',
+      fontSize: '15px',
       margin: '0 0 2px 0',
-      padding: '4',
+      padding: '2',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+    
+var panel_descrip = ui.Label({
+    value: 'Use the slider to change the map year. ' +
+        'Click the map to view time series.',
+    style: {
+      fontSize: '12px',
+      margin: '0 0 2px 0',
+      padding: '2',
       backgroundColor: 'rgba(255, 255, 255, 0)'
     }
     });
@@ -190,7 +201,7 @@ var select = ui.Slider({
 }});
 
 select.style().set('stretch', 'horizontal');
-panel.add(panel_title).add(select);
+panel.add(panel_title).add(panel_descrip).add(select);
 
 // ----------------------------------
 // Set up UI Panel - Time series chart

@@ -207,14 +207,6 @@ var select = ui.Slider({
 }});
 
 select.style().set('stretch', 'horizontal');
-
-// var checkbox = ui.Checkbox('Mask low TCG', true);
-
-// checkbox.onChange(function(checked) {
-//   Map.layers().get(2).setShown(checked);
-// });
-
-
 panel.add(panel_title).add(select);
 
 // ----------------------------------
@@ -429,7 +421,6 @@ Map.onClick(function(coords) {
   panel_ts.add(button_container).add(chart_container.add(chart));
 
 });
-
 
 ui.root.clear();
 ui.root.add(Map.add(panel));

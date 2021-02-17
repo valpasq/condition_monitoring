@@ -20,7 +20,7 @@ var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v8-0_by_state';
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 
-var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_products_annual/';
+var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_annual/';
 var OUTPUT_CRS = 'EPSG:5070';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 

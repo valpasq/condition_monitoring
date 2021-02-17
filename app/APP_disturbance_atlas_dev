@@ -215,18 +215,53 @@ var panel_ts = ui.Panel({
 // Score button
 var score_button = ui.Button('Score');
 score_button.onClick(function() {
-  // var MEAN_BAND = 'score_mean';
-  // var STDDEV_BAND = 'score_stddev';
+
 });
 
 // TCG button
 var tcg_button = ui.Button('TCG');
 tcg_button.onClick(function() {
-  var coords = Map.layers().get(2).get('eeObject');
+  var point = Map.layers().get(2).get('eeObject').geometry();
+  
+  var state_code = ee.Feature(STATES.filterBounds(point).first())
+      .get('STUSPS');
+  
+  var series = ee.ImageCollection(chart_collection)
+      .select(['tcg_lower', 'tcg_mean', 'tcg_upper'])
+      .filterMetadata('state', 'equals', state_code);
 
-  print(coords);
-  print('need to add TCG');
-
+  // Create charts
+  var chart = ui.Chart.image.series(series, point, ee.Reducer.first(), 30) 
+                .setOptions({
+                  vAxis: {
+                    title: 'Tasseled Cap Greenness',
+                    viewWindow: {min: -0.1, max: 0.5},
+                  },
+                  series: {
+                      0: {
+                          labelInLegend: '-1σ',
+                          color: 'darkgreen',
+                          lineWidth: 2, 
+                          pointSize: 0,
+                          curveType: 'function'
+                      },
+                      1: {
+                          labelInLegend: 'mean',
+                          color: 'green',
+                          lineWidth: 0,
+                          pointSize: 3
+                      },
+                      2: {
+                          labelInLegend: '+1σ',
+                          color: 'yellowgreen',
+                          lineWidth: 2,
+                          pointSize: 0,
+                          curveType: 'function'
+                      }
+                    },
+                  });
+      panel_ts.clear();
+      panel_ts.add(chart).add(button_container);
 });
 
 // Reset button
@@ -243,7 +278,6 @@ button_container
 
 // Set a callback function for when the user clicks the map.
 var dirtyMap = false;
-var coords = [];
 
 Map.onClick(function(coords) {
   
@@ -271,13 +305,13 @@ Map.onClick(function(coords) {
   var chart = ui.Chart.image.series(series, point, ee.Reducer.first(), 30) 
                 .setOptions({
                   vAxis: {
-                    title: 'condition score',
+                    title: 'Condition score',
                     viewWindow: {min: -5, max: 5},
                   },
                   series: {
                       0: {
                           labelInLegend: '-1σ',
-                          color: 'grey',
+                          color: 'orange',
                           lineWidth: 2, 
                           pointSize: 0,
                           curveType: 'function'
@@ -290,7 +324,7 @@ Map.onClick(function(coords) {
                       },
                       2: {
                           labelInLegend: '+1σ',
-                          color: 'silver',
+                          color: 'teal',
                           lineWidth: 2,
                           pointSize: 0,
                           curveType: 'function'

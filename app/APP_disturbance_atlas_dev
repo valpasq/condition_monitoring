@@ -323,8 +323,8 @@ nobs_button.onClick(function() {
           .setChartType('ColumnChart')
           .setOptions({
               vAxis: {
-                  title: 'number of observations',
-                  viewWindow: {min: 0, max: 50},
+                  title: 'Number of observations',
+                  viewWindow: {min: 0, max: 30},
               },
               colors: ['black'],
               hAxis: {

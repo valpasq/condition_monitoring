@@ -153,7 +153,6 @@ var draw_map_fn = function(year) {
 var chart_collection = images.map(get_range_fn_factory('tcg'))
     .map(get_range_fn_factory('score'));
 
-// print(chart_collection)
 // ----------------------------------
 // Set up UI Panel - Select year
 var panel = ui.Panel({
@@ -163,23 +162,6 @@ var panel = ui.Panel({
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
-
-var button_container = ui.Panel({
-        layout: ui.Panel.Layout.flow('vertical'),
-        style: {
-            width: '100px',
-            backgroundColor: 'rgba(255, 255, 255, 0)',
-            stretch: 'horizontal'
-        },
-    });
-    
-var chart_container = ui.Panel({
-        layout: ui.Panel.Layout.flow('horizontal'),
-        style: {
-            backgroundColor: 'rgba(255, 255, 255, 1.0)',
-            stretch: 'horizontal'
-        },
-    });
 
 var panel_title = ui.Label({
     value: '🔎 Select year:',
@@ -221,8 +203,25 @@ var panel_ts = ui.Panel({
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
+  
+var button_container = ui.Panel({
+        layout: ui.Panel.Layout.flow('vertical'),
+        style: {
+            width: '100px',
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+            stretch: 'horizontal'
+        },
+    });
+    
+var chart_container = ui.Panel({
+        layout: ui.Panel.Layout.flow('horizontal'),
+        style: {
+            backgroundColor: 'rgba(255, 255, 255, 1.0)',
+            stretch: 'horizontal'
+        },
+    });
 
-// BUTTONS ----------------------------------
+// ----------------------------------
 // Score button
 var score_button = ui.Button({label: 'Score',
     style: {color: 'black', stretch: 'horizontal'}});
@@ -271,6 +270,7 @@ score_button.onClick(function() {
       panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
+// ----------------------------------
 // TCG button
 var tcg_button = ui.Button({label: 'Greenness',
     style: {color: 'black', stretch: 'horizontal'}});
@@ -319,6 +319,7 @@ tcg_button.onClick(function() {
       panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
+// ----------------------------------
 // Number of Observations button
 var nobs_button = ui.Button({label: 'Observations', 
     style: {color: 'black', stretch:'horizontal'}});
@@ -351,7 +352,7 @@ nobs_button.onClick(function() {
       panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
-
+// ----------------------------------
 // Reset button
 var reset_button = ui.Button({label: 'Clear Chart',
     style: {color: 'navy', stretch: 'horizontal'}});
@@ -366,6 +367,7 @@ button_container
     .add(nobs_button)
     .add(reset_button);
 
+// ----------------------------------
 // Set a callback function for when the user clicks the map.
 var dirtyMap = false;
 Map.onClick(function(coords) {
@@ -426,15 +428,16 @@ Map.onClick(function(coords) {
 
 });
 
+// ----------------------------------
 ui.root.clear();
 ui.root.add(Map.add(panel));
 
+// Set style options
 Map.setOptions('Simple', {Simple: stylers.dark_mode});
 Map.setOptions('SATELLITE');
-
 Map.style().set({cursor:'crosshair'});
 
-// Initialize map
+// Add legend to map
 Map.add(makeLegend(PALETTE));
 
 // Add state boundaries

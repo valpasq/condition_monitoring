@@ -304,6 +304,52 @@ tcg_button.onClick(function() {
       panel_ts.add(chart).add(button_container);
 });
 
+// Score button
+var nobs_button = ui.Button('Observations');
+nobs_button.onClick(function() {
+  var point = Map.layers().get(2).get('eeObject').geometry();
+  
+  var state_code = ee.Feature(STATES.filterBounds(point).first())
+      .get('STUSPS');
+  
+  var series = ee.ImageCollection(chart_collection)
+      .select('nobs')
+      .filterMetadata('state', 'equals', state_code);
+
+  // Create charts
+  var chart = ui.Chart.image.series(series, point, ee.Reducer.first(), 30) 
+                .setOptions({
+                  vAxis: {
+                    title: 'Condition score',
+                    viewWindow: {min: -5, max: 5},
+                  },
+                  series: {
+                      0: {
+                          labelInLegend: '-1σ',
+                          color: 'orange',
+                          lineWidth: 2, 
+                          pointSize: 0,
+                          curveType: 'function'
+                      },
+                      1: {
+                          labelInLegend: 'mean',
+                          color: 'black',
+                          lineWidth: 0,
+                          pointSize: 3
+                      },
+                      2: {
+                          labelInLegend: '+1σ',
+                          color: 'teal',
+                          lineWidth: 2,
+                          pointSize: 0,
+                          curveType: 'function'
+                      }
+                    },
+                  });
+      panel_ts.clear();
+      panel_ts.add(chart).add(button_container);
+});
+
 
 // Reset button
 var reset_button = ui.Button('Clear Chart');

@@ -218,24 +218,15 @@ score_button.onClick(function() {
 // TCG button
 var tcg_button = ui.Button('TCG');
 tcg_button.onClick(function() {
-  // var point = ui.Map.layers()[2];
-  // var state_code = ee.Feature(STATES.filterBounds(point).first())
-  //     .get('STUSPS');
-  
-  // var series = ee.ImageCollection(images.map(get_range))
-  //     .select(['lower', MEAN_BAND, 'upper'])
-  //     .filterMetadata('state', 'equals', state_code);
-  // print(point);
-  
-  print(coords);
+  print('need to add TCG');
 
 });
 
 // Reset button
 var reset_button = ui.Button('Clear Chart');
 reset_button.onClick(function() {
-        Map.remove(panel_ts);
-        dirtyMap = false;
+  Map.remove(panel_ts);
+  dirtyMap = false;
 });
 
 button_container

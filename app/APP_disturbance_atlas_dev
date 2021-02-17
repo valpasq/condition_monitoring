@@ -276,7 +276,7 @@ tcg_button.onClick(function() {
                 .setOptions({
                   vAxis: {
                     title: 'Tasseled Cap Greenness',
-                    viewWindow: {min: -0.1, max: 0.7},
+                    viewWindow: {min: 0, max: 0.5},
                   },
                   series: {
                       0: {

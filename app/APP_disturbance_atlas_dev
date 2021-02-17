@@ -207,21 +207,29 @@ var panel_ts = ui.Panel({
 var MEAN_BAND = 'score_mean';
 var STDDEV_BAND = 'score_stddev';
 
-// score button
+// BUTTONS ----------------------------------
+// Score button
 var score_button = ui.Button('Score');
 score_button.onClick(function() {
   var MEAN_BAND = 'score_mean';
   var STDDEV_BAND = 'score_stddev';
 });
 
-// tcg button
+// TCG button
 var tcg_button = ui.Button('TCG');
 tcg_button.onClick(function() {
-  var MEAN_BAND = 'tcg_mean';
-  var STDDEV_BAND = 'tcg_stddev';
+  var point = ui.Map.layers()[2];
+  var state_code = ee.Feature(STATES.filterBounds(point).first())
+      .get('STUSPS');
+  
+  var series = ee.ImageCollection(images.map(get_range))
+      .select(['lower', MEAN_BAND, 'upper'])
+      .filterMetadata('state', 'equals', state_code);
+  print(point);
+
 });
 
-// reset button
+// Reset button
 var reset_button = ui.Button('Clear Chart');
 reset_button.onClick(function() {
   Map.remove(panel_ts);
@@ -235,6 +243,8 @@ button_container
 
 // Set a callback function for when the user clicks the map.
 var dirtyMap = false;
+var coords = [];
+
 Map.onClick(function(coords) {
   if(dirtyMap === false){
     Map.add(panel_ts);
@@ -287,17 +297,18 @@ Map.onClick(function(coords) {
                     },
                   });
 
-  
   // Add chart to panel
   panel_ts.add(chart).add(button_container);
-
+  
 });
+
 
 ui.root.clear();
 ui.root.add(Map.add(panel));
 
 Map.setOptions('Simple', {Simple: stylers.dark_mode});
 Map.setOptions('SATELLITE');
+
 Map.style().set({cursor:'crosshair'});
 
 // Initialize map

@@ -8,7 +8,7 @@ var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_pr
 var stylers = require('users/valeriepasquarella/default:map_stylers');
 
 //  Results collection
-var images = v8_2;
+var images = v9_0;
     
 // -----------------------------
 //  Visualization parameters
@@ -354,7 +354,7 @@ nobs_button.onClick(function() {
 
 // Reset button
 var reset_button = ui.Button({label: 'Clear Chart',
-    style: {color: 'darkgray', stretch: 'horizontal'}});
+    style: {color: 'navy', stretch: 'horizontal'}});
 reset_button.onClick(function() {
   Map.remove(panel_ts);
   dirtyMap = false;

@@ -23,7 +23,7 @@ var VERSION = '8-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
-var STATE = 'NH';
+var STATE = 'VT';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 
@@ -235,7 +235,7 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   
   Export.image.toAsset({
       image: outputMosaic,
-      description: DEPENDENT + '_' + start + '-' + end + '-' + path,
+      description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,
       assetId: output_name + '_p' + path + '_' + STATE,
       region: roi.bounds(),
       crs: path_proj,

@@ -218,22 +218,24 @@ score_button.onClick(function() {
 // TCG button
 var tcg_button = ui.Button('TCG');
 tcg_button.onClick(function() {
-  var point = ui.Map.layers()[2];
-  var state_code = ee.Feature(STATES.filterBounds(point).first())
-      .get('STUSPS');
+  // var point = ui.Map.layers()[2];
+  // var state_code = ee.Feature(STATES.filterBounds(point).first())
+  //     .get('STUSPS');
   
-  var series = ee.ImageCollection(images.map(get_range))
-      .select(['lower', MEAN_BAND, 'upper'])
-      .filterMetadata('state', 'equals', state_code);
-  print(point);
+  // var series = ee.ImageCollection(images.map(get_range))
+  //     .select(['lower', MEAN_BAND, 'upper'])
+  //     .filterMetadata('state', 'equals', state_code);
+  // print(point);
+  
+  print(coords);
 
 });
 
 // Reset button
 var reset_button = ui.Button('Clear Chart');
 reset_button.onClick(function() {
-  Map.remove(panel_ts);
-  dirtyMap = false;
+        Map.remove(panel_ts);
+        dirtyMap = false;
 });
 
 button_container
@@ -254,9 +256,9 @@ Map.onClick(function(coords) {
   panel_ts.clear();
   
   var pgeo = ee.Geometry.Point([coords.lon, coords.lat]);
-
   // Add a point to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
+  coords = point;
   Map.layers().set(2, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
   
   var state_code = ee.Feature(STATES.filterBounds(point).first())

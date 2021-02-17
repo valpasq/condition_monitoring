@@ -23,7 +23,7 @@ var VERSION = '8-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
-var STATE = 'NY';
+var STATE = 'NH';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 

@@ -177,7 +177,7 @@ var panel_title = ui.Label({
       fontWeight: 'bold',
       fontSize: '14px',
       margin: '0 0 2px 0',
-      padding: '0',
+      padding: '4',
       backgroundColor: 'rgba(255, 255, 255, 0)'
     }
     });

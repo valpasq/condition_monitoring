@@ -164,8 +164,9 @@ var panel = ui.Panel({
   });
 
 var button_container = ui.Panel({
-        layout: ui.Panel.Layout.flow('horizontal'),
+        layout: ui.Panel.Layout.flow('vertical'),
         style: {
+            width: '100px',
             backgroundColor: 'rgba(255, 255, 255, 0)',
             stretch: 'horizontal'
         },
@@ -211,17 +212,18 @@ panel.add(panel_title).add(select);
 // ----------------------------------
 // Set up UI Panel - Time series chart
 var panel_ts = ui.Panel({
+    layout: ui.Panel.Layout.flow('horizontal'),
     style: {
-      width: '600px',
-      // height: '230px',
+      width: '540px',
       position: 'bottom-left',
+      stretch: 'horizontal',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
 
 // BUTTONS ----------------------------------
 // Score button
-var score_button = ui.Button({label: 'Condition score',
+var score_button = ui.Button({label: 'Score',
     style: {color: 'black', stretch: 'horizontal'}});
 score_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();
@@ -264,7 +266,7 @@ score_button.onClick(function() {
                     },
                   });
       panel_ts.clear();
-      panel_ts.add(chart).add(button_container);
+      panel_ts.add(button_container).add(chart);
 });
 
 // TCG button
@@ -311,7 +313,7 @@ tcg_button.onClick(function() {
                     },
                   });
       panel_ts.clear();
-      panel_ts.add(chart).add(button_container);
+      panel_ts.add(button_container).add(chart);
 });
 
 // Number of Observations button
@@ -342,13 +344,13 @@ nobs_button.onClick(function() {
               },
           });
       panel_ts.clear();
-      panel_ts.add(chart).add(button_container);
+      panel_ts.add(button_container).add(chart);
 });
 
 
 // Reset button
 var reset_button = ui.Button({label: 'Clear Chart',
-    style: {color: 'darkgrey'}});
+    style: {color: 'darkgray', stretch: 'horizontal'}});
 reset_button.onClick(function() {
   Map.remove(panel_ts);
   dirtyMap = false;
@@ -416,7 +418,7 @@ Map.onClick(function(coords) {
                   });
 
   // Add chart to panel
-  panel_ts.add(chart).add(button_container);
+  panel_ts.add(button_container).add(chart);
 
 });
 

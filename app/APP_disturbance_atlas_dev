@@ -379,8 +379,6 @@ Map.onClick(function(coords) {
     dirtyMap = true;
   }
   
-  panel_ts.clear();
-  
   var pgeo = ee.Geometry.Point([coords.lon, coords.lat]);
   // Add a point to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
@@ -426,6 +424,8 @@ Map.onClick(function(coords) {
                   });
 
   // Add chart to panel
+  panel_ts.clear();
+  chart_container.clear();
   panel_ts.add(button_container).add(chart_container.add(chart));
 
 });

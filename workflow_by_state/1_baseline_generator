@@ -214,7 +214,7 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
         rightField: 'WRS_ROW'
     })
   )
-  })
+  });
   
   // Map harmonic estimation over scene collections
   var outputFull = ee.ImageCollection(collections.map(getCoeffs));

@@ -176,7 +176,7 @@ var panel_title = ui.Label({
     
 var panel_descrip = ui.Label({
     value: 'Use the slider to change the map year. ' +
-        'Click the map to view time series.',
+        'Click the map to view time series charts.',
     style: {
       fontSize: '12px',
       margin: '0 0 2px 0',

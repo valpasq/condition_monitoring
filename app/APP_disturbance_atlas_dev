@@ -266,6 +266,7 @@ score_button.onClick(function() {
                     },
                   });
       panel_ts.clear();
+      chart_container.clear();
       panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
@@ -313,6 +314,7 @@ tcg_button.onClick(function() {
                     },
                   });
       panel_ts.clear();
+      chart_container.clear();
       panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
@@ -344,6 +346,7 @@ nobs_button.onClick(function() {
               },
           });
       panel_ts.clear();
+      chart_container.clear();
       panel_ts.add(button_container).add(chart_container.add(chart));
 });
 

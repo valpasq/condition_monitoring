@@ -105,7 +105,7 @@ function makeLegend(palette) {
   return ui.Panel({
     widgets: [legendTitle, ColorBar(palette), labelPanel],
     style: {position: 'bottom-right',
-      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+      backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
 }
@@ -190,7 +190,7 @@ var select = ui.Slider({
     style: {
       backgroundColor: 'rgba(255, 255, 255, 0)',
       fontFamily: 'sans-serif',
-      fontWeight: 'bold'
+      fontWeight: 'bold',
     },
     onChange: function(key) {
         var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + key);

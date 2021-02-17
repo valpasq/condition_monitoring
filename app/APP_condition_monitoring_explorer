@@ -459,7 +459,7 @@ ui.root.clear();
 ui.root.add(Map.add(panel));
 
 // Set style options
-Map.setOptions('Simple', {Simple: stylers.dark_mode});
+Map.setOptions('Dark', {Dark: stylers.dark_mode});
 Map.setOptions('SATELLITE');
 Map.style().set({cursor:'crosshair'});
 

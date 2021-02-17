@@ -171,6 +171,14 @@ var button_container = ui.Panel({
             stretch: 'horizontal'
         },
     });
+    
+var chart_container = ui.Panel({
+        layout: ui.Panel.Layout.flow('horizontal'),
+        style: {
+            backgroundColor: 'rgba(255, 255, 255, 1.0)',
+            stretch: 'horizontal'
+        },
+    });
 
 var panel_title = ui.Label({
     value: '🔎 Select year:',
@@ -214,7 +222,7 @@ panel.add(panel_title).add(select);
 var panel_ts = ui.Panel({
     layout: ui.Panel.Layout.flow('horizontal'),
     style: {
-      width: '540px',
+      width: '530px',
       position: 'bottom-left',
       stretch: 'horizontal',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
@@ -266,7 +274,7 @@ score_button.onClick(function() {
                     },
                   });
       panel_ts.clear();
-      panel_ts.add(button_container).add(chart);
+      panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
 // TCG button
@@ -313,7 +321,7 @@ tcg_button.onClick(function() {
                     },
                   });
       panel_ts.clear();
-      panel_ts.add(button_container).add(chart);
+      panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
 // Number of Observations button
@@ -344,7 +352,7 @@ nobs_button.onClick(function() {
               },
           });
       panel_ts.clear();
-      panel_ts.add(button_container).add(chart);
+      panel_ts.add(button_container).add(chart_container.add(chart));
 });
 
 
@@ -418,7 +426,7 @@ Map.onClick(function(coords) {
                   });
 
   // Add chart to panel
-  panel_ts.add(button_container).add(chart);
+  panel_ts.add(button_container).add(chart_container.add(chart));
 
 });
 

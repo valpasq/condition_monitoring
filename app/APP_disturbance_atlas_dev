@@ -214,7 +214,8 @@ var panel_ts = ui.Panel({
 
 // BUTTONS ----------------------------------
 // Score button
-var score_button = ui.Button('Score');
+var score_button = ui.Button({label: 'Score',
+    style: {color: 'black'}});
 score_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();
   
@@ -260,7 +261,8 @@ score_button.onClick(function() {
 });
 
 // TCG button
-var tcg_button = ui.Button('Greenness');
+var tcg_button = ui.Button({label: 'Greenness',
+    style: {color: 'darkgreen'}});
 tcg_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();
   
@@ -337,7 +339,8 @@ nobs_button.onClick(function() {
 
 
 // Reset button
-var reset_button = ui.Button('Clear Chart');
+var reset_button = ui.Button({label: 'Clear Chart',
+    style: {color: 'darkgrey'}});
 reset_button.onClick(function() {
   Map.remove(panel_ts);
   dirtyMap = false;

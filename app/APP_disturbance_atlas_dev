@@ -351,7 +351,6 @@ button_container
 
 // Set a callback function for when the user clicks the map.
 var dirtyMap = false;
-
 Map.onClick(function(coords) {
   
   if(dirtyMap === false){

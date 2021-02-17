@@ -87,7 +87,7 @@ function makeLegend(palette) {
     value: 'Detected Change in Greenness',
     style: {
       fontWeight: 'bold',
-      fontSize: '12px',
+      fontSize: '13px',
       margin: '0 0 2px 0',
       padding: '0',
       backgroundColor: 'rgba(255, 255, 255, 0)'

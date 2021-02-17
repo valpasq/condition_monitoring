@@ -49,11 +49,14 @@ var water_mask = GSW.select('occurrence')
 // ------------------------------------------
 // Add range info for charting
 var get_range_fn_factory = function(prefix) {
+  var MEAN_BAND = prefix + '_mean';
+  var STDDEV_BAND = predix + '_stddev'
+  
   return function(img) {
   var mean = img.select(MEAN_BAND);
   var stddev = img.select(STDDEV_BAND);
-  var lower = mean.subtract(stddev).rename('lower');
-  var upper = mean.add(stddev).rename('upper');
+  var lower = mean.subtract(stddev).rename(prefix + '_lower');
+  var upper = mean.add(stddev).rename(prefix + '_upper');
   
   return img.addBands(lower).addBands(upper);
   }

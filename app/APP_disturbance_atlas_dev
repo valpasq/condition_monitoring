@@ -63,10 +63,6 @@ var get_range_fn_factory = function(prefix) {
   
 };
 
-var chart_collection = images.map(get_range_fn_factory('tcg'))
-    .map(get_range_fn_factory('score'));
-print(chart_collection);
-
 // ------------------------------------------
 // Create colorbar for legend.
 function ColorBar(palette) {
@@ -150,6 +146,11 @@ var draw_map_fn = function(year) {
   
   return score_mean_viz_alpha;
 };
+
+// ----------------------------------
+// Create collection for charts and display
+var chart_collection = images.map(get_range_fn_factory('tcg'))
+    .map(get_range_fn_factory('score'));
 
 // ----------------------------------
 // Set up UI Panel - Select year

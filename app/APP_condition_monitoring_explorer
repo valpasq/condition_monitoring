@@ -209,7 +209,7 @@ panel.add(panel_title).add(panel_descrip).add(select);
 var panel_ts = ui.Panel({
     layout: ui.Panel.Layout.flow('horizontal'),
     style: {
-      width: '530px',
+      width: '550px',
       position: 'bottom-left',
       stretch: 'horizontal',
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
@@ -219,7 +219,7 @@ var panel_ts = ui.Panel({
 var button_container = ui.Panel({
         layout: ui.Panel.Layout.flow('vertical'),
         style: {
-            width: '100px',
+            width: '120px',
             backgroundColor: 'rgba(255, 255, 255, 0)',
             stretch: 'both'
         },
@@ -248,7 +248,7 @@ var chart_descrip = ui.Label({
     
 // ----------------------------------
 // Score button
-var score_button = ui.Button({label: 'Score',
+var score_button = ui.Button({label: 'Condition score',
     style: {color: 'black', stretch: 'horizontal'}});
 score_button.onClick(function() {
   var point = Map.layers().get(2).get('eeObject').geometry();

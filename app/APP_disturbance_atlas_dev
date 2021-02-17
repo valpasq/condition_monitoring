@@ -105,7 +105,7 @@ function makeLegend(palette) {
   return ui.Panel({
     widgets: [legendTitle, ColorBar(palette), labelPanel],
     style: {position: 'bottom-right',
-      backgroundColor: 'rgba(255, 255, 255, 0.5)'
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
     }
   });
 }

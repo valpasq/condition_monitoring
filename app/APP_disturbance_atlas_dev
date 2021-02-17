@@ -196,6 +196,13 @@ var select = ui.Slider({
 
 select.style().set('stretch', 'horizontal');
 
+// var checkbox = ui.Checkbox('Mask low TCG', true);
+
+// checkbox.onChange(function(checked) {
+//   Map.layers().get(2).setShown(checked);
+// });
+
+
 panel.add(panel_title).add(select);
 
 // ----------------------------------
@@ -208,9 +215,6 @@ var panel_ts = ui.Panel({
       backgroundColor: 'rgba(255, 255, 255, 0.5)'
     }
   });
-  
-// var MEAN_BAND = 'score_mean';
-// var STDDEV_BAND = 'score_stddev';
 
 // BUTTONS ----------------------------------
 // Score button

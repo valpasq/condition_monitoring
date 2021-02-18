@@ -23,8 +23,10 @@ var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_annual/';
 var OUTPUT_CRS = 'EPSG:5070';
 
+var EXPORT_TYPE = 'Drive';
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var STATES = ['NH', 'VT', 'ME'];
+var STATES = ['PA'];
 
 var START_YEAR = 1995;
 var END_YEAR = 2020;
@@ -337,15 +339,27 @@ for (var state_index in STATES) {
     
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     
-    // Export final product for full study area
-    Export.image.toAsset({
-      image: final_img,
-      description: 'result_' + asset_name,
-      assetId: OUTPUT_COLLECTION + asset_name,
-      region: broad_geo_footprint,
-      crs: OUTPUT_CRS,
-      scale: 30,
-      maxPixels: 1e13,
-    });
-  }
+    if (EXPORT_TYPE === 'Drive') {
+        Export.image.toDrive({
+            image: final_img, 
+            description: 'result_' + asset_name,
+            folder: 'condition_monitoring_' + VERSION + '_by_state_annual/' + state +'/', 
+            fileNamePrefix: asset_name, 
+            region: broad_geo_footprint,
+            crs: OUTPUT_CRS,
+            scale: 30,
+            maxPixels: 1e13,
+        }); 
+    } else {     
+        Export.image.toAsset({
+            image: final_img,
+            description: 'result_' + asset_name,
+            assetId: OUTPUT_COLLECTION + asset_name,
+            region: broad_geo_footprint,
+            crs: OUTPUT_CRS,
+            scale: 30,
+            maxPixels: 1e13,
+          });
+    }
+  } 
 }

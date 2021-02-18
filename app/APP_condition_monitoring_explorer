@@ -120,7 +120,7 @@ var draw_map_fn = function(year, threshold) {
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select('score_mean').lte(threshold*-1)
+    var thresh_mask = score_disp.select('score_mean').lte(threshold * -1)
         .or(score_disp.select('score_mean').gte(threshold));
     score_disp = score_disp.updateMask(thresh_mask);
     

@@ -17,7 +17,7 @@ var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-var THRESHOLD = -1.5;
+// var THRESHOLD = -1.5;
 var MIN_NOBS = 3;
 
 var START_YEAR = 1995;
@@ -112,7 +112,7 @@ function makeLegend(palette) {
 }
 
 // Function to draw map layer
-var draw_map_fn = function(year) {
+var draw_map_fn = function(year, threshold) {
     var assessment = images
       .filterMetadata('monitor_year', 'equals', year)
       .mosaic();
@@ -120,8 +120,8 @@ var draw_map_fn = function(year) {
     var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD)
-        .or(score_disp.select('score_mean').gte(THRESHOLD*-1));
+    var thresh_mask = score_disp.select('score_mean').lte(threshold*-1)
+        .or(score_disp.select('score_mean').gte(threshold));
     score_disp = score_disp.updateMask(thresh_mask);
     
     var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
@@ -185,23 +185,45 @@ var panel_descrip = ui.Label({
     }
     });
 
-var select = ui.Slider({
+var year_slider = ui.Slider({
     min: START_YEAR,
     max: END_YEAR,
     value: END_YEAR,
     step: 1,
     style: {
-      stretch: 'horizontal',
-      backgroundColor: 'rgba(255, 255, 255, 0)',
-      fontFamily: 'sans-serif',
-      fontWeight: 'bold',
+        stretch: 'horizontal',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        fontFamily: 'sans-serif',
+        fontWeight: 'bold',
     },
-    onChange: function(key) {
-        var disp_layer = ui.Map.Layer(draw_map_fn(key), {}, 'Mean condition score ' + key);
+    onChange: function(year) {
+        var threshold = threshold_slider.getValue();
+        var disp_layer = ui.Map.Layer(draw_map_fn(year, threshold), {}, 'Mean condition score ' + year);
         Map.layers().set(1, disp_layer);
 }});
 
-panel.add(panel_title).add(panel_descrip).add(select);
+var threshold_slider = ui.Slider({
+    min:1, 
+    max:4, 
+    value:1.5, 
+    step:0.5,
+    style: {
+        stretch: 'horizontal',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        fontFamily: 'sans-serif',
+    },
+    onChange: function(threshold) {
+      var year = year_slider.getValue();
+      var disp_layer = ui.Map.Layer(draw_map_fn(year, threshold), {}, 'Mean condition score ' + year);
+      Map.layers().set(1, disp_layer);
+    }
+  
+});
+
+panel.add(panel_title)
+    .add(panel_descrip)
+    .add(year_slider)
+    .add(threshold_slider);
 
 // ----------------------------------
 // Set up UI Panel - Time series chart
@@ -469,7 +491,8 @@ Map.add(makeLegend(PALETTE));
 Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State boundaries'));
 
 // Add most recent result to Map
-var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR), {}, 'Mean condition score ' + END_YEAR);
+var default_threshold = threshold_slider.getValue();
+var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR, default_threshold), {}, 'Mean condition score ' + END_YEAR);
 Map.layers().set(1, init_layer);
 
 Map.setCenter(-73.299, 43.011, 6);

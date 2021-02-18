@@ -17,8 +17,12 @@ var state_roi = STATES
 var histogram = ui.Chart.image.histogram(map, state_roi, 30, null, null, null, 1e10);
 histogram = histogram.setOptions({
     hAxis: {
-      title: 'Mean condition score',
+      title: 'Mean condition score (' + YEAR + ')',
       viewWindow: {min: -5, max: 5},
+    },
+    vAxis: {
+      title: 'Pixels',
+      viewWindow: {min: 0, max: 15000000},
     }
 });
 

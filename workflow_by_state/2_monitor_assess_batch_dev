@@ -343,7 +343,7 @@ for (var state_index in STATES) {
         Export.image.toDrive({
             image: final_img.toFloat(), 
             description: 'result_' + asset_name,
-            folder: 'condition_monitoring_' + VERSION + '_by_state/' + state + '/annual/', 
+            folder: 'condition_monitoring_' + VERSION + '_by_state/', 
             fileNamePrefix: asset_name, 
             region: broad_geo_footprint,
             crs: OUTPUT_CRS,

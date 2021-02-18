@@ -15,4 +15,11 @@ var state_roi = STATES
     .first().geometry(); 
 
 var histogram = ui.Chart.image.histogram(map, state_roi, 30, null, null, null, 1e10);
+histogram = histogram.setOptions({
+    hAxis: {
+      title: 'Mean condition score',
+      viewWindow: {min: -5, max: 5},
+    }
+});
+
 print(histogram);

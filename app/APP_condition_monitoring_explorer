@@ -175,7 +175,8 @@ var panel_title = ui.Label({
     });
     
 var panel_descrip = ui.Label({
-    value: 'Use the slider to change the map year. ' +
+    value: 'Use the sliders to change the map year and ' + 
+        'change threshold (score magnitude). ' +
         'Click the map to view time series charts.',
     style: {
       fontSize: '12px',
@@ -202,6 +203,23 @@ var year_slider = ui.Slider({
         Map.layers().set(1, disp_layer);
 }});
 
+
+var threshold_container = ui.Panel({
+        layout: ui.Panel.Layout.flow('horizontal'),
+        style: {
+            backgroundColor: 'rgba(255, 255, 255, 0)',
+        },
+    });
+    
+var threshold_label = ui.Label({
+    value: 'Change threshold:',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '12px',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+
 var threshold_slider = ui.Slider({
     min:1, 
     max:4, 
@@ -223,7 +241,7 @@ var threshold_slider = ui.Slider({
 panel.add(panel_title)
     .add(panel_descrip)
     .add(year_slider)
-    .add(threshold_slider);
+    .add(threshold_container.add(threshold_label).add(threshold_slider));
 
 // ----------------------------------
 // Set up UI Panel - Time series chart

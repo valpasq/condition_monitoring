@@ -472,4 +472,4 @@ Map.layers().set(0, ui.Map.Layer(state_outlines, {palette: 'gray'}, 'State bound
 var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR), {}, 'Mean condition score ' + END_YEAR);
 Map.layers().set(1, init_layer);
 
-Map.setCenter(-72.1278, 41.857, 8);
+Map.setCenter(-73.299, 43.011, 6);

@@ -2,7 +2,7 @@
 var imageCollection = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     STATES = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var STATE = 'MA';
+var STATE = 'NY';
 var YEAR = 2019;
 
 var map = imageCollection.filterMetadata('state', 'equals', STATE)
@@ -14,15 +14,15 @@ var state_roi = STATES
     .filterMetadata('STUSPS', 'equals', STATE)
     .first().geometry(); 
 
-var histogram = ui.Chart.image.histogram(map, state_roi, 30, null, null, null, 1e10);
+var histogram = ui.Chart.image.histogram(map, state_roi, 30, null, 0.5, null, 1e10);
 histogram = histogram.setOptions({
     hAxis: {
       title: 'Mean condition score (' + YEAR + ')',
       viewWindow: {min: -5, max: 5},
     },
     vAxis: {
-      title: 'Pixels',
-      viewWindow: {min: 0, max: 15000000},
+      title: 'Pixels (30m)',
+      // viewWindow: {min: 0, max: 25000000},
     }
 });
 

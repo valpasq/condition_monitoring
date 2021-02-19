@@ -2,8 +2,8 @@
 var imageCollection = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     STATES = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var STATE = 'NY';
-var YEAR = 2019;
+var STATE = 'PA';
+var YEAR = 2020;
 
 var map = imageCollection.filterMetadata('state', 'equals', STATE)
     .filterMetadata('monitor_year', 'equals', YEAR)

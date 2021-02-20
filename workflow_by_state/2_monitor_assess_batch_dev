@@ -28,8 +28,8 @@ var EXPORT_TYPE = 'Asset';
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var STATES = ['MA'];
 
-var START_YEAR = 1998;
-var END_YEAR = 1998;
+var START_YEAR = 1995;
+var END_YEAR = 2005;
 
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '10-01';      // Date to end monitoring

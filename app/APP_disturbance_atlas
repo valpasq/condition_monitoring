@@ -83,7 +83,6 @@ function makeLegend(palette) {
   var legendTitle = ui.Label({
     value: 'Detected Change in Greenness',
     style: {
-      color: 'darkgrey',
       fontWeight: 'bold',
       fontSize: '12px',
       margin: '0 0 2px 0',
@@ -94,9 +93,9 @@ function makeLegend(palette) {
     
   var labelPanel = ui.Panel({
       widgets: [
-        ui.Label('Less Green', {color: 'darkgrey', margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
-        ui.Label(' ', {color: 'darkgrey', margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
-        ui.Label('More Green', {color: 'darkgrey', margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
+        ui.Label('Less Green', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label(' ', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('More Green', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
       ],
       layout: ui.Panel.Layout.flow('horizontal'),
       style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
@@ -127,7 +126,6 @@ var panel_title = ui.Label({
       fontSize: '14px',
       margin: '0 0 2px 0',
       padding: '0',
-      color: 'darkgrey',
       backgroundColor: 'rgba(255, 255, 255, 0)'
     }
     });
@@ -139,7 +137,6 @@ var select = ui.Slider({
   step: 1,
   style: {
     backgroundColor: 'rgba(255, 255, 255, 0)',
-    color: 'darkgrey',
     fontFamily: 'sans-serif',
     fontWeight: 'bold'
   },
@@ -240,7 +237,7 @@ Map.onClick(function(coords) {
                   },
                   1: {
                       labelInLegend: 'mean',
-                      color: 'darkgrey',
+                      color: 'black',
                       lineWidth: 0,
                       pointSize: 3
                   },
@@ -286,52 +283,3 @@ function redraw() {
 // Initialize map
 Map.add(makeLegend(PALETTE));
 redraw();
-
-var alert_panel = ui.Panel({
-    style: {
-      // width: '280px',
-      // height: '70px',
-      position: 'top-center',
-      backgroundColor: 'rgba(0, 0, 0, 0.75)'
-    }
-  });
-
-var warning_text = ui.Label({
-      value: 'WARNING: This app is deprecated!', 
-      style: {
-        fontWeight: 'bold',
-        fontSize: '18px',
-        color: 'darkred',
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        margin: '0 0 8px 0',
-        padding: '5px'},
-      });
-var warning_text_2 = ui.Label({
-      value: 'Please visit the updated version here:', 
-      style: {
-        fontSize: '16px',
-        color: 'grey',
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        margin: '0 0 0 0',
-        padding: '5px'},
-      });
-
-var link_text = ui.Label({
-      value: 'Condition Monitoring Explorer',  // Change text
-      style: {
-        fontWeight: 'bold',
-        fontSize: '22px',
-        backgroundColor: 'rgba(255, 255, 255, 0)',
-        margin: '0 0 8px 0',
-        padding: '5px'},
-      targetUrl: 'https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-explorer'
-});
-  
-alert_panel.add(warning_text).add(warning_text_2).add(link_text);
-Map.add(alert_panel);
-
-var WORLD = ee.Geometry.Polygon(
-  [[-180, 78], [0, 78], [180, 78], [180,-59], [0, -59], [-180,-59]], 
-  null, false);
-  
-Map.addLayer(WORLD, {color: 'black'}, 'deprecated', true);

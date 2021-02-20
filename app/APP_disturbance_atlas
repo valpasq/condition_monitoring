@@ -326,3 +326,9 @@ var link_text = ui.Label({
   
 alert_panel.add(warning_text).add(warning_text_2).add(link_text);
 Map.add(alert_panel);
+
+var WORLD = ee.Geometry.Polygon(
+  [[-180, 78], [0, 78], [180, 78], [180,-59], [0, -59], [-180,-59]], 
+  null, false);
+  
+Map.addLayer(WORLD, {color: 'black'}, null, true);

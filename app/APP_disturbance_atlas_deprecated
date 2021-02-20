@@ -33,8 +33,6 @@ var style = {
 
 var alert_panel = ui.Panel({
     style: {
-      // width: '280px',
-      // height: '70px',
       position: 'top-center',
       backgroundColor: 'rgba(0, 0, 0, 0.75)'
     }
@@ -50,6 +48,7 @@ var warning_text = ui.Label({
         margin: '0 0 8px 0',
         padding: '5px'},
       });
+      
 var warning_text_2 = ui.Label({
       value: 'Please visit the updated version here:', 
       style: {

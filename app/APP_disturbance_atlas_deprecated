@@ -22,15 +22,6 @@ var START_YEAR = 1995;
 var END_YEAR = 2020;
 
 
-// Add "Figure" basemap option (solid color)
-var style = {
-  'Figure': [{
-      featureType: 'all',
-      stylers: [{ color: '#000000'}]
-  }]
-};
-    
-
 var alert_panel = ui.Panel({
     style: {
       position: 'top-center',

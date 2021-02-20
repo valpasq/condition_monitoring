@@ -289,7 +289,7 @@ var alert_panel = ui.Panel({
       // width: '280px',
       // height: '70px',
       position: 'top-center',
-      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+      backgroundColor: 'rgba(0, 0, 0, 0.75)'
     }
   });
 
@@ -301,15 +301,16 @@ var warning_text = ui.Label({
         color: 'darkred',
         backgroundColor: 'rgba(255, 255, 255, 0)',
         margin: '0 0 8px 0',
-        padding: '0'},
+        padding: '5px'},
       });
 var warning_text_2 = ui.Label({
       value: 'Please visit the updated version here:', 
       style: {
         fontSize: '16px',
+        color: 'grey',
         backgroundColor: 'rgba(255, 255, 255, 0)',
         margin: '0 0 0 0',
-        padding: '0'},
+        padding: '5px'},
       });
 
 var link_text = ui.Label({
@@ -319,7 +320,7 @@ var link_text = ui.Label({
         fontSize: '22px',
         backgroundColor: 'rgba(255, 255, 255, 0)',
         margin: '0 0 8px 0',
-        padding: '0'},
+        padding: '5px'},
       targetUrl: 'https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-explorer'
 });
   

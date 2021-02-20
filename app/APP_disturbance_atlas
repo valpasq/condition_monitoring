@@ -283,3 +283,45 @@ function redraw() {
 // Initialize map
 Map.add(makeLegend(PALETTE));
 redraw();
+
+var alert_panel = ui.Panel({
+    style: {
+      // width: '280px',
+      // height: '70px',
+      position: 'top-center',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+
+var warning_text = ui.Label({
+      value: 'WARNING: This app is deprecated!', 
+      style: {
+        fontWeight: 'bold',
+        fontSize: '18px',
+        color: 'darkred',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        margin: '0 0 8px 0',
+        padding: '0'},
+      });
+var warning_text_2 = ui.Label({
+      value: 'Please visit the updated version here:', 
+      style: {
+        fontSize: '16px',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        margin: '0 0 0 0',
+        padding: '0'},
+      });
+
+var link_text = ui.Label({
+      value: 'Condition Monitoring Explorer',  // Change text
+      style: {
+        fontWeight: 'bold',
+        fontSize: '22px',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        margin: '0 0 8px 0',
+        padding: '0'},
+      targetUrl: 'https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-explorer'
+});
+  
+alert_panel.add(warning_text).add(warning_text_2).add(link_text);
+Map.add(alert_panel);

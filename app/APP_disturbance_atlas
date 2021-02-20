@@ -240,7 +240,7 @@ Map.onClick(function(coords) {
                   },
                   1: {
                       labelInLegend: 'mean',
-                      color: 'black',
+                      color: 'darkgrey',
                       lineWidth: 0,
                       pointSize: 3
                   },

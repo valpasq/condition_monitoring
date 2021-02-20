@@ -26,13 +26,13 @@ var OUTPUT_CRS = 'EPSG:5070';
 var EXPORT_TYPE = 'Asset';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var STATES = ['PA', 'NJ', 'NY', 'MA', 'CT', 'RI', 'NH', 'VT', 'ME'];
+var STATES = ['MA'];
 
-var START_YEAR = 1995;
-var END_YEAR = 2020;
+var START_YEAR = 1998;
+var END_YEAR = 1998;
 
 var DAY_START = '05-01';    // Date to start monitoring
-var DAY_END = '06-01';      // Date to end monitoring
+var DAY_END = '10-01';      // Date to end monitoring
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs
@@ -290,9 +290,12 @@ for (var state_index in STATES) {
     
     // --------------------------------- Combine Results ---------------------------------- 
     
+    Map.addLayer(avg_dev_per_path)
     var weighted = avg_dev_per_path.map(weight_paths);
+    print(avg_dev_per_path)
+    print(weighted)
     
-    var total_obs = avg_dev_per_path
+    var total_obs = weighted
         .select(DEPENDENT + '_count')
         .reduce('sum')
         .toUint8();
@@ -335,7 +338,7 @@ for (var state_index in STATES) {
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
     
-    Map.addLayer(final_img.select('score_mean'));
+    Map.addLayer(final_img);
     
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     

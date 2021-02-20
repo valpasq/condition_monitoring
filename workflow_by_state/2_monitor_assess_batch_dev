@@ -281,7 +281,7 @@ for (var state_index in STATES) {
           
           score_image = score_image
               .updateMask(score_image
-              .select('score_variance').lte(MAX_STDDEV*MAX_STDDEV));
+              .select('score_variance').lte(MAX_STDDEV * MAX_STDDEV));
     
           return score_image
               .reproject(model_image.projection())

@@ -56,4 +56,3 @@ alert_panel.add(warning_text).add(warning_text_2).add(link_text);
 Map.add(alert_panel);
 
 Map.setOptions('SATELLITE');
-Map.style().set({cursor:'crosshair'});

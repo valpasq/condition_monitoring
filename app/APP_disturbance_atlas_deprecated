@@ -11,6 +11,7 @@ var WORLD = /* color: #000000 */ee.Feature(
           "system:index": "0"
         });
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
+// App is deprecated!
 
 var alert_panel = ui.Panel({
     style: {

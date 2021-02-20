@@ -57,18 +57,18 @@ Map.add(alert_panel);
 
 Map.setOptions('SATELLITE');
 
-// var ZOOM = 10;
-// var RADIUS = 0.1;
-// var RATE = 0.15;
+var ZOOM = 10;
+var RADIUS = 0.1;
+var RATE = 0.05;
 
-// var coords = [-98.46, 40.35];
+var coords = [-98.46, 40.35];
 
-// var a = 0.0;
-// ui.util.setInterval(function(f) {
-//       Map.setCenter(
-//           coords[0] + Math.sin(a) * RADIUS + a * 0.1, 
-//           coords[1] + Math.cos(a) * RADIUS, 
-//           ZOOM);
-//       a += RATE;
-//     }, 20);
+var a = 0.0;
+ui.util.setInterval(function(f) {
+      Map.setCenter(
+          coords[0] + Math.sin(a) * RADIUS + a * 0.1, 
+          coords[1] + Math.cos(a) * RADIUS, 
+          ZOOM);
+      a += RATE;
+    }, 20);
  

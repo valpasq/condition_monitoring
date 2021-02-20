@@ -1,26 +1,3 @@
-/**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v8_2 = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual");
-/***** End of imports. If edited, may not auto-convert in the playground. *****/
-// -----------------------------
-//  Results collection
-var images = v8_2;
-
-var SCORE_MEAN_BAND = 'score_mean';
-var SCORE_STDDEV_BAND = 'score_stddev';
-
-// -----------------------------
-//  Visualization parameters
-var MIN = -4;
-var MAX = 4;
-var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
-var viz = {min: MIN, max: MAX, palette: PALETTE};
-
-var THRESHOLD = -1.5;
-var MIN_NOBS = 3;
-
-var START_YEAR = 1995;
-var END_YEAR = 2020;
-
 
 var alert_panel = ui.Panel({
     style: {

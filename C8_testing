@@ -26,26 +26,26 @@ var filt_baselines_7 = imageCollection3
     .filterMetadata('WRS_PATH', 'equals', 12)
     .filterMetadata('state', 'equals', 'MA')
     .filterMetadata('year_start', 'greater_than', 1988)
-    .filterMetadata('year_end', 'less_than', 1998)
+    .filterMetadata('year_end', 'less_than', 1998);
 
 var filt_baselines_8 = imageCollection4
     .filterMetadata('WRS_PATH', 'equals', 12)
     .filterMetadata('state', 'equals', 'MA')
     .filterMetadata('year_start', 'greater_than', 1988)
-    .filterMetadata('year_end', 'less_than', 1998)
+    .filterMetadata('year_end', 'less_than', 1998);
     
 var filt_baselines_7_13 = imageCollection3
     .filterMetadata('WRS_PATH', 'equals', 13)
     .filterMetadata('state', 'equals', 'MA')
     .filterMetadata('year_start', 'greater_than', 1988)
-    .filterMetadata('year_end', 'less_than', 1998)
+    .filterMetadata('year_end', 'less_than', 1998);
 
 
 var filt_baselines_8_13 = imageCollection4
     .filterMetadata('WRS_PATH', 'equals', 13)
     .filterMetadata('state', 'equals', 'MA')
     .filterMetadata('year_start', 'greater_than', 1988)
-    .filterMetadata('year_end', 'less_than', 1998)
+    .filterMetadata('year_end', 'less_than', 1998);
 
     
 Map.addLayer(filt_baselines_7);

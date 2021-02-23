@@ -2,7 +2,7 @@
 var imageCollection = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     STATES = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
-var STATE = 'PA';
+var STATE = 'MA';
 var YEAR = 2000;
 
 var map = imageCollection.filterMetadata('state', 'equals', STATE)

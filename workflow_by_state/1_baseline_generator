@@ -1,6 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
-    table = ee.FeatureCollection("TIGER/2018/States");
+    STATES = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -100,7 +100,7 @@ var getCoeffs = function(feature) {
 
 // ------------------------------------- Analysis -------------------------------------- 
 
-var roi = ee.FeatureCollection(table)
+var roi = ee.FeatureCollection(STATES)
     .filterMetadata('STUSPS', 'equals', STATE)
     .geometry().dissolve().buffer(100);
 

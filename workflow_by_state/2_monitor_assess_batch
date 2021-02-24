@@ -359,6 +359,6 @@ for (var state_index in STATES) {
             maxPixels: 1e13,
           });
     }
-    else print('Export type not specified!');
+    else print('Check export type, specify Drive or Asset');
   } 
 }

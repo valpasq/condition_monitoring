@@ -1,7 +1,5 @@
 # [Harmonic baseline condition monitoring](https://valpasq.github.io/condition_monitoring/)
 
-# Harmonic condition monitoring
-
 The tools and workflow described in these docs and hosted in the associated repositories on [GitHub](https://github.com/valpasq/condition_monitoring) and [Earth Engine](https://code.earthengine.google.com/?accept_repo=users/valeriepasquarella/condition_monitoring) are designed to support spatially and temporally consistent Landsat-based condition change monitoring for retrospective disturbance assessment at regional to national scales.
 ___
 

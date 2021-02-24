@@ -23,9 +23,8 @@ var VERSION = '8-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
-var STATE = 'ME';
-
 // ---------------------------------- Model Parameters ---------------------------------- 
+var STATE = 'ME';
 
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month

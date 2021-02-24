@@ -289,11 +289,7 @@ for (var state_index in STATES) {
         });
     
     // --------------------------------- Combine Results ---------------------------------- 
-    
-    Map.addLayer(avg_dev_per_path)
     var weighted = avg_dev_per_path.map(weight_paths);
-    print(avg_dev_per_path)
-    print(weighted)
     
     var total_obs = weighted
         .select(DEPENDENT + '_count')

@@ -23,7 +23,7 @@ var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_monthly/';
 var OUTPUT_CRS = 'EPSG:5070';
 
-var EXPORT_TYPE = 'Asset';
+var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var STATES = ['MA', 'CT', 'RI', 'PA', 'NY', 'NJ', 'NH', 'VT', 'ME'];
@@ -166,7 +166,6 @@ var weight_paths = function(image) {
 
 for (var state_index in STATES) {
   var state = STATES[state_index];
-  print(state);
   
   for(var year = START_YEAR; year <= END_YEAR; year++){
     
@@ -349,7 +348,7 @@ for (var state_index in STATES) {
             scale: 30,
             maxPixels: 1e13,
         }); 
-    } else {     
+    } else if (EXPORT_TYPE === 'Asset') {     
         Export.image.toAsset({
             image: final_img,
             description: 'result_' + asset_name,
@@ -360,5 +359,6 @@ for (var state_index in STATES) {
             maxPixels: 1e13,
           });
     }
+    else print('Export type not specified!');
   } 
 }

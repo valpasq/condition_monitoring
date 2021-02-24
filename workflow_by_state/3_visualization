@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual");
+var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -13,19 +13,12 @@ var imageCollection = ee.ImageCollection("projects/sites-project/baselines_v8-0_
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = imageCollection;
+var FINAL_PRODUCTS = v9_0;
 
 var START_ASSESS = 1995;
 var END_ASSESS = 2020;
 
 // ---------------------- Visualization ---------------------- 
-// Default palette used in Pasquarella et al. 2017, 2018
-
-// var MIN = -4;
-// var MAX = 0;
-// var PALETTE = ['red', 'orange', 'yellow', 'blue'];
-// var viz = {min: MIN, max: MAX, palette: PALETTE};
-
 var MIN = -4;
 var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
@@ -54,19 +47,20 @@ for(var year = 0; year < num_years; year++){
   var score_disp = disp_img
       .focal_mean(30, 'circle', 'meters', 1);
   
-  var thresh_mask = score_disp.select('weighted_mean').lte(THRESHOLD);
+  var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD)
+      .or(score_disp.select('score_mean').gte(THRESHOLD * -1));
   score_disp = score_disp.updateMask(thresh_mask);
 
   // c = (1 / (1 + s))^0.6;
   // c = (TanH(7*(c - 0.5)) + 1)*0.5;
   var confidence_scale = ee.Image(1)
-    .divide(score_disp.select('weighted_stddev').add(1))
+    .divide(score_disp.select('score_stddev').add(1))
     .pow(0.6)
     .subtract(0.5).multiply(7)
     .tanh()
     .add(1).multiply(0.5);
 
-  var score_mean_viz_alpha = score_disp.select('weighted_mean')
+  var score_mean_viz_alpha = score_disp.select('score_mean')
       .visualize(viz)
       .toUint8()
       .updateMask(thresh_mask.multiply(confidence_scale));

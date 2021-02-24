@@ -332,7 +332,7 @@
 
   <li class="md-nav__item">
     <a href="app/" class="md-nav__link">
-      Vegetation Disturbance Atlas
+      Condition Monitoring Explorer
     </a>
   </li>
 
@@ -423,16 +423,16 @@
 <p>The scripts in this repository include:</p>
 <ul>
 <li><code>app/</code><ul>
-<li><code>APP_disturbance_atlas</code> - Interactive mapping app with select by year</li>
+<li><code>APP_condition_monitoring_explorer</code> - Interactive mapping app with updated chart options.</li>
 </ul>
 </li>
 <li><code>workflow_by_state/</code><ul>
-<li><code>1_baseline_generator</code> - Generate harmonic baseline models using fixed-length moving window (default: 5-year models)</li>
-<li><code>2_monitor_assess</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across orbital Paths</li>
+<li><code>1_baseline_generator</code> - Generate harmonic baseline models using fixed-length moving window (default: 5-year models).</li>
+<li><code>2_monitor_assess_batch</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across orbital Paths. Batch version can be used to queue tasks for multiple states and/or years.</li>
 <li><code>3_visualization</code> - Spatially smooth and threshold for visualization</li>
 </ul>
 </li>
-<li><code>utils.js</code> - Utility functions shared across scripts</li>
+<li><code>utils.js</code> - Utility functions shared across scripts.</li>
 </ul>
 <p>While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas.</p>
 <p><em>Note: Current scripts have been developed and tested for US State geographies, and example products are available for select Northeastern states within USFS Region 9.</em></p>

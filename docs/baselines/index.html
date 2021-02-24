@@ -341,7 +341,7 @@
 
   <li class="md-nav__item">
     <a href="../app/" class="md-nav__link">
-      Vegetation Disturbance Atlas
+      Condition Monitoring Explorer
     </a>
   </li>
 
@@ -428,7 +428,7 @@
                 
                 
                 <h1 id="1_baseline_generator"><code>1_baseline_generator</code><a class="headerlink" href="#1_baseline_generator" title="Permanent link">&para;</a></h1>
-<p>This script generates a collection of harmonic baseline models for a user-specified Region of Interest, e.g. US State.</p>
+<p>This script generates a collection of harmonic baseline models for a user-specified Region of Interest, e.g. a US State.</p>
 <h2 id="output-specifications">Output specifications<a class="headerlink" href="#output-specifications" title="Permanent link">&para;</a></h2>
 <p>Baseline models are generated per Path and are exported to specified Earth Engine Image Collection. The current implementation exports Path-based results clipped to a US State boundary from the <a href="https://developers.google.com/earth-engine/datasets/catalog/TIGER_2018_States">TIGER: US Census States 2018 dataset</a>, with states specified using their two-letter USPS code, e.g. <code>'MA'</code> for Massachusetts.</p>
 <table>
@@ -441,7 +441,7 @@
 <tbody>
 <tr>
 <td>VERSION</td>
-<td align="left">current version, <code>7-0</code></td>
+<td align="left">current version, <code>8-0</code></td>
 </tr>
 <tr>
 <td>ROOT</td>
@@ -492,7 +492,7 @@
 <td>END_YEAR</td>
 <td align="center">int</td>
 <td align="center"><code>2019</code></td>
-<td align="left">last year of last baseline</td>
+<td align="left">last year of last baseline (inclusive)</td>
 </tr>
 <tr>
 <td>WINDOW</td>
@@ -512,10 +512,16 @@
 <td align="center"><code>80</code></td>
 <td align="left">maximum CLOUD_COVER_LAND filtering</td>
 </tr>
+<tr>
+<td>BUFFER</td>
+<td align="center">int</td>
+<td align="center"><code>100</code></td>
+<td align="left">buffer distance to accomodate reprojection</td>
+</tr>
 </tbody>
 </table>
 <h2 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
-<p>Output images include harmonic regression terms, specifically the intercept (constant), slope (t), and two pairs of sine and cosine coefficients, as well as the model Root Mean Squared Error (rmse) and number of observations (nobs) used in model fitting. All results retain the UTM zone of Landsat inputs and have a 30m nominal pixel scale.</p>
+<p>Output images include harmonic regression terms, specifically the intercept (constant), slope (t), and two pairs of sine and cosine coefficients, as well as the model Root Mean Squared Error (rmse) and number of observations (nobs) used in model fitting. All results retain the UTM zone of Landsat inputs and have a 30m nominal pixel scale. Updated version buffers state boundaries to accomodate reprojection when generating assessment results.</p>
 <p>Example output:</p>
 <table>
 <thead>
@@ -621,7 +627,7 @@
 </tr>
 <tr>
 <td>version</td>
-<td align="left">7-0</td>
+<td align="left">8-0</td>
 </tr>
 <tr>
 <td>year_end</td>

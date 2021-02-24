@@ -71,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#2_monitor_assess" class="md-skip">
+        <a href="#2_monitor_assess_batch" class="md-skip">
           Skip to content
         </a>
       
@@ -341,7 +341,7 @@
 
   <li class="md-nav__item">
     <a href="../app/" class="md-nav__link">
-      Vegetation Disturbance Atlas
+      Condition Monitoring Explorer
     </a>
   </li>
 
@@ -427,8 +427,8 @@
               
                 
                 
-                <h1 id="2_monitor_assess"><code>2_monitor_assess</code><a class="headerlink" href="#2_monitor_assess" title="Permanent link">&para;</a></h1>
-<p>This script reads a collection of baseline models and produces a condition assessment layer for the specified monitoring period for a Region of Interest (e.g. US state).</p>
+                <h1 id="2_monitor_assess_batch"><code>2_monitor_assess_batch</code><a class="headerlink" href="#2_monitor_assess_batch" title="Permanent link">&para;</a></h1>
+<p>This script reads a collection of baseline models and generates tasks to export condition assessment results to Earth Engine assets or to Google Drive. Updated "batch" version loops over a list of states and monitoring years creating tasks by monitoring year and state, enabling more flexible production of assessment products over large areas.</p>
 <h2 id="output-specifications">Output specifications<a class="headerlink" href="#output-specifications" title="Permanent link">&para;</a></h2>
 <p>Monitoring results are generated for an ROI and final assessment layer is exported to a specified Image Collection.</p>
 <table>
@@ -441,7 +441,7 @@
 <tbody>
 <tr>
 <td>VERSION</td>
-<td align="left">current version, <code>8-0</code></td>
+<td align="left">current version, <code>9-0</code></td>
 </tr>
 <tr>
 <td>ROOT</td>
@@ -456,12 +456,12 @@
 <td align="left">new monitoring output Image Collection</td>
 </tr>
 <tr>
-<td>STATE</td>
-<td align="left">USPS state abbreviation e.g. <code>MA</code></td>
-</tr>
-<tr>
 <td>OUTPUT_CRS</td>
 <td align="left">ESPG code, e.g. <code>'EPSG:5070'</code></td>
+</tr>
+<tr>
+<td>EXPORT_TYPE</td>
+<td align="left">flag for export, options: <code>Asset</code> or <code>Drive</code></td>
 </tr>
 </tbody>
 </table>
@@ -478,10 +478,22 @@
 </thead>
 <tbody>
 <tr>
-<td>YEAR</td>
+<td>STATE</td>
+<td align="center">list of USPS state abbreviation e.g. <code>['MA']</code> or <code>['MA', 'CT', 'RI']</code></td>
+<td align="center"></td>
+<td align="left"></td>
+</tr>
+<tr>
+<td>START_YEAR</td>
+<td align="center">string</td>
+<td align="center"><code>1995</code></td>
+<td align="left">first year in monitoring year list  (YYYY)</td>
+</tr>
+<tr>
+<td>END_YEAR</td>
 <td align="center">string</td>
 <td align="center"><code>2020</code></td>
-<td align="left">monitoring year (YYYY)</td>
+<td align="left">last year in monitoring year list (YYYY) ,  end year is inclusive</td>
 </tr>
 <tr>
 <td>DAY_START</td>
@@ -492,8 +504,8 @@
 <tr>
 <td>DAY_END</td>
 <td align="center">string</td>
-<td align="center"><code>'09-30'</code></td>
-<td align="left">end of monitoring period (MM-DD)</td>
+<td align="center"><code>'10-01'</code></td>
+<td align="left">end of monitoring period (MM-DD) , note end date is not inclusive</td>
 </tr>
 <tr>
 <td>CC_THRESH</td>
@@ -522,7 +534,7 @@
 </tbody>
 </table>
 <h2 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
-<p>Condition assessment products include Path-integrated mean (weighted_mean) and standard deviation (weighted_standard) of condition scores, as well as the number of  observations during the monitoring period (total_nobs).</p>
+<p>Condition assessment products include Path-integrated mean (score_mean) and standard deviation (score_stddev) of condition scores, as well as the number of  observations during the monitoring period (total_nobs). Updated version also now includes additional bands for mean and standard deviation of observed Tasseled Cap Greenness (tcg_mean and tcg_stddev), which provide context on the nature of post-disturbance dynamics and may be useful for separating emphermeral changes in vegetation condition from more changes in land cover.</p>
 <p>Example output:</p>
 <table>
 <thead>
@@ -537,20 +549,34 @@
 <tbody>
 <tr>
 <td>0</td>
-<td align="center">weighted_mean</td>
+<td align="center">score_mean</td>
 <td align="center">double</td>
 <td align="center">EPSG:5070</td>
 <td align="center">30</td>
 </tr>
 <tr>
 <td>1</td>
-<td align="center">weighted_stddev</td>
+<td align="center">score_stddev</td>
 <td align="center">double</td>
 <td align="center">EPSG:5070</td>
 <td align="center">30</td>
 </tr>
 <tr>
 <td>2</td>
+<td align="center">tcg_mean</td>
+<td align="center">double</td>
+<td align="center">EPSG:5070</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>3</td>
+<td align="center">tcg_stddev</td>
+<td align="center">double</td>
+<td align="center">EPSG:5070</td>
+<td align="center">30</td>
+</tr>
+<tr>
+<td>4</td>
 <td align="center">total_nobs</td>
 <td align="center">signed int64</td>
 <td align="center">EPSG:5070</td>
@@ -569,7 +595,7 @@
 <tbody>
 <tr>
 <td>monitor_end</td>
-<td align="left">2010-09-30</td>
+<td align="left">2010-10-01</td>
 </tr>
 <tr>
 <td>monitor_start</td>

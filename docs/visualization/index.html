@@ -341,7 +341,7 @@
 
   <li class="md-nav__item">
     <a href="../app/" class="md-nav__link">
-      Vegetation Disturbance Atlas
+      Condition Monitoring Explorer
     </a>
   </li>
 
@@ -428,7 +428,7 @@
                 
                 
                 <h1 id="3_visualization"><code>3_visualization</code><a class="headerlink" href="#3_visualization" title="Permanent link">&para;</a></h1>
-<p>This script is used to visualize final assessment products as spatially smoothed and magnitude-thresholded maps.</p>
+<p>This script can be used to visualize final assessment products as spatially smoothed and magnitude-thresholded maps.</p>
 <h2 id="product-specification">Product specification<a class="headerlink" href="#product-specification" title="Permanent link">&para;</a></h2>
 <p>Assessment products to be visualized are read from specified Image Collection.</p>
 <table>
@@ -452,7 +452,7 @@
 <tr>
 <th>parameter</th>
 <th align="center">type</th>
-<th align="center">default</th>
+<th align="left">default</th>
 <th align="left">explanation</th>
 </tr>
 </thead>
@@ -460,27 +460,45 @@
 <tr>
 <td>START_ASSESS</td>
 <td align="center">int</td>
-<td align="center"><code>2010</code></td>
+<td align="left"><code>1995</code></td>
 <td align="left">first year to add to map</td>
 </tr>
 <tr>
 <td>END_ASSESS</td>
 <td align="center">int</td>
-<td align="center"><code>2020</code></td>
+<td align="left"><code>2020</code></td>
 <td align="left">last year to add to map</td>
 </tr>
 <tr>
 <td>THRESHOLD</td>
 <td align="center">int</td>
-<td align="center"><code>-2</code></td>
+<td align="left"><code>-1.5</code></td>
 <td align="left">condition score threshold</td>
+</tr>
+<tr>
+<td>MIN</td>
+<td align="center">int</td>
+<td align="left"><code>-4</code></td>
+<td align="left">min score for visualization palette</td>
+</tr>
+<tr>
+<td>MAX</td>
+<td align="center">int</td>
+<td align="left"><code>4</code></td>
+<td align="left">max score for visualization palette</td>
+</tr>
+<tr>
+<td>PALETTE</td>
+<td align="center">list</td>
+<td align="left"><code>['red', 'orange', 'white', 'teal', 'darkblue']</code></td>
+<td align="left">list of colors for palette</td>
 </tr>
 </tbody>
 </table>
 <h2 id="map">Map<a class="headerlink" href="#map" title="Permanent link">&para;</a></h2>
-<p>Scores are smoothed using a 30-meter circular kernel, values are shaded based on condition score value such that more negative changes in vegetation greenness are shown in redder tones, and pixel transparency is set based on standard deviation such that pixels with greater uncertainty/disagreement in score estimates are shown with a greater transparency. Products for all years within the specified assessment range added at once, enabling inspection of results for both individual years and cumulative change.</p>
-<p>Example output:
-<img width="1083" alt="zoom_example_w_transparency_2" src="https://user-images.githubusercontent.com/7560906/102677391-294d3380-4170-11eb-98b5-5e7dad4b4618.png"></p>
+<p>Results are smoothed using a 30-meter circular kernel and values are color-coded based on condition score value such that more negative changes in vegetation greenness are shown in redder tones and more positive changes are shown in cooler tones. Pixel transparency is set to scale with standard deviation such that pixels with greater uncertainty/disagreement in score estimates are shown with a greater transparency. Products for all years within the specified assessment range added to the Layers list, enabling inspection of results for both individual years and cumulative change.</p>
+<p>Example of mapped results for a single year:
+<img width="782" alt="zoom_example_w_transparency_3" src="https://user-images.githubusercontent.com/7560906/109071258-7ba35700-76c1-11eb-80ed-546a501fe0cf.png"></p>
                 
               
               
@@ -520,7 +538,7 @@
                 <span class="md-footer-nav__direction">
                   Next
                 </span>
-                Vegetation Disturbance Atlas
+                Condition Monitoring Explorer
               </div>
             </div>
             <div class="md-footer-nav__button md-icon">

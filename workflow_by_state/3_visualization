@@ -72,13 +72,6 @@ for(var year = 0; year < num_years; year++){
 }
 
 // ----------------------- Map Styling ------------------------
- 
-var style = {
-  'Figure': [{
-      featureType: 'all',
-      stylers: [{ color: '#000000'}]
-  }]
-};
-
-Map.setOptions(null, style);
+var stylers = require('users/valeriepasquarella/default:map_stylers');
+Map.setOptions('Dark', {Dark: stylers.dark_mode});
 Map.setOptions('SATELLITE');

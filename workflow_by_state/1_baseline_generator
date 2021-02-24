@@ -230,8 +230,6 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
       .clip(roi)
       .setMulti(outputProperties))
       .set('WRS_PATH', path);
-    
-  // Map.addLayer(outputMosaic.select('constant'));
   
   Export.image.toAsset({
       image: outputMosaic,

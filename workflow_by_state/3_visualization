@@ -26,7 +26,6 @@ var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-
 // ----------------------- Map Results ------------------------
 
 var images = FINAL_PRODUCTS

@@ -26,16 +26,17 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 var STATE = 'ME';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
-
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 1985;  // Starts 01-01
-var END_YEAR = 2020;   // Year to stop
+var END_YEAR = 2020;    // Year to stop (inclusive)
 var WINDOW = 5;
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
 var CC_THRESH = 80;     // Maximum cloud cover for baseline inputs
+
+var BUFFER = 100;       // buffer
 
 // ------------------------------ Modeling Constants -------------------------------- 
 
@@ -102,7 +103,7 @@ var getCoeffs = function(feature) {
 
 var roi = ee.FeatureCollection(table)
     .filterMetadata('STUSPS', 'equals', STATE)
-    .geometry().dissolve().buffer(100);
+    .geometry().dissolve().buffer(BUFFER);
 
 // Get WRS2 scenes
 var scenes = wrs2.filterBounds(roi);

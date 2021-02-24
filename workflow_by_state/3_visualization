@@ -15,16 +15,16 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 
 var FINAL_PRODUCTS = v9_0;
 
+// ---------------------- Visualization ---------------------- 
 var START_ASSESS = 1995;
 var END_ASSESS = 2020;
 
-// ---------------------- Visualization ---------------------- 
+var THRESHOLD = 1.5; 
+
 var MIN = -4;
 var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
-
-var THRESHOLD = -1.5;
 
 // ----------------------- Map Results ------------------------
 
@@ -47,8 +47,8 @@ for(var year = 0; year < num_years; year++){
   var score_disp = disp_img
       .focal_mean(30, 'circle', 'meters', 1);
   
-  var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD)
-      .or(score_disp.select('score_mean').gte(THRESHOLD * -1));
+  var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
+      .or(score_disp.select('score_mean').gte(THRESHOLD));
   score_disp = score_disp.updateMask(thresh_mask);
 
   // c = (1 / (1 + s))^0.6;

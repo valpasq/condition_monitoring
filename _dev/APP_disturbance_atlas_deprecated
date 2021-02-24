@@ -1,0 +1,74 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var WORLD = /* color: #000000 */ee.Feature(
+        ee.Geometry.Polygon(
+            [[[-180, 78],
+              [0, 78],
+              [180, 78],
+              [180, -59],
+              [0, -59],
+              [-180, -59]]], null, false),
+        {
+          "system:index": "0"
+        });
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// App is deprecated!
+
+var alert_panel = ui.Panel({
+    style: {
+      position: 'top-center',
+      backgroundColor: 'rgba(0, 0, 0, 0.75)'
+    }
+  });
+
+var warning_text = ui.Label({
+      value: 'WARNING: This app is deprecated!', 
+      style: {
+        fontWeight: 'bold',
+        fontSize: '18px',
+        color: 'darkred',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        margin: '0 0 8px 0',
+        padding: '5px'},
+      });
+      
+var warning_text_2 = ui.Label({
+      value: 'Please visit the updated version here:', 
+      style: {
+        fontSize: '16px',
+        color: 'grey',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        margin: '0 0 0 0',
+        padding: '5px'},
+      });
+
+var link_text = ui.Label({
+      value: 'Condition Monitoring Explorer',  // Change text
+      style: {
+        fontWeight: 'bold',
+        fontSize: '22px',
+        backgroundColor: 'rgba(255, 255, 255, 0)',
+        margin: '0 0 8px 0',
+        padding: '5px'},
+      targetUrl: 'https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-explorer'
+});
+  
+alert_panel.add(warning_text).add(warning_text_2).add(link_text);
+Map.add(alert_panel);
+
+Map.setOptions('SATELLITE');
+
+var ZOOM = 10;
+var RADIUS = 0.1;
+var RATE = 0.05;
+
+var coords = [-98.46, 40.35];
+
+var a = 0.0;
+ui.util.setInterval(function(f) {
+      Map.setCenter(
+          coords[0] + Math.sin(a) * RADIUS + a * 0.1, 
+          coords[1] + Math.cos(a) * RADIUS, 
+          ZOOM);
+      a += RATE;
+    }, 20);
+ 

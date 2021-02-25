@@ -158,200 +158,199 @@ var weight_paths = function(image) {
 // --------------------------------- PREDICT ---------------------------------- 
 
 for (var state_index in STATES) {
-  var state = STATES[state_index];
-  
-  for(var year = START_YEAR; year <= END_YEAR; year++){
+    var state = STATES[state_index];
     
-    var roi = ee.FeatureCollection(table)
-      .filterMetadata('STUSPS', 'equals', state)
-      .geometry().dissolve();
-  
-    var MONITOR_START = year + '-' + DAY_START;
-    var MONITOR_END = year + '-' + DAY_END;
+    for(var year = START_YEAR; year <= END_YEAR; year++){
+        var roi = ee.FeatureCollection(table)
+            .filterMetadata('STUSPS', 'equals', state)
+            .geometry().dissolve();
       
-    var OUTPUT_PROPERTIES = ee.Dictionary({
-          'system:time_start': ee.Date(MONITOR_START).millis(),
-          'system:time_end': ee.Date(MONITOR_END).millis(),
-          'spectral_band': DEPENDENT,
-          'monitor_year': year,
-          'monitor_start': MONITOR_START,
-          'monitor_end': MONITOR_END,
-          'n_models': N_MODELS,
-          'state': state
-      });
-    
-    // Get baselines
-    var baselines_for_state = BASELINES_COLLECTION
-        .filterMetadata('state', 'equals', state)
-        .filter(ee.Filter.rangeContains('year_end', year - N_MODELS, year - 1));
-    
-    // Get WRS2 paths
-    var paths = ee.FeatureCollection(baselines_for_state
-        .aggregate_array('WRS_PATH')
-        .distinct()
-        .map(function(path) {
-              return ee.Feature(null, {'WRS_PATH': path});
-            }));
-    
-    // All baselines will have a footprint that cover our entire study area.
-    var broad_geo_footprint = baselines_for_state.first().geometry();
-    
-    var baselines_by_path = ee.FeatureCollection(
-        ee.Join.saveAll('baselines').apply(
-            paths, 
-            baselines_for_state, 
-            ee.Filter.equals({
-                leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
-    
-    var baseline_coeffs_by_path = ee.ImageCollection(
-        baselines_by_path.map(function(f) {
-              var baselines = ee.ImageCollection.fromImages(f.get('baselines'));
-              var reference_proj = baselines.first().projection();
-              return baselines
-                  .toArrayPerBand()
-                  .reproject(reference_proj)
-                  .set('WRS_PATH', f.get('WRS_PATH'));
-            }));   
-      
-    var all_observations = monitorTS(
-        broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
-    
-    var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
-            baseline_coeffs_by_path,
-            all_observations,
-            ee.Filter.equals({
-                leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
-    
-    var avg_dev_per_path = obs_to_paths.map(function(model_image) {
-          var model = model_image;
-          var observations = ee.ImageCollection.fromImages(
-              model_image.get('observed'));
-              
-          var obs_nobs = observations.reduce('count');
-              
-          var model_rmse = model_image.select('rmse');
+        var MONITOR_START = year + '-' + DAY_START;
+        var MONITOR_END = year + '-' + DAY_END;
           
-          var predict_fn = utils.addPredictionFnFactory(INDEPENDENTS, model);
-          var scores = observations.map(function(observed_image) {
-                // Note we don't use the actual bands from the observed_image here.
-                var terms = 
-                    ADD_HARMONICS_FN(
-                        utils.addTime(utils.addConstant(observed_image)));
-                
-                var predictions = predict_fn(terms).select('prediction');
-    
-                var residuals = observed_image.subtract(predictions);
-                var rmse_scores = residuals.divide(model_rmse);
-    
-                return rmse_scores;
-              }).map(function(observed_image) {
-                return observed_image.unmask(
-                    ee.Image(ee.Array([], ee.PixelType.float())));
-              });
-          
-          var scores_flat = scores.toArrayPerBand();
-          var scores_flat_mask = scores_flat.arrayLength(0).neq(0);
-          
-          scores_flat = scores_flat.updateMask(scores_flat_mask);
-          
-          var scores_mean = scores_flat
-              .arrayReduce(ee.Reducer.mean(), [0])
-              .arrayGet([0])
-              .rename('score_mean');
-              
-          var scores_variance = scores_flat
-              .arrayReduce(ee.Reducer.variance(), [0])
-              .arrayGet([0])
-              .rename('score_variance');
-          
-          var score_image = ee.Image(scores_mean
-              .addBands(scores_variance)
-              .addBands(obs_nobs)
-              .addBands(observations.reduce('mean'))
-              .addBands(observations.reduce('variance'))
-              .copyProperties(model_image, ['WRS_PATH']));
-          
-          score_image = score_image
-              .updateMask(score_image
-              .select('score_variance').lte(MAX_STDDEV * MAX_STDDEV));
-    
-          return score_image
-              .reproject(model_image.projection())
-              .set(OUTPUT_PROPERTIES);
+        var OUTPUT_PROPERTIES = ee.Dictionary({
+            'system:time_start': ee.Date(MONITOR_START).millis(),
+            'system:time_end': ee.Date(MONITOR_END).millis(),
+            'spectral_band': DEPENDENT,
+            'monitor_year': year,
+            'monitor_start': MONITOR_START,
+            'monitor_end': MONITOR_END,
+            'n_models': N_MODELS,
+            'state': state
         });
-    
-    // --------------------------------- Combine Results ---------------------------------- 
-    var weighted = avg_dev_per_path.map(weight_paths);
-    
-    var total_obs = weighted
-        .select(DEPENDENT + '_count')
-        .reduce('sum')
-        .toUint8();
-    
-    var score_wt_mean = ee.Image(weighted
-        .select('score_mean_scaled')
-        .reduce('sum')
-        .divide(total_obs))
-        .toFloat();
-      
-    var score_wt_stddev = ee.Image(weighted
-        .select('score_variance_scaled')
-        .reduce('sum')
-        .divide(total_obs)
-        .sqrt())
-        .toFloat();
         
-    var value_wt_mean = ee.Image(weighted
-        .select(DEPENDENT + '_mean_scaled')
-        .reduce('sum')
-        .divide(total_obs))
-        .toFloat();
-    
-    var value_wt_stddev = ee.Image(weighted
-        .select(DEPENDENT + '_variance_scaled')
-        .reduce('sum')
-        .divide(total_obs)
-        .sqrt())
-        .toFloat();
-    
-    var final_img = ee.Image(score_wt_mean
-        .addBands(score_wt_stddev)
-        .addBands(value_wt_mean)
-        .addBands(value_wt_stddev)
-        .addBands(total_obs)
-        .rename(['score_mean', 'score_stddev', 
-                DEPENDENT + '_mean', DEPENDENT + '_stddev', 
-                'total_nobs'])
-        .reproject(OUTPUT_CRS, null, 30)
-        .clip(roi)
-        .setMulti(OUTPUT_PROPERTIES));
-    
-    // Map.addLayer(final_img);
-    
-    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
-    
-    if (EXPORT_TYPE === 'Drive') {
-        Export.image.toDrive({
-            image: final_img.toFloat(), 
-            description: 'result_' + asset_name,
-            folder: 'condition_monitoring_' + VERSION + '_by_state/', 
-            fileNamePrefix: asset_name, 
-            region: broad_geo_footprint,
-            crs: OUTPUT_CRS,
-            scale: 30,
-            maxPixels: 1e13,
-        }); 
-    } else if (EXPORT_TYPE === 'Asset') {     
-        Export.image.toAsset({
-            image: final_img,
-            description: 'result_' + asset_name,
-            assetId: OUTPUT_COLLECTION + asset_name,
-            region: broad_geo_footprint,
-            crs: OUTPUT_CRS,
-            scale: 30,
-            maxPixels: 1e13,
-          });
-    }
-    else print('Check export type, specify Drive or Asset');
-  } 
+        // Get baselines
+        var baselines_for_state = BASELINES_COLLECTION
+            .filterMetadata('state', 'equals', state)
+            .filter(ee.Filter.rangeContains('year_end', year - N_MODELS, year - 1));
+        
+        // Get WRS2 paths
+        var paths = ee.FeatureCollection(baselines_for_state
+            .aggregate_array('WRS_PATH')
+            .distinct()
+            .map(function(path) {
+                  return ee.Feature(null, {'WRS_PATH': path});
+                }));
+        
+        // All baselines will have a footprint that cover our entire study area.
+        var broad_geo_footprint = baselines_for_state.first().geometry();
+        
+        var baselines_by_path = ee.FeatureCollection(
+            ee.Join.saveAll('baselines').apply(
+                paths, 
+                baselines_for_state, 
+                ee.Filter.equals({
+                    leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
+        
+        var baseline_coeffs_by_path = ee.ImageCollection(
+            baselines_by_path.map(function(f) {
+                var baselines = ee.ImageCollection.fromImages(f.get('baselines'));
+                var reference_proj = baselines.first().projection();
+                return baselines
+                    .toArrayPerBand()
+                    .reproject(reference_proj)
+                    .set('WRS_PATH', f.get('WRS_PATH'));
+                }));   
+          
+        var all_observations = monitorTS(
+            broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
+        
+        var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
+                baseline_coeffs_by_path,
+                all_observations,
+                ee.Filter.equals({
+                    leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
+        
+        var avg_dev_per_path = obs_to_paths.map(function(model_image) {
+            var model = model_image;
+            var observations = ee.ImageCollection.fromImages(
+                model_image.get('observed'));
+                
+            var obs_nobs = observations.reduce('count');
+                
+            var model_rmse = model_image.select('rmse');
+            
+            var predict_fn = utils.addPredictionFnFactory(INDEPENDENTS, model);
+            var scores = observations.map(function(observed_image) {
+                  // Note we don't use the actual bands from the observed_image here.
+                  var terms = 
+                      ADD_HARMONICS_FN(
+                          utils.addTime(utils.addConstant(observed_image)));
+                  
+                  var predictions = predict_fn(terms).select('prediction');
+      
+                  var residuals = observed_image.subtract(predictions);
+                  var rmse_scores = residuals.divide(model_rmse);
+      
+                  return rmse_scores;
+                }).map(function(observed_image) {
+                  return observed_image.unmask(
+                      ee.Image(ee.Array([], ee.PixelType.float())));
+                });
+            
+            var scores_flat = scores.toArrayPerBand();
+            var scores_flat_mask = scores_flat.arrayLength(0).neq(0);
+            
+            scores_flat = scores_flat.updateMask(scores_flat_mask);
+            
+            var scores_mean = scores_flat
+                .arrayReduce(ee.Reducer.mean(), [0])
+                .arrayGet([0])
+                .rename('score_mean');
+                
+            var scores_variance = scores_flat
+                .arrayReduce(ee.Reducer.variance(), [0])
+                .arrayGet([0])
+                .rename('score_variance');
+            
+            var score_image = ee.Image(scores_mean
+                .addBands(scores_variance)
+                .addBands(obs_nobs)
+                .addBands(observations.reduce('mean'))
+                .addBands(observations.reduce('variance'))
+                .copyProperties(model_image, ['WRS_PATH']));
+            
+            score_image = score_image
+                .updateMask(score_image
+                .select('score_variance').lte(MAX_STDDEV * MAX_STDDEV));
+      
+            return score_image
+                .reproject(model_image.projection())
+                .set(OUTPUT_PROPERTIES);
+        });
+        
+        // --------------------------------- Combine Results ---------------------------------- 
+        var weighted = avg_dev_per_path.map(weight_paths);
+        
+        var total_obs = weighted
+            .select(DEPENDENT + '_count')
+            .reduce('sum')
+            .toUint8();
+        
+        var score_wt_mean = ee.Image(weighted
+            .select('score_mean_scaled')
+            .reduce('sum')
+            .divide(total_obs))
+            .toFloat();
+          
+        var score_wt_stddev = ee.Image(weighted
+            .select('score_variance_scaled')
+            .reduce('sum')
+            .divide(total_obs)
+            .sqrt())
+            .toFloat();
+            
+        var value_wt_mean = ee.Image(weighted
+            .select(DEPENDENT + '_mean_scaled')
+            .reduce('sum')
+            .divide(total_obs))
+            .toFloat();
+        
+        var value_wt_stddev = ee.Image(weighted
+            .select(DEPENDENT + '_variance_scaled')
+            .reduce('sum')
+            .divide(total_obs)
+            .sqrt())
+            .toFloat();
+        
+        var final_img = ee.Image(score_wt_mean
+            .addBands(score_wt_stddev)
+            .addBands(value_wt_mean)
+            .addBands(value_wt_stddev)
+            .addBands(total_obs)
+            .rename(['score_mean', 'score_stddev', 
+                    DEPENDENT + '_mean', DEPENDENT + '_stddev', 
+                    'total_nobs'])
+            .reproject(OUTPUT_CRS, null, 30)
+            .clip(roi)
+            .setMulti(OUTPUT_PROPERTIES));
+        
+        // Map.addLayer(final_img);
+        
+        var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
+        
+        if (EXPORT_TYPE === 'Drive') {
+            Export.image.toDrive({
+                image: final_img.toFloat(), 
+                description: 'result_' + asset_name,
+                folder: 'condition_monitoring_' + VERSION + '_by_state/', 
+                fileNamePrefix: asset_name, 
+                region: broad_geo_footprint,
+                crs: OUTPUT_CRS,
+                scale: 30,
+                maxPixels: 1e13,
+            }); 
+        } else if (EXPORT_TYPE === 'Asset') {     
+            Export.image.toAsset({
+                image: final_img,
+                description: 'result_' + asset_name,
+                assetId: OUTPUT_COLLECTION + asset_name,
+                region: broad_geo_footprint,
+                crs: OUTPUT_CRS,
+                scale: 30,
+                maxPixels: 1e13,
+            });
+        }
+        else print('Check export type, specify Drive or Asset');
+    } 
 }

@@ -72,87 +72,87 @@ var ADD_HARMONICS_FN = utils.addHarmonicsFnFactory(
 // Function to build monitoring collection
 var monitorTS = function(clipBound, monitor_start, monitor_end, dependent) {
   
-// Get Landsat 5 imagery
-  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
-      .filterDate(monitor_start, monitor_end)  
-      .filterBounds(clipBound) 
-      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess457);
-    
-  // Get Landsat 7 imagery
-  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
-      .filterDate(monitor_start, monitor_end) 
-      .filterBounds(clipBound) 
-      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess457);
-
-  // Get  Landsat 8 imagery
-  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
-      .filterDate(monitor_start, monitor_end) 
-      .filterBounds(clipBound) 
-      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess8); 
-
-  // FINAL LTS COLLECTION
-  var collection = collection5.merge(collection7).merge(collection8)
-      .map(function(image) {return image.set({
-          'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
-          'WRS_PATH': image.get('WRS_PATH')});
-      })
-      .map(utils.addCloudScore)
-      .map(utils.maskCloudScore) 
-      .map(utils.spectralTransformsFnFactory(dependent))
-      .sort('system:time_start');
+  // Get Landsat 5 imagery
+    var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+        .filterDate(monitor_start, monitor_end)  
+        .filterBounds(clipBound) 
+        .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+        .map(utils.preprocess457);
       
-  // ENDLAP FILTERING
-  var acquisitions = collection.aggregate_array('SENSING_TIME').distinct();
+    // Get Landsat 7 imagery
+    var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+        .filterDate(monitor_start, monitor_end) 
+        .filterBounds(clipBound) 
+        .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+        .map(utils.preprocess457);
   
-  // Take mean for each acquisition date (Path)
-  var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
-    var date = ee.Date(d);
-    var date2 = date.advance(24, 'hour');
-    var path = collection.filterDate(date, date2).first().get('WRS_PATH');
+    // Get  Landsat 8 imagery
+    var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+        .filterDate(monitor_start, monitor_end) 
+        .filterBounds(clipBound) 
+        .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+        .map(utils.preprocess8); 
+  
+    // FINAL LTS COLLECTION
+    var collection = collection5.merge(collection7).merge(collection8)
+        .map(function(image) {return image.set({
+            'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+            'WRS_PATH': image.get('WRS_PATH')});
+        })
+        .map(utils.addCloudScore)
+        .map(utils.maskCloudScore) 
+        .map(utils.spectralTransformsFnFactory(dependent))
+        .sort('system:time_start');
+        
+    // ENDLAP FILTERING
+    var acquisitions = collection.aggregate_array('SENSING_TIME').distinct();
     
-    return collection.filterDate(date, date2).mean()
-      .set({
-        'system:time_start': date.millis(), 
-        'WRS_PATH': path
-      });
-  }));
-  
-  // Return image collection for monitoring period
-  return monitorC;
+    // Take mean for each acquisition date (Path)
+    var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
+      var date = ee.Date(d);
+      var date2 = date.advance(24, 'hour');
+      var path = collection.filterDate(date, date2).first().get('WRS_PATH');
+      
+      return collection.filterDate(date, date2).mean()
+        .set({
+          'system:time_start': date.millis(), 
+          'WRS_PATH': path
+        });
+    }));
+    
+    // Return image collection for monitoring period
+    return monitorC;
 };
 
 // Function to combine results across Paths
 var weight_paths = function(image) {
-  var nobs = image.select(DEPENDENT + '_count');
- 
-  var score_mean = image
-      .select('score_mean')
-      .multiply(nobs)
-      .rename('score_mean_scaled');
-      
-  var score_variance = image
-      .select('score_variance')
-      .multiply(nobs)
-      .rename('score_variance_scaled');
-      
-  var value_mean = image
-      .select(DEPENDENT + '_mean')
-      .multiply(nobs)
-      .rename(DEPENDENT + '_mean_scaled');
-      
-  var value_variance = image
-      .select(DEPENDENT + '_variance')
-      .multiply(nobs)
-      .rename(DEPENDENT + '_variance_scaled');
-  
-  return image.addBands(score_mean)
-    .addBands(score_variance)
-    .addBands(value_mean)
-    .addBands(value_variance)
-    .reproject(OUTPUT_CRS, null, 30);
+    var nobs = image.select(DEPENDENT + '_count');
+   
+    var score_mean = image
+        .select('score_mean')
+        .multiply(nobs)
+        .rename('score_mean_scaled');
+        
+    var score_variance = image
+        .select('score_variance')
+        .multiply(nobs)
+        .rename('score_variance_scaled');
+            
+    var value_mean = image
+        .select(DEPENDENT + '_mean')
+        .multiply(nobs)
+        .rename(DEPENDENT + '_mean_scaled');
+        
+    var value_variance = image
+        .select(DEPENDENT + '_variance')
+        .multiply(nobs)
+        .rename(DEPENDENT + '_variance_scaled');
+    
+    return image.addBands(score_mean)
+        .addBands(score_variance)
+        .addBands(value_mean)
+        .addBands(value_variance)
+        .reproject(OUTPUT_CRS, null, 30);
 };
 
 // --------------------------------- PREDICT ---------------------------------- 

@@ -19,22 +19,21 @@ The scripts in this repository include:
     * `APP_condition_monitoring_explorer` - Interactive mapping app with updated chart options.
 * `workflow_by_state/`
     * `1_baseline_generator` - Generate harmonic baseline models using fixed-length moving window (default: 5-year models).
-    * `2_monitor_assess_batch` - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across orbital Paths. Batch version can be used to queue tasks for multiple states and/or years.
-    * `3_visualization` - Spatially smooth and threshold for visualization
+    * `2_monitor_assess_batch` - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across Landsat orbital Paths. Batch version can be used to queue tasks for multiple states and/or years.
+    * `3_visualization` - Spatially smooth and threshold map results for visualization. 
 * `utils.js` - Utility functions shared across scripts.
 
 
 While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas.
 
-_Note: Current scripts have been developed and tested for US State geographies, and example products are available for select Northeastern states within USFS Region 9._
-
+_Note: Current scripts have been developed and tested for US State geographies, and example products are available for select Northeastern states within USFS Region 9. However, assets are currently not publicly shared. To access the assets associated with these scripts, please contact valpasq@bu.edu and request to join our Google Group by clicking "Ask to Join Group" [here](https://groups.google.com/g/harmonic-condition-monitoring)._
 
 ___
 
 ## Products
 As proof of concept, we have piloted the harmonic baseline monitoring workflow for a selection of Northeastern states within USFS Region 9 and generated annual change assessments for 1995-2020 using a May 1 through September 30 monitoring period.
 
-To view these preliminary results, visit our [Condition Monitoring Explorer App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-explorer).
+To interactively view these preliminary results, visit our [Condition Monitoring Explorer App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-explorer).
 
 
 ___

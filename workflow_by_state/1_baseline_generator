@@ -224,22 +224,22 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path);
     var path_proj = images.first().projection();
     
-  // Quality mosaic based on number of observations per pixel (endlap filter)
-  var outputMosaic = ee.Image(images
-      .qualityMosaic('nobs')
-      .clip(roi)
-      .setMulti(outputProperties))
-      .set('WRS_PATH', path);
-  
-  Export.image.toAsset({
-      image: outputMosaic,
-      description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,
-      assetId: output_name + '_p' + path + '_' + STATE,
-      region: roi.bounds(),
-      crs: path_proj,
-      scale: 30,
-      maxPixels: 1e13,
-  });
+    // Quality mosaic based on number of observations per pixel (endlap filter)
+    var outputMosaic = ee.Image(images
+        .qualityMosaic('nobs')
+        .clip(roi)
+        .setMulti(outputProperties))
+        .set('WRS_PATH', path);
+    
+    Export.image.toAsset({
+        image: outputMosaic,
+        description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,
+        assetId: output_name + '_p' + path + '_' + STATE,
+        region: roi.bounds(),
+        crs: path_proj,
+        scale: 30,
+        maxPixels: 1e13,
+    });
   }
 
 }

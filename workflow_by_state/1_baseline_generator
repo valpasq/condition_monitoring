@@ -199,7 +199,6 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   
   // Filter full Landsat collection to moving window period
   var collection_filt = collection.filterDate(start + '-01-01', end + '-12-31') ;
-  // print(collection_filt)
   
   // Join images by Scene (Path/Row)
   var join = ee.Join.saveAll('images', 'system:time_start', true);

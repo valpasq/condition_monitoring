@@ -21,7 +21,7 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 var VERSION = '8-0';
 
 var ROOT = 'projects/sites-project/condition_monitoring/';
-var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
+var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state_SR/';
 
 var STATE = 'ME';
 

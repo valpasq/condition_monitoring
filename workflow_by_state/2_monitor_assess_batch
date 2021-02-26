@@ -14,24 +14,25 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '9-0';
+var VERSION = '9-1-1';
 
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v8-0_by_state';
 
-var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_annual/';
+// var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_annual/';
+var OUTPUT_COLLECTION = 'projects/ee-valeriepasquarella/assets/HCM-GEE/' + VERSION + '_TCG_annual';
 var OUTPUT_CRS = 'EPSG:5070';
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['MA', 'CT', 'RI'];
+var STATES = ['ME'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 1995;      // First year in monitoring year list
 var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)
 
-var DAY_START = '05-01';    // Date to start monitoring
-var DAY_END = '10-01';      // Date to end monitoring (not inclusive)
+var DAY_START = '06-20';    // Date to start monitoring
+var DAY_END = '09-20';      // Date to end monitoring (not inclusive)
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs

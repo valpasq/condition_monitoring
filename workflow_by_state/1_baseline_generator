@@ -54,48 +54,46 @@ var INDEPENDENTS = ee.List(['constant', 't']).cat(COS_NAMES).cat(SIN_NAMES);
 
 // ---------------------------------- Functions ---------------------------------- 
 
-var getCoeffs = function(feature) {
-    var collectionScene = ee.ImageCollection.fromImages(feature.get('images'));
+function getCoeffs(feature) {
+  var collectionScene = ee.ImageCollection.fromImages(feature.get('images'));
 
-    // Calculate number of observations per pixel
-    var numObs = collectionScene.count().select(0).rename('nobs');
-    var crs = collectionScene.first().projection().crs();
-    
-    // Add constant, time, and coefficients
-    var harmonicLandsat = collectionScene
-        .select(DEPENDENT)
-        .map(utils.addConstant)
-        .map(utils.addTime)
-        .map(utils.addHarmonicsFnFactory(HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES));
-      
-    // The output of the regression reduction is a 4x1 array image
-    var harmonicTrend = harmonicLandsat
-        .select(INDEPENDENTS.add(DEPENDENT))
-        .reduce(ee.Reducer.linearRegression(INDEPENDENTS.length(), 1));
-    
-    // Turn the array image into a multi-band image of coefficients
-    var harmonicTrendCoefficients = harmonicTrend
-        .select('coefficients')
-        .arrayProject([0])
-        .arrayFlatten([INDEPENDENTS]);
-    
-    // Get RMSE from linearRegression result
-    var rmse = harmonicTrend.select('residuals')
-        .arrayProject([0])
-        .arrayFlatten([ee.List(['rmse'])]);
+  // Calculate number of observations per pixel
+  var numObs = collectionScene.count().select(0).rename('nobs');
+  var crs = collectionScene.first().projection().crs();
   
-    harmonicTrendCoefficients = harmonicTrendCoefficients
-        .addBands([rmse, numObs])
-        .setDefaultProjection(crs);
-      
-    var outputProperties = ee.Dictionary({
+  // Add constant, time, and coefficients
+  var harmonicLandsat = collectionScene
+      .select(DEPENDENT)
+      .map(utils.addConstant)
+      .map(utils.addTime)
+      .map(utils.addHarmonicsFnFactory(HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES));
+    
+  // The output of the regression reduction is a 4x1 array image
+  var harmonicTrend = harmonicLandsat
+      .select(INDEPENDENTS.add(DEPENDENT))
+      .reduce(ee.Reducer.linearRegression(INDEPENDENTS.length(), 1));
+  
+  // Turn the array image into a multi-band image of coefficients
+  var harmonicTrendCoefficients = harmonicTrend
+      .select('coefficients')
+      .arrayProject([0])
+      .arrayFlatten([INDEPENDENTS]);
+  
+  // Get RMSE from linearRegression result
+  var rmse = harmonicTrend.select('residuals')
+      .arrayProject([0])
+      .arrayFlatten([ee.List(['rmse'])]);
+
+  harmonicTrendCoefficients = harmonicTrendCoefficients
+      .addBands([rmse, numObs])
+      .setDefaultProjection(crs);
+    
+  var outputProperties = ee.Dictionary({
       'WRS_PATH': feature.get('PATH'),
-      'crs': crs
-    });
-  
-    return harmonicTrendCoefficients
-        .setMulti(outputProperties);
-};
+      'crs': crs});
+
+  return harmonicTrendCoefficients.setMulti(outputProperties);
+}
 
 
 // ------------------------------------- Analysis -------------------------------------- 
@@ -117,126 +115,123 @@ var path_stop = paths.get(-1).getInfo();
 // Select all available (full) versus limited L7 (16d) time series
 if (TS == 'full') {
   
-    // Get Landsat 5 imagery.
-    var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
-        .filterBounds(roi)
-        .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
-        .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-        .map(utils.preprocess457);
-    
-    // Get Landsat 7 imagery
-    var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
-        .filterBounds(roi)
-        .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
-        .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-        .map(utils.preprocess457);
-    
-    // Get Landsat 8 imagery.
-    var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
-        .filterBounds(roi)
-        .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
-        .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-        .map(utils.preprocess8);
+  // Get Landsat 5 imagery.
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterBounds(roi)
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
+      .map(utils.preprocess457);
+  
+  // Get Landsat 7 imagery
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+      .filterBounds(roi)
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
+      .map(utils.preprocess457);
+  
+  // Get Landsat 8 imagery.
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+      .filterBounds(roi)
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
+      .map(utils.preprocess8);
     
 } else if (TS == '16d') {
   
-    // Get Landsat 5 imagery.
-    var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
-        .filterBounds(roi)
-        .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
-        .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
-        .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-        .map(utils.preprocess457);
-    
-    // Get Landsat 7 imagery to fill gap period between 5 and 8.
-    var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
-        .filterBounds(roi)
-        .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
-        .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
-        .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-        .map(utils.preprocess457);
-    
-    // Get Landsat 8 imagery.
-    var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
-        .filterBounds(roi)
-        .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
-        .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
-        .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-        .map(utils.preprocess8);
+  // Get Landsat 5 imagery.
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterBounds(roi)
+      .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
+      .map(utils.preprocess457);
+  
+  // Get Landsat 7 imagery to fill gap period between 5 and 8.
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+      .filterBounds(roi)
+      .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
+      .map(utils.preprocess457);
+  
+  // Get Landsat 8 imagery.
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+      .filterBounds(roi)
+      .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
+      .map(utils.preprocess8);
 }
 
 // Merge pre-processed Landsat 5, 7 and 8 collections
 var collection = collection5
-      .merge(collection7)
-      .merge(collection8)
-      .map(utils.addCloudScore)
-      .map(utils.maskCloudScore) // mask based on simple cloud score
-      .map(utils.spectralTransformsFnFactory(DEPENDENT))
-      .sort('system:time_start');
+    .merge(collection7)
+    .merge(collection8)
+    .map(utils.addCloudScore)
+    .map(utils.maskCloudScore) // mask based on simple cloud score
+    .map(utils.spectralTransformsFnFactory(DEPENDENT))
+    .sort('system:time_start');
   
 
 // Moving window baseline estimation
 for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
-    var end = start + (WINDOW - 1);
+  var end = start + (WINDOW - 1);
+  
+  var experiment_name = DEPENDENT + '_' + start + '-' + end + '_' + HARMONICS + '_' + TS;
+  var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + experiment_name;
+  
+  // Dictionary for asset properties
+  var outputProperties = ee.Dictionary({
+      'system:time_start': ee.Date(start+'-01-01').millis(),
+      'system:time_end': ee.Date(end+'-12-31').millis(),
+      'spectral_band': DEPENDENT,
+      'year_start': start,
+      'year_end': end,
+      'version': VERSION,
+      'harmonics': HARMONICS,
+      'time_series': TS,
+      'name': experiment_name,
+      'state': STATE});
+  
+  // Filter full Landsat collection to moving window period
+  var collection_filt = collection.filterDate(start + '-01-01', end + '-12-31') ;
+  
+  // Join images by Scene (Path/Row)
+  var join = ee.Join.saveAll('images', 'system:time_start', true);
+  var collections = join.apply({
+          primary: scenes, 
+          secondary: collection_filt, 
+          condition: ee.Filter.and(
+              ee.Filter.equals({
+                  leftField: 'PATH', 
+                  rightField: 'WRS_PATH'}), 
+              ee.Filter.equals({
+                  leftField: 'ROW', 
+                  rightField: 'WRS_ROW'}))
+      });
+  
+  // Map harmonic estimation over scene collections
+  var outputFull = ee.ImageCollection(collections.map(getCoeffs));
+  
+  // Combine results by Path
+  for(var path = path_start; path <= path_stop; path++){
+    var images = outputFull.filterMetadata('WRS_PATH', 'equals', path);
+    var path_proj = images.first().projection();
     
-    var experiment_name = DEPENDENT + '_' + start + '-' + end + '_' + HARMONICS + '_' + TS;
-    var output_name = OUTPUT_COLLECTION + 'features-v' + VERSION + '_' + experiment_name;
+    // Quality mosaic based on number of observations per pixel (endlap filter)
+    var outputMosaic = ee.Image(images
+        .qualityMosaic('nobs')
+        .clip(roi)
+        .setMulti(outputProperties))
+        .set('WRS_PATH', path);
     
-    // Dictionary for asset properties
-    var outputProperties = ee.Dictionary({
-        'system:time_start': ee.Date(start+'-01-01').millis(),
-        'system:time_end': ee.Date(end+'-12-31').millis(),
-        'spectral_band': DEPENDENT,
-        'year_start': start,
-        'year_end': end,
-        'version': VERSION,
-        'harmonics': HARMONICS,
-        'time_series': TS,
-        'name': experiment_name,
-        'state': STATE
-    });
-    
-    // Filter full Landsat collection to moving window period
-    var collection_filt = collection.filterDate(start + '-01-01', end + '-12-31') ;
-    
-    // Join images by Scene (Path/Row)
-    var join = ee.Join.saveAll('images', 'system:time_start', true);
-    var collections = join.apply({
-        primary: scenes, 
-        secondary: collection_filt, 
-        condition: ee.Filter.and(
-            ee.Filter.equals({
-                leftField: 'PATH', 
-                rightField: 'WRS_PATH'
-            }), ee.Filter.equals({
-                leftField: 'ROW', 
-                rightField: 'WRS_ROW'
-            }))
-    });
-    
-    // Map harmonic estimation over scene collections
-    var outputFull = ee.ImageCollection(collections.map(getCoeffs));
-    
-    // Combine results by Path
-    for(var path = path_start; path <= path_stop; path++){
-        var images = outputFull.filterMetadata('WRS_PATH', 'equals', path);
-        var path_proj = images.first().projection();
-        
-        // Quality mosaic based on number of observations per pixel (endlap filter)
-        var outputMosaic = ee.Image(images
-            .qualityMosaic('nobs')
-            .clip(roi)
-            .setMulti(outputProperties))
-            .set('WRS_PATH', path);
-        
-        Export.image.toAsset({
-            image: outputMosaic,
-            description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,
-            assetId: output_name + '_p' + path + '_' + STATE,
-            region: roi.bounds(),
-            crs: path_proj,
-            scale: 30,
-            maxPixels: 1e13,
-        });
-    }
+    Export.image.toAsset({
+        image: outputMosaic,
+        description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,
+        assetId: output_name + '_p' + path + '_' + STATE,
+        region: roi.bounds(),
+        crs: path_proj,
+        scale: 30,
+        maxPixels: 1e13});
+  }
 }

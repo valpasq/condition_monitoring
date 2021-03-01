@@ -1,0 +1,355 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var table = ee.FeatureCollection("TIGER/2018/States");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Harmonic Condition Assessment -- 
+// | Monitoring & Assessment
+// | 
+// | [valpasq@bu.edu], 2020
+// |
+// | This script generates condition scores for each acquisition date
+// | within the specified monitoring period and averages across dates
+// | and Landsat WRS2 Paths. Results are output by ROI (e.g. US state).
+
+// ---------------------------------- Imports & Outputs ---------------------------------- 
+var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
+
+var VERSION = '9-1-2';
+
+var ROOT = 'projects/sites-project/condition_monitoring/';
+var BASELINES = 'baselines_v8-0_by_state';
+
+// var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_monthly/';
+var OUTPUT_COLLECTION = 'projects/ee-valeriepasquarella/assets/HCM-GEE/v' + VERSION + '_TCG_annual/';
+var OUTPUT_CRS = 'EPSG:5070';
+
+var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
+
+var STATES = ['ME'];
+
+// -------------------------------- Monitoring Parameters --------------------------------- 
+var START_YEAR = 1995;      // First year in monitoring year list
+var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)
+
+var DAY_START = '05-01';    // Date to start monitoring
+var DAY_END = '10-01';      // Date to end monitoring (not inclusive)
+
+var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
+var OBS_MIN = 30;           // exclude baseline models fit with less than minimum nobs
+
+var N_MODELS = 5;           // number of models to include in ensemble
+
+var MAX_STDDEV = 5;         // maximum allowable standard deviation to include scores in weighted average
+
+
+// -------------------------------- Baseline Info -------------------------------- 
+var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
+
+var DEPENDENT = BASELINES_COLLECTION.first()
+    .get('spectral_band').getInfo();
+    
+var HARMONICS = BASELINES_COLLECTION.first()
+    .get('harmonics').getInfo();
+
+// ------------------------------ Modeling Constants -------------------------------- 
+
+if (HARMONICS == 'h13') {
+  var HARMONIC_FREQUENCIES = ee.List([1,3]);
+} else if (HARMONICS == 'h12') {
+  var HARMONIC_FREQUENCIES = ee.List([1,2]);
+}
+
+var COS_NAMES = utils.getNames('cos_', HARMONIC_FREQUENCIES);
+var SIN_NAMES = utils.getNames('sin_', HARMONIC_FREQUENCIES);
+
+var INDEPENDENTS = ee.List(['constant', 't']).cat(COS_NAMES).cat(SIN_NAMES);
+    
+var ADD_HARMONICS_FN = utils.addHarmonicsFnFactory(
+    HARMONIC_FREQUENCIES, COS_NAMES, SIN_NAMES);
+    
+
+// ---------------------------------- Functions ---------------------------------- 
+
+// Function to build monitoring collection
+function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
+  
+  // Get Landsat 5 imagery
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end)  
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess457);
+      
+  // Get Landsat 7 imagery
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess457);
+  
+  // Get  Landsat 8 imagery
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+      .filterDate(monitor_start, monitor_end) 
+      .filterBounds(clipBound) 
+      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+      .map(utils.preprocess8); 
+  
+  // FINAL LTS COLLECTION
+  var collection = collection5.merge(collection7).merge(collection8)
+      .map(function(image) {
+            return image.set({
+                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+                'WRS_PATH': image.get('WRS_PATH')});
+          })
+      .map(utils.addCloudScore)
+      .map(utils.maskCloudScore) 
+      .map(utils.spectralTransformsFnFactory(dependent))
+      .sort('system:time_start');
+        
+  // ENDLAP FILTERING
+  var acquisitions = collection.aggregate_array('SENSING_TIME').distinct();
+    
+  // Take mean for each acquisition date (Path)
+  var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
+        var date = ee.Date(d);
+        var date2 = date.advance(24, 'hour');
+        var path = collection.filterDate(date, date2).first().get('WRS_PATH');
+        
+        return collection.filterDate(date, date2).mean()
+            .set({
+                'system:time_start': date.millis(), 
+                'WRS_PATH': path});
+      }));
+    
+  // Return image collection for monitoring period
+  return monitorC;
+}
+
+// Function to combine results across Paths
+function weight_paths(image) {
+  var nobs = image.select(DEPENDENT + '_count');
+ 
+  var score_mean = image
+      .select('score_mean')
+      .multiply(nobs)
+      .rename('score_mean_scaled');
+      
+  var score_variance = image
+      .select('score_variance')
+      .multiply(nobs)
+      .rename('score_variance_scaled');
+          
+  var value_mean = image
+      .select(DEPENDENT + '_mean')
+      .multiply(nobs)
+      .rename(DEPENDENT + '_mean_scaled');
+      
+  var value_variance = image
+      .select(DEPENDENT + '_variance')
+      .multiply(nobs)
+      .rename(DEPENDENT + '_variance_scaled');
+  
+  return image.addBands(score_mean)
+      .addBands(score_variance)
+      .addBands(value_mean)
+      .addBands(value_variance)
+      .reproject(OUTPUT_CRS, null, 30);
+}
+
+// --------------------------------- PREDICT ---------------------------------- 
+
+for (var state_index in STATES) {
+  var state = STATES[state_index];
+    
+  for (var year = START_YEAR; year <= END_YEAR; year++) {
+    var roi = ee.FeatureCollection(table)
+        .filterMetadata('STUSPS', 'equals', state)
+        .geometry().dissolve();
+  
+    var MONITOR_START = year + '-' + DAY_START;
+    var MONITOR_END = year + '-' + DAY_END;
+          
+    var OUTPUT_PROPERTIES = ee.Dictionary({
+        'system:time_start': ee.Date(MONITOR_START).millis(),
+        'system:time_end': ee.Date(MONITOR_END).millis(),
+        'spectral_band': DEPENDENT,
+        'monitor_year': year,
+        'monitor_start': MONITOR_START,
+        'monitor_end': MONITOR_END,
+        'n_models': N_MODELS,
+        'state': state});
+        
+    // Get baselines
+    var baselines_for_state = BASELINES_COLLECTION
+        .filterMetadata('state', 'equals', state)
+        .filter(ee.Filter.rangeContains('year_end', year - N_MODELS, year - 1));
+    
+    // Get WRS2 paths
+    var paths = ee.FeatureCollection(baselines_for_state
+        .aggregate_array('WRS_PATH')
+        .distinct()
+        .map(function(path) {
+              return ee.Feature(null, {'WRS_PATH': path});
+            }));
+        
+    // All baselines will have a footprint that cover our entire study area.
+    var broad_geo_footprint = baselines_for_state.first().geometry();
+    
+    var baselines_by_path = ee.FeatureCollection(
+        ee.Join.saveAll('baselines').apply(
+            paths, 
+            baselines_for_state, 
+            ee.Filter.equals({
+                leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
+        
+    var baseline_coeffs_by_path = ee.ImageCollection(
+        baselines_by_path.map(function(f) {
+              var baselines = ee.ImageCollection.fromImages(f.get('baselines'));
+              var reference_proj = baselines.first().projection();
+              return baselines
+                  .toArrayPerBand()
+                  .reproject(reference_proj)
+                  .set('WRS_PATH', f.get('WRS_PATH'));
+            }));   
+          
+    var all_observations = monitorTS(
+        broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
+        
+    var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
+        baseline_coeffs_by_path,
+        all_observations,
+        ee.Filter.equals({
+            leftField: 'WRS_PATH', rightField: 'WRS_PATH'})));
+        
+    var avg_dev_per_path = obs_to_paths.map(function(model_image) {
+          var model = model_image;
+          var observations = ee.ImageCollection.fromImages(
+              model_image.get('observed'));
+              
+          var obs_nobs = observations.reduce('count');
+              
+          var model_rmse = model_image.select('rmse');
+          
+          var predict_fn = utils.addPredictionFnFactory(INDEPENDENTS, model);
+          var scores = observations.map(function(observed_image) {
+                // Note we don't use the actual bands from the observed_image here.
+                var terms = 
+                    ADD_HARMONICS_FN(
+                        utils.addTime(utils.addConstant(observed_image)));
+                
+                var predictions = predict_fn(terms).select('prediction');
+    
+                var residuals = observed_image.subtract(predictions);
+                var rmse_scores = residuals.divide(model_rmse);
+    
+                return rmse_scores;
+              }).map(function(observed_image) {
+                return observed_image.unmask(
+                    ee.Image(ee.Array([], ee.PixelType.float())));
+              });
+              
+              var scores_flat = scores.toArrayPerBand();
+              var scores_flat_mask = scores_flat.arrayLength(0).neq(0);
+              
+              scores_flat = scores_flat.updateMask(scores_flat_mask);
+              
+              var scores_mean = scores_flat
+                  .arrayReduce(ee.Reducer.mean(), [0])
+                  .arrayGet([0])
+                  .rename('score_mean');
+                  
+              var scores_variance = scores_flat
+                  .arrayReduce(ee.Reducer.variance(), [0])
+                  .arrayGet([0])
+                  .rename('score_variance');
+              
+              var score_image = ee.Image(scores_mean
+                  .addBands(scores_variance)
+                  .addBands(obs_nobs)
+                  .addBands(observations.reduce('mean'))
+                  .addBands(observations.reduce('variance'))
+                  .copyProperties(model_image, ['WRS_PATH']));
+              
+              score_image = score_image
+                  .updateMask(score_image
+                  .select('score_variance').lte(MAX_STDDEV * MAX_STDDEV));
+        
+              return score_image
+                  .reproject(model_image.projection())
+                  .set(OUTPUT_PROPERTIES);
+        });
+        
+    // --------------------------------- Combine Results ---------------------------------- 
+    var weighted = avg_dev_per_path.map(weight_paths);
+    
+    var total_obs = weighted
+        .select(DEPENDENT + '_count')
+        .reduce('sum')
+        .toUint8();
+    
+    var score_wt_mean = ee.Image(weighted
+        .select('score_mean_scaled')
+        .reduce('sum')
+        .divide(total_obs))
+        .toFloat();
+      
+    var score_wt_stddev = ee.Image(weighted
+        .select('score_variance_scaled')
+        .reduce('sum')
+        .divide(total_obs)
+        .sqrt())
+        .toFloat();
+        
+    var value_wt_mean = ee.Image(weighted
+        .select(DEPENDENT + '_mean_scaled')
+        .reduce('sum')
+        .divide(total_obs))
+        .toFloat();
+    
+    var value_wt_stddev = ee.Image(weighted
+        .select(DEPENDENT + '_variance_scaled')
+        .reduce('sum')
+        .divide(total_obs)
+        .sqrt())
+        .toFloat();
+    
+    var final_img = ee.Image(score_wt_mean
+        .addBands(score_wt_stddev)
+        .addBands(value_wt_mean)
+        .addBands(value_wt_stddev)
+        .addBands(total_obs)
+        .rename(['score_mean', 'score_stddev', 
+            DEPENDENT + '_mean', DEPENDENT + '_stddev', 
+            'total_nobs'])
+        .reproject(OUTPUT_CRS, null, 30)
+        .clip(roi)
+        .setMulti(OUTPUT_PROPERTIES));
+    
+    // Map.addLayer(final_img);
+    
+    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
+    
+    if (EXPORT_TYPE === 'Drive') {
+      Export.image.toDrive({
+          image: final_img.toFloat(), 
+          description: 'result_' + asset_name,
+          folder: 'condition_monitoring_' + VERSION + '_by_state' + '_' + DEPENDENT, 
+          fileNamePrefix: asset_name + '_' + DEPENDENT, 
+          region: broad_geo_footprint,
+          crs: OUTPUT_CRS,
+          scale: 30,
+          maxPixels: 1e13}); 
+    } else if (EXPORT_TYPE === 'Asset') {     
+      Export.image.toAsset({
+          image: final_img,
+          description: 'result_' + asset_name,
+          assetId: OUTPUT_COLLECTION + asset_name,
+          region: broad_geo_footprint,
+          crs: OUTPUT_CRS,
+          scale: 30,
+          maxPixels: 1e13});
+    } else {
+      print('Check export type, specify Drive or Asset');
+    }
+  } 
+}

@@ -165,7 +165,7 @@ var state_outlines = ee.Image().byte().paint({
   }); 
   
 Map.addLayer(state_outlines, {palette: 'gray'}, 'state boundaries');
-Map.centerObject(POINT_ROI, 14);
+// Map.centerObject(POINT_ROI, 14);
  
 // ---------------- MAP STYLING ----------------
 var style = {

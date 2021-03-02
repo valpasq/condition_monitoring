@@ -2,8 +2,8 @@
 var states = ee.FeatureCollection("TIGER/2018/States"),
     v9_0_annual = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     v9_0_monthly = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_monthly"),
-    geometry = /* color: #ffffff */ee.Geometry.Point([-72.24424941466329, 42.42221199601379]),
-    table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple");
+    quabbin_plots = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
+    geometry = /* color: #ffffff */ee.Geometry.Point([-72.24424941466329, 42.42221199601379]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -27,7 +27,7 @@ var END_ASSESS = 2020;
 
 var DISPLAY_YEAR = 2016;
 var START_DATE = ee.Date(DISPLAY_YEAR + '-04-01').millis().getInfo();
-var END_DATE = ee.Date(DISPLAY_YEAR + '-09-30').millis().getInfo();
+var END_DATE = ee.Date(DISPLAY_YEAR + '-10-01').millis().getInfo();
 
 // ---------------------- Visualization ---------------------- 
 // Default palette used in Pasquarella et al. 2017, 2018
@@ -88,11 +88,12 @@ for(var month = 5; month <= 9; month++){
       .filterMetadata('monitor_start', 'equals', DISPLAY_YEAR+'-0' + month + '-01')
       .mosaic();
       
-  var score_disp_m = disp_img_m
-      .focal_mean(30, 'circle', 'meters', 1);
+  var score_disp_m = disp_img_m;
+      // .focal_mean(30, 'circle', 'meters', 1);
   
   var thresh_mask_m = score_disp_m.select('score_mean').lte(THRESHOLD)
       .or(score_disp_m.select('score_mean').gte(THRESHOLD*-1));
+  
   score_disp_m = score_disp_m.updateMask(thresh_mask_m);
 
   // c = (1 / (1 + s))^0.6;
@@ -104,7 +105,7 @@ for(var month = 5; month <= 9; month++){
       .tanh()
       .add(1).multiply(0.5);
 
-  var score_mean_viz_alpha_m = score_disp_m.select('score_stddev')
+  var score_mean_viz_alpha_m = score_disp_m.select('score_mean')
       .visualize(viz)
       .toUint8()
       .updateMask(thresh_mask_m.multiply(confidence_scale_m));
@@ -166,7 +167,7 @@ var state_outlines = ee.Image().byte().paint({
   }); 
   
 Map.addLayer(state_outlines, {palette: 'gray'}, 'state boundaries');
-Map.addLayer(table, {color: 'white'}, 'Quabbin plots');
+Map.addLayer(quabbin_plots, {color: 'white'}, 'Quabbin plots');
  
 // ---------------- MAP STYLING ----------------
 var style = {

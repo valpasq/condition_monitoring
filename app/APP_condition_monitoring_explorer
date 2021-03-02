@@ -4,7 +4,7 @@ var GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater"),
     v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
-var stylers = require('users/valeriepasquarella/default:map_stylers');
+var stylers = require('users/valeriepasquarella/shared:map_stylers');
 
 //  Results collection
 var images = v9_0;

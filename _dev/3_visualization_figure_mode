@@ -1,9 +1,9 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var states = ee.FeatureCollection("TIGER/2018/States"),
-    annual = ee.ImageCollection("projects/sites-project/baselines_v8-0_by_state_products_annual"),
-    monthly = ee.ImageCollection("projects/sites-project/baselines_v8-1_by_state_products_monthly"),
-    geometry = /* color: #ffffff */ee.Geometry.Point([-71.65306909010884, 42.03143520001809]),
-    annual_w_tcg = ee.ImageCollection("projects/sites-project/baselines_v8-2_by_state_products_annual");
+    v9_0_annual = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
+    v9_0_monthly = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_monthly"),
+    geometry = /* color: #ffffff */ee.Geometry.Point([-72.24424941466329, 42.42221199601379]),
+    table = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -17,8 +17,8 @@ var states = ee.FeatureCollection("TIGER/2018/States"),
 // | DEMO VERSION -- FOR TESTING ONLY
 
 // -------------------- Image Collections ---------------------
-var FINAL_PRODUCTS = annual_w_tcg;
-var FINAL_PRODUCTS_m = monthly;
+var FINAL_PRODUCTS = v9_0_annual;
+var FINAL_PRODUCTS_m = v9_0_monthly;
 
 var POINT_ROI = geometry;
 
@@ -38,6 +38,8 @@ var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var THRESHOLD = -1.5;
+
+// var TCG_MIN = 0.15;
 
 // ----------------------- Map Results ------------------------
 
@@ -76,7 +78,7 @@ var scores = images.select('score_mean', 'score_stddev')
 var values = images.select(['tcg_mean', 'tcg_stddev'])
     .map(range_fn_factory('tcg_mean', 'tcg_stddev'));
 
-var scores_m = images_m.map(range_fn_factory('weighted_mean', 'weighted_stddev'));
+var scores_m = images_m.map(range_fn_factory('score_mean', 'score_stddev'));
 
 // ---------------- MONTHLY RESULTS ----------------
 // Loop over months to add each product to Map
@@ -89,20 +91,20 @@ for(var month = 5; month <= 9; month++){
   var score_disp_m = disp_img_m
       .focal_mean(30, 'circle', 'meters', 1);
   
-  var thresh_mask_m = score_disp_m.select('weighted_mean').lte(THRESHOLD)
-      .or(score_disp_m.select('weighted_mean').gte(THRESHOLD*-1));
+  var thresh_mask_m = score_disp_m.select('score_mean').lte(THRESHOLD)
+      .or(score_disp_m.select('score_mean').gte(THRESHOLD*-1));
   score_disp_m = score_disp_m.updateMask(thresh_mask_m);
 
   // c = (1 / (1 + s))^0.6;
   // c = (TanH(7*(c - 0.5)) + 1)*0.5;
   var confidence_scale_m = ee.Image(1)
-      .divide(score_disp_m.select('weighted_stddev').add(1))
+      .divide(score_disp_m.select('score_stddev').add(1))
       .pow(0.6)
       .subtract(0.5).multiply(7)
       .tanh()
       .add(1).multiply(0.5);
 
-  var score_mean_viz_alpha_m = score_disp_m.select('weighted_mean')
+  var score_mean_viz_alpha_m = score_disp_m.select('score_stddev')
       .visualize(viz)
       .toUint8()
       .updateMask(thresh_mask_m.multiply(confidence_scale_m));
@@ -116,19 +118,18 @@ var disp_img = images
       .filterMetadata('monitor_year', 'equals', DISPLAY_YEAR)
       .mosaic();
       
-var score_disp = disp_img
-    .focal_mean(30, 'circle', 'meters', 1);
+var score_disp = disp_img;
+    // .focal_mean(30, 'circle', 'meters', 1);
     // .focal_mean(150, 'square', 'meters', 1);
 
 var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD)
     .or(score_disp.select('score_mean').gte(THRESHOLD*-1));
 
-var TCG_MIN = 0.15;
-var tcg_mask = score_disp.select('tcg_mean').gte(TCG_MIN);
+// var tcg_mask = score_disp.select('tcg_mean').gte(TCG_MIN);
     
 score_disp = score_disp
-    .updateMask(thresh_mask)
-    .updateMask(tcg_mask);
+    .updateMask(thresh_mask);
+    // .updateMask(tcg_mask);
 
 // c = (1 / (1 + s))^0.6;
 // c = (TanH(7*(c - 0.5)) + 1)*0.5;
@@ -165,7 +166,7 @@ var state_outlines = ee.Image().byte().paint({
   }); 
   
 Map.addLayer(state_outlines, {palette: 'gray'}, 'state boundaries');
-// Map.centerObject(POINT_ROI, 14);
+Map.addLayer(table, {color: 'white'}, 'Quabbin plots');
  
 // ---------------- MAP STYLING ----------------
 var style = {
@@ -191,7 +192,7 @@ var series_tcg = ee.ImageCollection(values)
     .filterMetadata('state', 'equals', state_code);
 
 var series_m = ee.ImageCollection(scores_m)
-    .select(['lower', 'weighted_mean', 'upper'])
+    .select(['lower', 'score_mean', 'upper'])
     .filterMetadata('state', 'equals', state_code);
 
 var annual_time_series = ui.Chart.image.series(
@@ -280,24 +281,24 @@ var monthly_time_series_all_years = ui.Chart.image.series(
                 title: 'Year', 
             },
             series: {
-                0: {
-                    labelInLegend: '-1σ',
-                    color: 'grey',
-                    lineWidth: 0, 
-                    pointSize: 2,
-                },
-                1: {
-                    labelInLegend: '+1σ',
-                    color: 'silver',
-                    lineWidth: 0,
-                    pointSize: 2,
-                },
-                2: {
-                    labelInLegend: 'mean',
-                    color: 'black',
-                    lineWidth: 0,
-                    pointSize: 4
-                }
+              0: {
+                  labelInLegend: '-1σ',
+                  color: 'grey',
+                  lineWidth: 0, 
+                  pointSize: 2,
+              },
+              1: {
+                  labelInLegend: 'mean',
+                  color: 'black',
+                  lineWidth: 0,
+                  pointSize: 3
+              },
+              2: {
+                  labelInLegend: '+1σ',
+                  color: 'silver',
+                  lineWidth: 0,
+                  pointSize: 2,
+              },
             },
         });
 print(monthly_time_series_all_years);
@@ -333,23 +334,23 @@ var monthly_time_series = ui.Chart.image.series(
                     labelInLegend: '-1σ',
                     color: 'grey',
                     lineWidth: 1, 
-                    pointSize: 2,
+                    pointSize: 0,
                     curveType: 'function'
                 },
                 1: {
-                    labelInLegend: '+1σ',
-                    color: 'silver',
-                    lineWidth: 1,
-                    pointSize: 2,
-                    curveType: 'function'
-                },
-                2: {
                     labelInLegend: 'mean',
                     color: 'black',
                     lineWidth: 0,
-                    pointSize: 4
-                }
-            },
+                    pointSize: 3
+                },
+                2: {
+                    labelInLegend: '+1σ',
+                    color: 'silver',
+                    lineWidth: 1,
+                    pointSize: 0,
+                    curveType: 'function'
+                },
+              },
         });
 print(monthly_time_series);
 

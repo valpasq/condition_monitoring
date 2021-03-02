@@ -52,12 +52,7 @@ var images_m = FINAL_PRODUCTS_m
 var images = FINAL_PRODUCTS
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
     .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
-
-// Get list of years
-var years = images
-    .aggregate_array('monitor_year')
-    .distinct();
-var num_years = years.size().getInfo();
+    
 
 // Function to get score range for chart visualization
 var range_fn_factory = function(mean_band, stddev_band) {
@@ -146,8 +141,8 @@ var score_mean_viz_alpha = score_disp.select('score_mean')
     .toUint8()
     .updateMask(thresh_mask.multiply(confidence_scale));
 
-
 Map.addLayer(score_mean_viz_alpha, {}, 'score annual', true);
+
 
 // ---------------- ADD STATES ----------------
 // Get state outlines and style
@@ -169,6 +164,7 @@ var state_outlines = ee.Image().byte().paint({
 Map.addLayer(state_outlines, {palette: 'gray'}, 'state boundaries');
 Map.addLayer(quabbin_plots, {color: 'white'}, 'Quabbin plots');
  
+ 
 // ---------------- MAP STYLING ----------------
 var style = {
   'Figure': [{
@@ -180,8 +176,11 @@ var style = {
 Map.setOptions(null, style);
 Map.setOptions('SATELLITE');
 
+
 // ------------------- CHARTS -------------------
-var state_code = ee.Feature(STATES.filterBounds(POINT_ROI).first())
+var state_code = ee.Feature(STATES
+    .filterBounds(POINT_ROI)
+    .first())
     .get('STUSPS');
   
 var series = ee.ImageCollection(scores)

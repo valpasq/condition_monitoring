@@ -514,3 +514,8 @@ var init_layer = ui.Map.Layer(draw_map_fn(END_YEAR, default_threshold), {}, 'Mea
 Map.layers().set(1, init_layer);
 
 Map.setCenter(-73.299, 43.011, 6);
+
+Map.setControlVisibility({
+    zoomControl: true,
+    drawingToolsControl: false,
+    layerList: true});

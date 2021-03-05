@@ -41,7 +41,7 @@ var state_outlines = ee.Image().byte().paint({
 
 // ------------------------------------------
 // Get Global Surface Water Mapping Layers for masking
-var OCCURRENCE_THRESH = 95;
+var OCCURRENCE_THRESH = 50;
 
 var water_mask = GSW.select('occurrence')
     .gte(OCCURRENCE_THRESH).unmask().not();

@@ -3,8 +3,8 @@ var states = ee.FeatureCollection("TIGER/2018/States"),
     v9_0_annual = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     v9_0_monthly = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_monthly"),
     quabbin_plots = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/HF-GM/PlotDefHarvSimple"),
-    geometry = /* color: #ffffff */ee.Geometry.Point([-72.27257354186055, 42.484843412340666]),
-    lter_oak = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/LTER_OakPlots");
+    lter_oak = ee.FeatureCollection("projects/ee-valeriepasquarella/assets/LTER_OakPlots"),
+    geometry = /* color: #ffffff */ee.Geometry.Point([-72.27257354186055, 42.484843412340666]);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -164,7 +164,9 @@ var state_outlines = ee.Image().byte().paint({
   
 Map.addLayer(state_outlines, {palette: 'gray'}, 'state boundaries');
 Map.addLayer(quabbin_plots, {color: 'black'}, 'Quabbin plots');
-Map.addLayer(lter_oak, {color: 'lightgrey'}, 'LTER oak plots');
+
+var oak_filt = lter_oak.filterMetadata('plot2019', 'equals', 'Y');
+Map.addLayer(oak_filt, {color: 'lightgrey'}, 'LTER oak plots');
   
  
 // ---------------- MAP STYLING ----------------

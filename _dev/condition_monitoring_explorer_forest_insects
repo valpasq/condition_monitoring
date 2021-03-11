@@ -450,7 +450,7 @@ Map.onClick(function(coords) {
   // Add a point to the map where the user clicked.
   var point = ee.Geometry.Point(coords.lon, coords.lat);
   coords = point;
-  Map.layers().set(3, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
+  Map.layers().set(5, ui.Map.Layer(point, {color: 'white'}, 'Clicked point'));
   
   var state_code = ee.Feature(STATES.filterBounds(point).first())
       .get('STUSPS');
@@ -525,7 +525,8 @@ var hem_outline = ee.Image().byte().paint({
     featureCollection: hemlock,
     width: 2
   }); 
-Map.addLayer(hem_outline, {palette: 'white'}, 'Hemlock stands');
+// Map.addLayer(hem_outline, {palette: 'white'}, 'Hemlock stands');
+Map.addLayer(hemlock, {color: 'lightgrey'}, 'Hemlock stands');
 Map.addLayer(waypoints, {color: 'lightgrey'}, 'Orwig sites');
 
 

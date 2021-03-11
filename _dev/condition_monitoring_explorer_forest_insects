@@ -520,10 +520,14 @@ Map.layers().set(1, init_layer);
 var gm = lter_oak.filterMetadata('plot2019', 'equals', 'Y');
 Map.addLayer(gm, {color: 'lightgrey'}, 'LTER GM plots');
 
-Map.addLayer(hem_ct, {color: 'lightgrey'}, 'LTER GM plots');
-Map.addLayer(hem_ma, {color: 'lightgrey'}, 'LTER GM plots');
-
-Map.addLayer(waypoints, {color: 'lightgrey'}, 'LTER GM plots');
+var hemlock = hem_ct.merge(hem_ma);
+var hem_outline = ee.Image().byte().paint({
+    featureCollection: hemlock,
+    color: 'darkgreen',
+    width: 2
+  }); 
+Map.addLayer(hem_outline, {color: 'darkgreen'}, 'Hemlock stands');
+Map.addLayer(waypoints, {color: 'lightgrey'}, 'Orwig sites');
 
 
 Map.setCenter(-73.299, 43.011, 6);

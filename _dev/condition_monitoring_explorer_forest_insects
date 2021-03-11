@@ -523,10 +523,9 @@ Map.addLayer(gm, {color: 'lightgrey'}, 'LTER GM plots');
 var hemlock = hem_ct.merge(hem_ma);
 var hem_outline = ee.Image().byte().paint({
     featureCollection: hemlock,
-    color: 'darkgreen',
     width: 2
   }); 
-Map.addLayer(hem_outline, {color: 'darkgreen'}, 'Hemlock stands');
+Map.addLayer(hem_outline, {palette: 'white'}, 'Hemlock stands');
 Map.addLayer(waypoints, {color: 'lightgrey'}, 'Orwig sites');
 
 

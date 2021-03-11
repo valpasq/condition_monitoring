@@ -526,7 +526,7 @@ var hem_outline = ee.Image().byte().paint({
     width: 2
   }); 
 // Map.addLayer(hem_outline, {palette: 'white'}, 'Hemlock stands');
-Map.addLayer(hemlock, {color: 'lightgrey'}, 'Hemlock stands');
+Map.addLayer(hemlock, {color: 'navy'}, 'Hemlock stands');
 Map.addLayer(waypoints, {color: 'lightgrey'}, 'Orwig sites');
 
 

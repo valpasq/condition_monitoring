@@ -90,7 +90,7 @@ var maskCloudScore = function(image) {
   var mask = qa.gte(0.8);
   return image.updateMask(mask)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
-}
+};
 
 
 var getNames = function(base, list) {

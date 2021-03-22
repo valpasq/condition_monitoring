@@ -27,8 +27,8 @@ var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 var STATES = ['MA'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 1995;      // First year in monitoring year list
-var END_YEAR = 1998;        // Last year in monitoring year list (inclusive)
+var START_YEAR = 1996;      // First year in monitoring year list
+var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '10-01';      // Date to end monitoring (not inclusive)
@@ -42,7 +42,15 @@ var MAX_STDDEV = 5;         // maximum allowable standard deviation to include s
 
 
 // -------------------------------- Baseline Info -------------------------------- 
-var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
+
+function slope_mask(img) {
+  var slope = img.select('t').multiply(2 * Math.PI);
+  img = img.updateMask(slope.gte(-0.005).and(slope.lte(0.005)));
+  return img.copyProperties(img);
+}
+
+var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES)
+    .map(slope_mask);
 
 var DEPENDENT = BASELINES_COLLECTION.first()
     .get('spectral_band').getInfo();

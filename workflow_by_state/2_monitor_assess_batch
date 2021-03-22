@@ -329,6 +329,7 @@ for (var state_index in STATES) {
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     
     if (EXPORT_TYPE === 'Drive') {
+      
       Export.image.toDrive({
           image: final_img.toFloat(), 
           description: 'result_' + asset_name,
@@ -338,7 +339,9 @@ for (var state_index in STATES) {
           crs: OUTPUT_CRS,
           scale: 30,
           maxPixels: 1e13}); 
-    } else if (EXPORT_TYPE === 'Asset') {     
+          
+    } else if (EXPORT_TYPE === 'Asset') {
+      
       Export.image.toAsset({
           image: final_img,
           description: 'result_' + asset_name,
@@ -347,6 +350,7 @@ for (var state_index in STATES) {
           crs: OUTPUT_CRS,
           scale: 30,
           maxPixels: 1e13});
+          
     } else {
       print('Check export type, specify Drive or Asset');
     }

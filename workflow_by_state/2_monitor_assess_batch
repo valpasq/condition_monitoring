@@ -221,9 +221,7 @@ for (var state_index in STATES) {
         
     var avg_dev_per_path = obs_to_paths.map(function(model_image) {
           var model = model_image;
-          var slope = model_image.select('t').multiply(2 * Math.PI);
-          model_image = model_image.updateMask(slope.gte(-0.005).and(slope.lte(0.005)));
-          
+
           var observations = ee.ImageCollection.fromImages(
               model_image.get('observed'));
               

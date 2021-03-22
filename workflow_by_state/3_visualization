@@ -71,6 +71,6 @@ for(var year = 0; year < num_years; year++){
 }
 
 // ----------------------- Map Styling ------------------------
-var stylers = require('users/valeriepasquarella/default:map_stylers');
+var stylers = require('users/valeriepasquarella/shared:map_stylers');
 Map.setOptions('Dark', {Dark: stylers.dark_mode});
 Map.setOptions('SATELLITE');

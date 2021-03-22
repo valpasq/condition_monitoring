@@ -27,7 +27,7 @@ var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 var STATES = ['MA'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 1996;      // First year in monitoring year list
+var START_YEAR = 1995;      // First year in monitoring year list
 var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring
@@ -45,7 +45,7 @@ var MAX_STDDEV = 5;         // maximum allowable standard deviation to include s
 
 function slope_mask(img) {
   var slope = img.select('t').multiply(2 * Math.PI);
-  img = img.updateMask(slope.gte(-0.005).and(slope.lte(0.005)));
+  img = img.updateMask(slope.gte(-0.01).and(slope.lte(0.01)));
   return img.copyProperties(img);
 }
 

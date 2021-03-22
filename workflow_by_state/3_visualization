@@ -16,8 +16,8 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 var FINAL_PRODUCTS = v9_0;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 1995;
-var END_ASSESS = 2020;
+var START_ASSESS = 2015;
+var END_ASSESS = 2018;
 
 var THRESHOLD = 1.5; 
 

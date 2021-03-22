@@ -1,13 +1,14 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater"),
     STATES = ee.FeatureCollection("TIGER/2018/States"),
-    v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual");
+    v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
+    v9_1 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-1_by_state_annual");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
 var stylers = require('users/valeriepasquarella/shared:map_stylers');
 
 //  Results collection
-var images = v9_0;
+var images = v9_1;
     
 // -----------------------------
 //  Visualization parameters

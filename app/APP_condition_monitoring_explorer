@@ -8,7 +8,7 @@ var GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater"),
 var stylers = require('users/valeriepasquarella/shared:map_stylers');
 
 //  Results collection
-var images = v9_1;
+var images = v9_0;
     
 // -----------------------------
 //  Visualization parameters

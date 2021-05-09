@@ -39,6 +39,7 @@ print(select_experiment);
 
 var select_new_product = NEW_PRODUCT
     .filterMetadata('monitor_year', 'equals', YEAR)
+    .filter(ee.Filter.inList('state', ['CT', 'MA', 'RI']))
     .mosaic();
 print(select_new_product);
 
@@ -53,7 +54,8 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 }
 print(reanalysis);
 
-Map.addLayer(select_experiment.select('score_weighted_mean'));
-Map.addLayer(select_new_product.select('score_mean'));
-Map.addLayer(reanalysis);
+Map.addLayer(reanalysis, {}, 'reanalysis');
+Map.addLayer(select_experiment.select('score_weighted_mean'), {}, 'parameter experiment');
+Map.addLayer(select_new_product.select('score_mean'), {}, 'new product');
+
 

@@ -31,11 +31,17 @@ print(SAMPLE);
 // ---------------------------------- Get experiments ---------------------------------- 
 
 // Get results for selected year
-var select_experiment = EXPERIMENTS
+var select_experiment_0515 = EXPERIMENTS
     .filterMetadata('monitor_year', 'equals', YEAR)
     .filterMetadata('name', 'equals', 'tcg_2005-2015_h13_full')
     .first();
-print(select_experiment);
+print(select_experiment_0515);
+
+var select_experiment_0010 = EXPERIMENTS
+    .filterMetadata('monitor_year', 'equals', YEAR)
+    .filterMetadata('name', 'equals', 'tcg_2000-2010_h13_full')
+    .first();
+print(select_experiment_0010);
 
 var select_new_product = NEW_PRODUCT
     .filterMetadata('monitor_year', 'equals', YEAR)
@@ -56,7 +62,8 @@ print(reanalysis);
 
 var viz = {min: -4, max:4, palette: ['white', 'black']};
 Map.addLayer(reanalysis, viz, 'reanalysis');
-Map.addLayer(select_experiment.select('score_weighted_mean'), viz, 'parameter experiment');
+Map.addLayer(select_experiment_0010.select('score_weighted_mean'), viz, 'parameter experiment 2000-2005');
+Map.addLayer(select_experiment_0515.select('score_weighted_mean'), viz, 'parameter experiment 2005-2015');
 Map.addLayer(select_new_product.select('score_mean'), viz, 'new product');
 
 

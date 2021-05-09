@@ -54,8 +54,9 @@ if (YEAR >= 2015 & YEAR <= 2018) {
 }
 print(reanalysis);
 
-Map.addLayer(reanalysis, {}, 'reanalysis');
-Map.addLayer(select_experiment.select('score_weighted_mean'), {}, 'parameter experiment');
-Map.addLayer(select_new_product.select('score_mean'), {}, 'new product');
+var viz = {min: -4, max:4}
+Map.addLayer(reanalysis, viz, 'reanalysis');
+Map.addLayer(select_experiment.select('score_weighted_mean'), viz, 'parameter experiment');
+Map.addLayer(select_new_product.select('score_mean'), viz, 'new product');
 
 

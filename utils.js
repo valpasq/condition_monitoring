@@ -144,8 +144,6 @@ var addTime = function(image) {
 
 var spectralTransformsFnFactory = function(dependent) {
   return function(img){
-    // Make sure index string is in upper case
-    
     var scaled = img.divide(10000);
   
     var dict = {

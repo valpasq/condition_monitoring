@@ -101,8 +101,8 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
                 'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
                 'WRS_PATH': image.get('WRS_PATH')});
           })
-      .map(utils.addCloudScore)
-      .map(utils.maskCloudScore) 
+      // .map(utils.addCloudScore)
+      // .map(utils.maskCloudScore) 
       .map(utils.spectralTransformsFnFactory(dependent))
       .sort('system:time_start');
         

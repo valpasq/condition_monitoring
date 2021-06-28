@@ -25,7 +25,8 @@ var OUTPUT_CRS = 'EPSG:5070';
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['MA', 'CT', 'RI', 'NY', 'NH', 'VT', 'ME', 'NJ', 'PA'];
+var STATES = ['MA'];
+// var STATES = ['MA', 'CT', 'RI', 'NY', 'NH', 'VT', 'ME', 'NJ', 'PA'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2021;      // First year in monitoring year list

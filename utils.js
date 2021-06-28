@@ -109,7 +109,7 @@ var addCloudScore = function(image) {
       score = ee.Image(1).subtract(score).select([0], ['cloudscore']);
       return image.addBands(score);
 
-}
+};
 
 
 var maskCloudScore = function(image) {

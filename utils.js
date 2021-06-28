@@ -7,7 +7,10 @@
 // ---------------------------- LANDSAT Pre-processing ---------------------------- 
 
 
-var L8_BANDS = ['B2', 'B3', 'B4', 'B5',  'B6',  'B7', 'B10']; // Landsat OLI bands
+var L8_BANDS = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']; // Landsat OLI bands
+
+var L8_C2_BANDS = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6',  'SR_B7', 'B10']; // Landsat OLI bands
+
 var L457_BANDS = ['B1', 'B2', 'B3', 'B4',  'B5',  'B7', 'B6']; // Landsat TM/ETM+ bands
 var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp']; // Common names
 
@@ -37,6 +40,32 @@ var preprocess8 = function(image) {
   return image.updateMask(mask1.and(mask2).and(mask3))
       .select(L8_BANDS).rename(LTS_NAMES) // Map legacy band names
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
+};
+
+var preprocess8_c2 = function(image) {
+  // Get bits for "bad QA"
+  var dilatedcloud_bit = 1 << 1;
+  var cloud_bit = 1 << 3;
+  var cirrus_bit = 1 << 2;
+  var cloudshadow_bit = 1 << 4;
+  var snow_bit = 1 << 5;
+  
+  // Get the pixel QA band.
+  var qa = image.select('QA_PIXEL');
+
+  // Both flags should be set to zero, indicating clear conditions.
+  var mask = qa.bitwiseAnd(cloud_bit).eq(0)
+      .and(qa.bitwiseAnd(dilatedcloud_bit).eq(0))
+      .and(qa.bitwiseAnd(cirrus_bit).eq(0))
+      .and(qa.bitwiseAnd(cloudshadow_bit).eq(0))
+      .and(qa.bitwiseAnd(snow_bit).eq(0));
+
+  // Return the masked image, scaled to reflectance, without the QA bands.
+  return image
+      .updateMask(mask)
+      .select("SR_B[1-7]*")
+      .divide(10)
+      .copyProperties(image, ["system:time_start"]);
 };
 
 // ------------------------- Simple Cloud Score for SR ------------------------- 

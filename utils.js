@@ -63,7 +63,8 @@ var preprocess8_c2 = function(image) {
       .updateMask(mask.and(mask2))
       .select(L8_C2_BANDS).rename(LTS_NAMES)
       .divide(10)
-      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"])
+      .set("SENSING_TIME", image.get("DATE_ACQUIRED"));
 };
 
 // ------------------------- Simple Cloud Score for SR ------------------------- 

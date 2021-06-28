@@ -201,6 +201,7 @@ var spectralTransformsFnFactory = function(dependent) {
     }
   
     return indexImg
+      .toFloat()
       .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
   };
 };

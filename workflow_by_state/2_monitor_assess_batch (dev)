@@ -44,7 +44,6 @@ var MAX_STDDEV = 5;         // maximum allowable standard deviation to include s
 // -------------------------------- Baseline Info -------------------------------- 
 
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
-    // .map(slope_mask);
 
 var DEPENDENT = BASELINES_COLLECTION.first()
     .get('spectral_band').getInfo();
@@ -92,7 +91,7 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
       .filterDate(monitor_start, monitor_end) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess8); 
+      .map(utils.preprocess8_c2); 
   
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)

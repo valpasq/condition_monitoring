@@ -244,6 +244,7 @@ exports = {
   addHarmonicsFnFactory: addHarmonicsFnFactory,
   preprocess457: preprocess457,
   preprocess8: preprocess8,
+  preprocess8_c2: preprocess8_c2,
   cloudScore: cloudScore,
   addCloudScore: addCloudScore,
   maskCloudScore: maskCloudScore,

@@ -152,7 +152,6 @@ function weight_paths(image) {
       .addBands(score_variance)
       .addBands(value_mean)
       .addBands(value_variance)
-      .toFloat()
       .reproject(OUTPUT_CRS, null, 30);
 }
 

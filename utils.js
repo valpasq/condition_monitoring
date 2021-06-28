@@ -200,7 +200,7 @@ var spectralTransformsFnFactory = function(dependent) {
         print('The index you provided is not supported');
     }
   
-    return indexImg
+    return indexImg.toFloat()
       .copyProperties(img, ["system:time_start", "WRS_PATH", "WRS_ROW", "SENSING_TIME"]);
   };
 };

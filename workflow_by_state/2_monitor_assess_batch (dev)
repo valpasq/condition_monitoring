@@ -95,11 +95,11 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
   
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
-      // .map(function(image) {
-      //       return image.set({
-      //           'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
-      //           'WRS_PATH': image.get('WRS_PATH')});
-      //     })
+      .map(function(image) {
+            return image.set({
+                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+                'WRS_PATH': image.get('WRS_PATH')});
+          })
       .map(utils.addCloudScore)
       .map(utils.maskCloudScore) 
       .map(utils.spectralTransformsFnFactory(dependent))

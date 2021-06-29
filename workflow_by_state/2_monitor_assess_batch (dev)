@@ -78,25 +78,14 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
       .filterDate(monitor_start, monitor_end)  
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess457)
-      .map(function(image) {
-            return image.set({
-                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
-                'WRS_PATH': image.get('WRS_PATH')});
-          });
+      .map(utils.preprocess457);
       
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
       .filterDate(monitor_start, monitor_end) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess457)
-      .map(function(image) {
-            return image.set({
-                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
-                'WRS_PATH': image.get('WRS_PATH')});
-          })
-      ;
+      .map(utils.preprocess457);
       
 
   // Get  Landsat 8 imagery

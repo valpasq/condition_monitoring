@@ -27,7 +27,7 @@ var preprocess457 = function(image) {
     .multiply(0.0001)
     .select(L457_BANDS).rename(LTS_NAMES)
     .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"])
-    .set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0));
+    // .set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0));
 };
 
 

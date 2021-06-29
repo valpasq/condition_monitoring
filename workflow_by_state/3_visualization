@@ -1,5 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual");
+var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
+    v9_0p = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-1_by_state_prelim");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -13,11 +14,11 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = v9_0;
+var FINAL_PRODUCTS = v9_0p;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2015;
-var END_ASSESS = 2018;
+var START_ASSESS = 2021;
+var END_ASSESS = 2021;
 
 var THRESHOLD = 1.5; 
 

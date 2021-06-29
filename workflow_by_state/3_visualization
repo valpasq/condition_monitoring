@@ -68,7 +68,10 @@ for(var year = 0; year < num_years; year++){
   
   var year_str = year_value.getInfo();
   
+  Map.addLayer(images.select('total_nobs'), {min:0, max: 5}, 'nobs ' + year_str, true);
   Map.addLayer(score_mean_viz_alpha, {}, 'score ' + year_str, true);
+  Map.addLayer(images, {}, 'raw ' + year_str, false);
+  
 }
 
 // ----------------------- Map Styling ------------------------

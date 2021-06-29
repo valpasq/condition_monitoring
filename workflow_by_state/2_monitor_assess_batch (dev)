@@ -78,15 +78,27 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
       .filterDate(monitor_start, monitor_end)  
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess457);
+      .map(utils.preprocess457)
+      .map(function(image) {
+            return image.set({
+                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+                'WRS_PATH': image.get('WRS_PATH')});
+          });
       
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
       .filterDate(monitor_start, monitor_end) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess457);
-  
+      .map(utils.preprocess457)
+      .map(function(image) {
+            return image.set({
+                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
+                'WRS_PATH': image.get('WRS_PATH')});
+          })
+      ;
+      
+
   // Get  Landsat 8 imagery
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
       .filterDate(monitor_start, monitor_end) 
@@ -96,24 +108,15 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
   
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
-      .map(function(image) {
-            return image.set({
-                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
-                'WRS_PATH': image.get('WRS_PATH')});
-          })
       .map(utils.addCloudScore)
       .map(utils.maskCloudScore) 
       .map(utils.spectralTransformsFnFactory(dependent))
       .sort('system:time_start');
 
   
-  Map.addLayer(collection7)
-  Map.addLayer(collection8)
-  Map.addLayer(collection)
-  
   // ENDLAP FILTERING
   var acquisitions = collection.aggregate_array('SENSING_TIME').distinct();
-    
+  
   // Take mean for each acquisition date (Path)
   var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
         var date = ee.Date(d);

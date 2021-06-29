@@ -24,6 +24,7 @@ var preprocess457 = function(image) {
             .reduce('min');
   
   return image.updateMask(mask1.and(mask2).and(mask3))
+    .multiply(0.0001)
     .select(L457_BANDS).rename(LTS_NAMES)
     .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 };
@@ -38,6 +39,7 @@ var preprocess8 = function(image) {
             .reduce('min');
                
   return image.updateMask(mask1.and(mask2).and(mask3))
+      .multiply(0.0001)
       .select(L8_BANDS).rename(LTS_NAMES) // Map legacy band names
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
 };
@@ -77,7 +79,7 @@ var cloudScore = function(image) {
   // A helper to apply an expression and linearly rescale the output.
   var rescale = function(image, exp, thresholds) {
     return image.expression(exp, {image: image})
-        .divide(10000) // need to divide by 10000 (SR)
+        // .divide(10000) // need to divide by 10000 (SR)
         .subtract(thresholds[0]).divide(thresholds[1] - thresholds[0]);
   };
 
@@ -148,50 +150,50 @@ var spectralTransformsFnFactory = function(dependent) {
     // var scaled = img.divide(10000);
   
     var dict = {
-      blue: scaled.select("blue"),
-      green: scaled.select("green"), 
-      red: scaled.select("red"),
-      nir: scaled.select("nir"),
-      swir1: scaled.select("swir1"),
-      swir2: scaled.select("swir2"),
+      blue: img.select("blue"),
+      green: img.select("green"), 
+      red: img.select("red"),
+      nir: img.select("nir"),
+      swir1: img.select("swir1"),
+      swir2: img.select("swir2"),
     };
     
     var indexImg;
     switch (dependent.toUpperCase()){
       case 'NBR':
-        indexImg = scaled.normalizedDifference(['nir', 'swir2'])
+        indexImg = img.normalizedDifference(['nir', 'swir2'])
           .rename("nbr");
         break;
       case 'NDMI':
-        indexImg = scaled.normalizedDifference(['nir', 'swir1'])
+        indexImg = img.normalizedDifference(['nir', 'swir1'])
           .rename("ndmi");
         break;
       case 'NDVI':
-        indexImg = scaled.normalizedDifference(['nir', 'red'])
+        indexImg = img.normalizedDifference(['nir', 'red'])
           .rename("ndvi");
         break;
       case 'NDSI':
-        indexImg = scaled.normalizedDifference(['green', 'swir1'])
+        indexImg = img.normalizedDifference(['green', 'swir1'])
           .rename("ndsi");
         break;
       case 'EVI':
-        indexImg = scaled.expression("2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))", dict)
+        indexImg = img.expression("2.5 * ((nir - red) / (nir + 6 * red - 7.5 * blue + 1))", dict)
           .rename("evi");
         break;
       case 'TCB':
-        indexImg = scaled.expression("0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)
+        indexImg = img.expression("0.2043*blue + 0.4158*green + 0.5524*red + 0.5741*nir + 0.3124*swir1 + 0.2303*swir2", dict)
           .rename("tcb");
         break;
       case 'TCG':
-        indexImg = scaled.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
+        indexImg = img.expression("-0.1603*blue - 0.2819*green - 0.4934*red + 0.7940*nir - 0.0002*swir1 - 0.1446*swir2", dict)
           .rename("tcg");
         break;
       case 'TCW':
-        indexImg = scaled.expression("0.0315*blue + 0.2021*green + 0.3102*red + 0.1594*nir - 0.6806*swir1 - 0.6109*swir2", dict)
+        indexImg = img.expression("0.0315*blue + 0.2021*green + 0.3102*red + 0.1594*nir - 0.6806*swir1 - 0.6109*swir2", dict)
           .rename("tcw");
         break;
       case 'SR':
-        indexImg = scaled.select('nir').divide(scaled.select('red'))
+        indexImg = img.select('nir').divide(scaled.select('red'))
           .rename("sr");
         break;
   

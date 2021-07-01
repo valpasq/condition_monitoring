@@ -26,14 +26,14 @@ var OUTPUT_CRS = 'EPSG:5070';
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
 // var STATES = ['MA'];
-var STATES = ['MA', 'CT', 'RI', 'NY', 'NH', 'VT', 'ME', 'NJ', 'PA'];
+var STATES = ['NH'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2021;      // First year in monitoring year list
 var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring
-var DAY_END = '06-28';      // Date to end monitoring (not inclusive)
+var DAY_END = '07-01';      // Date to end monitoring (not inclusive)
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 
@@ -101,7 +101,7 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
       .map(utils.maskCloudScore) 
       .map(utils.spectralTransformsFnFactory(dependent))
       .sort('system:time_start');
-
+  print(collection);
   
   // ENDLAP FILTERING
   var acquisitions = collection.aggregate_array('SENSING_TIME').distinct();
@@ -117,7 +117,7 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
                 'system:time_start': date.millis(), 
                 'WRS_PATH': path});
       }));
-    
+  
   // Return image collection for monitoring period
   return monitorC;
 }
@@ -211,7 +211,7 @@ for (var state_index in STATES) {
           
     var all_observations = monitorTS(
         broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
-        
+    
     var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
         baseline_coeffs_by_path,
         all_observations,

@@ -14,7 +14,7 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '9-0';
+var VERSION = '9-1';
 
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v8-0_by_state';
@@ -25,15 +25,15 @@ var OUTPUT_CRS = 'EPSG:5070';
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['MA'];
-// var STATES = ['PA', 'NY', 'NJ', 'MA', 'CT', 'RI', 'NY', 'VT', 'NH', 'ME'];
+// var STATES = ['MA'];
+var STATES = ['NH'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2021;      // First year in monitoring year list
 var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring
-var DAY_END = '06-28';      // Date to end monitoring (not inclusive)
+var DAY_END = '07-01';      // Date to end monitoring (not inclusive)
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 
@@ -45,7 +45,6 @@ var MAX_STDDEV = 5;         // maximum allowable standard deviation to include s
 // -------------------------------- Baseline Info -------------------------------- 
 
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
-    // .map(slope_mask);
 
 var DEPENDENT = BASELINES_COLLECTION.first()
     .get('spectral_band').getInfo();
@@ -87,29 +86,26 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(utils.preprocess457);
-  
+      
+
   // Get  Landsat 8 imagery
-  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
       .filterDate(monitor_start, monitor_end) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess8); 
+      .map(utils.preprocess8_c2); 
   
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
-      .map(function(image) {
-            return image.set({
-                'SENSING_TIME': ee.String(image.get('SENSING_TIME')).split('T').get(0), 
-                'WRS_PATH': image.get('WRS_PATH')});
-          })
       .map(utils.addCloudScore)
       .map(utils.maskCloudScore) 
       .map(utils.spectralTransformsFnFactory(dependent))
       .sort('system:time_start');
-        
+  print(collection);
+  
   // ENDLAP FILTERING
   var acquisitions = collection.aggregate_array('SENSING_TIME').distinct();
-    
+  
   // Take mean for each acquisition date (Path)
   var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
         var date = ee.Date(d);
@@ -121,7 +117,7 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
                 'system:time_start': date.millis(), 
                 'WRS_PATH': path});
       }));
-    
+  
   // Return image collection for monitoring period
   return monitorC;
 }
@@ -215,7 +211,7 @@ for (var state_index in STATES) {
           
     var all_observations = monitorTS(
         broad_geo_footprint, MONITOR_START, MONITOR_END, DEPENDENT);
-        
+    
     var obs_to_paths = ee.ImageCollection(ee.Join.saveAll('observed').apply(
         baseline_coeffs_by_path,
         all_observations,
@@ -334,7 +330,7 @@ for (var state_index in STATES) {
     if (EXPORT_TYPE === 'Drive') {
       
       Export.image.toDrive({
-          image: final_img.toFloat(), 
+          image: final_img, 
           description: 'result_' + asset_name,
           folder: 'condition_monitoring_' + VERSION + '_by_state/', 
           fileNamePrefix: asset_name, 

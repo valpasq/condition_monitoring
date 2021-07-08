@@ -1,5 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual");
+var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
+    v9_0p = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-1_by_state_prelim"),
+    GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -13,11 +15,11 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = v9_0;
+var FINAL_PRODUCTS = v9_0p;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 1995;
-var END_ASSESS = 2020;
+var START_ASSESS = 2021;
+var END_ASSESS = 2021;
 
 var THRESHOLD = 1.5; 
 
@@ -25,6 +27,9 @@ var MIN = -4;
 var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var water_mask = GSW.select('occurrence')
+    .gte(50).unmask().not();
 
 // ----------------------- Map Results ------------------------
 
@@ -49,16 +54,18 @@ for(var year = 0; year < num_years; year++){
   
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));
-  score_disp = score_disp.updateMask(thresh_mask);
+  score_disp = score_disp
+      .updateMask(thresh_mask)
+      .updateMask(water_mask);
 
   // c = (1 / (1 + s))^0.6;
   // c = (TanH(7*(c - 0.5)) + 1)*0.5;
   var confidence_scale = ee.Image(1)
-    .divide(score_disp.select('score_stddev').add(1))
-    .pow(0.6)
-    .subtract(0.5).multiply(7)
-    .tanh()
-    .add(1).multiply(0.5);
+      .divide(score_disp.select('score_stddev').add(1))
+      .pow(0.6)
+      .subtract(0.5).multiply(7)
+      .tanh()
+      .add(1).multiply(0.5);
 
   var score_mean_viz_alpha = score_disp.select('score_mean')
       .visualize(viz)
@@ -67,11 +74,62 @@ for(var year = 0; year < num_years; year++){
   
   var year_str = year_value.getInfo();
   
+  Map.addLayer(images.select('total_nobs'), {min:0, max: 8}, 'nobs ' + year_str, true);
   Map.addLayer(score_mean_viz_alpha, {}, 'score ' + year_str, true);
+  Map.addLayer(images, {}, 'raw ' + year_str, false);
   
 }
 
 // ----------------------- Map Styling ------------------------
-var stylers = require('users/valeriepasquarella/default:map_stylers');
+var stylers = require('users/valeriepasquarella/shared:map_stylers');
 Map.setOptions('Dark', {Dark: stylers.dark_mode});
-Map.setOptions('SATELLITE');
+// Map.setOptions('SATELLITE');
+
+// ------------------------------------------
+// Create colorbar for legend.
+function ColorBar(palette) {
+  return ui.Thumbnail({
+    image: ee.Image.pixelLonLat().select(0),
+    params: {
+      bbox: [0, 0, 1, 0.1],
+      dimensions: '100x10',
+      format: 'png',
+      min: 0,
+      max: 1,
+      palette: palette,
+    },
+    style: {stretch: 'horizontal', margin: '2px 2px'},
+  });
+}
+
+// Build legend
+function makeLegend(palette) {
+  var legendTitle = ui.Label({
+    value: 'Detected Change in Greenness',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '13px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+    
+  var labelPanel = ui.Panel({
+      widgets: [
+        ui.Label('Less Green', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label(' ', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('More Green', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
+      ],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
+  
+  return ui.Panel({
+    widgets: [legendTitle, ColorBar(palette), labelPanel],
+    style: {position: 'bottom-right',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+}
+
+Map.add(makeLegend(PALETTE));

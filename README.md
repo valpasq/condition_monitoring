@@ -8,6 +8,7 @@ ___
 ## Overview
 Detecting changes in surface conditions requires establishing reference or "baseline" conditions to be used for comparison. Our approach uses time series of [Landsat](https://www.usgs.gov/core-science-systems/nli/landsat) observations to estimate a series of harmonic baseline models that account for seasonal variability in vegetation conditions and builds on [previously published methods](https://www.mdpi.com/1999-4907/8/8/275). An ensemble of the _n_ preceding harmonic models is used to estimate the average anomaly in Greenness for a given acquisition date. By then aggregating average anomalies over a specified monitoring period (i.e. summer growing season), a relatively stable and robust annual estimate of change in Greenness can be produced. Spatial smoothing and thresholding by anomaly magnitude improves visualization of disturbance patches, and the resulting map products can be used to compare disturbances across years.
 
+
 ___
 
 ## Workflow
@@ -46,5 +47,5 @@ Pasquarella, V. J., Bradley, B. A., & Woodcock, C. E. (2017). [Near-real-time mo
 
 Pasquarella, V. J., Elkinton, J. S., & Bradley, B. A. (2018). [Extensive gypsy moth defoliation in Southern New England characterized using Landsat satellite observations](https://link.springer.com/article/10.1007/s10530-018-1778-0). _Biological Invasions_, 20(11), 3047-3053.
 
-Pasquarella, V. J., Mickley, J. G., Barker Plotkin, A., MacLean, R. G., Anderson, R. M., Brown, L. M., Wagner, D. L., Singer, M. S., and Bagchi, R. (2021). Assessing a Landsat-based harmonic modeling approach for forest condition monitoring using defoliator abundance and defoliation measurements.
-_Remote Sensing in Ecology and Conservation_. [doi.org/10.1002/rse2.211](https://doi.org/10.1002/rse2.211).
+Pasquarella, V. J., Mickley, J. G., Barker Plotkin, A., MacLean, R. G., Anderson, R. M., Brown, L. M., Wagner, D. L., Singer, M. S., and Bagchi, R. (2021). [Assessing a Landsat-based harmonic modeling approach for forest condition monitoring using defoliator abundance and defoliation measurements](https://doi.org/10.1002/rse2.211).
+_Remote Sensing in Ecology and Conservation_.

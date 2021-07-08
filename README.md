@@ -1,4 +1,4 @@
-# [Harmonic baseline condition monitoring](https://valpasq.github.io/condition_monitoring/)
+# [Harmonic condition monitoring](https://valpasq.github.io/condition_monitoring/)
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4565535.svg)](https://doi.org/10.5281/zenodo.4565535)
 
@@ -46,4 +46,5 @@ Pasquarella, V. J., Bradley, B. A., & Woodcock, C. E. (2017). [Near-real-time mo
 
 Pasquarella, V. J., Elkinton, J. S., & Bradley, B. A. (2018). [Extensive gypsy moth defoliation in Southern New England characterized using Landsat satellite observations](https://link.springer.com/article/10.1007/s10530-018-1778-0). _Biological Invasions_, 20(11), 3047-3053.
 
-Pasquarella, V. J., Mickley, J. G., Barker Plotkin, A., MacLean, R. G., Anderson, R. M., Brown, L. M., Wagner, D. L., Singer, M. S., and Bagchi, R. (in review). Assessing a Landsat-based harmonic modeling approach for forest condition monitoring using defoliator abundance and defoliation measurements.
+Pasquarella, V. J., Mickley, J. G., Barker Plotkin, A., MacLean, R. G., Anderson, R. M., Brown, L. M., Wagner, D. L., Singer, M. S., and Bagchi, R. (2021). Assessing a Landsat-based harmonic modeling approach for forest condition monitoring using defoliator abundance and defoliation measurements.
+_Remote Sensing in Ecology and Conservation_. [doi.org/10.1002/rse2.211](https://doi.org/10.1002/rse2.211).

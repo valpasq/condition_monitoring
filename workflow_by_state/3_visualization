@@ -23,6 +23,8 @@ var END_ASSESS = 2021;
 
 var THRESHOLD = 1.5; 
 
+var MIN_NOBS = 5;
+
 var MIN = -4;
 var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
@@ -56,7 +58,7 @@ for(var year = 0; year < num_years; year++){
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));
   
-  var nobs_mask = score_disp.select('total_nobs').gte(5);
+  var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
   
   score_disp = score_disp
       .updateMask(thresh_mask)

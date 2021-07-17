@@ -35,7 +35,8 @@ var water_mask = GSW.select('occurrence')
 
 var images = FINAL_PRODUCTS
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
-    .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
+    .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS)
+    .filterMetadata('monitor_end', 'equals', '2021-07-16');
 var years = images
     .aggregate_array('monitor_year')
     .distinct();

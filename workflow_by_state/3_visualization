@@ -55,9 +55,13 @@ for(var year = 0; year < num_years; year++){
   
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));
+  
+  var nobs_mask = score_disp.select('total_nobs').gte(5);
+  
   score_disp = score_disp
       .updateMask(thresh_mask)
-      .updateMask(water_mask);
+      .updateMask(water_mask)
+      .updateMask(nobs_mask);
 
   // c = (1 / (1 + s))^0.6;
   // c = (TanH(7*(c - 0.5)) + 1)*0.5;

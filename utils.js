@@ -42,7 +42,8 @@ var preprocess8 = function(image) {
   return image.updateMask(mask1.and(mask2).and(mask3))
       .multiply(0.0001)
       .select(L8_BANDS).rename(LTS_NAMES) // Map legacy band names
-      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"]);
+      .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"])
+      .set('SENSING_TIME', ee.String(image.get('SENSING_TIME')).split('T').get(0));
 };
 
 var preprocess8_c2 = function(image) {

@@ -325,7 +325,7 @@ for (var state_index in STATES) {
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
     
-    Map.addLayer(final_img, {}, 'year ' + year);
+    // Map.addLayer(final_img, {}, 'year ' + year);
     
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     

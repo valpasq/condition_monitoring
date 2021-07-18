@@ -45,7 +45,6 @@ var MAX_STDDEV = 5;         // maximum allowable standard deviation to include s
 // -------------------------------- Baseline Info -------------------------------- 
 
 var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
-    // .map(slope_mask);
 
 var DEPENDENT = BASELINES_COLLECTION.first()
     .get('spectral_band').getInfo();

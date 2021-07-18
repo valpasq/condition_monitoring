@@ -1,5 +1,5 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var table = ee.FeatureCollection("TIGER/2018/States");
+var states = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -159,7 +159,7 @@ for (var state_index in STATES) {
   var state = STATES[state_index];
     
   for (var year = START_YEAR; year <= END_YEAR; year++) {
-    var roi = ee.FeatureCollection(table)
+    var roi = ee.FeatureCollection(states)
         .filterMetadata('STUSPS', 'equals', state)
         .geometry().dissolve();
   

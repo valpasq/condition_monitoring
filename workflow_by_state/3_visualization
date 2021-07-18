@@ -23,7 +23,7 @@ var END_ASSESS = 2021;
 
 var THRESHOLD = 1.5; 
 
-var MIN_NOBS = 5;
+var MIN_NOBS = 3;
 
 var MIN = -4;
 var MAX = 4;

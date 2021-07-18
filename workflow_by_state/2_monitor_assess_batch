@@ -19,13 +19,13 @@ var VERSION = '9-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v8-0_by_state';
 
-var OUTPUT_TYPE = 'prelim';
+var OUTPUT_TYPE = 'annual';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_TYPE + '/';
 var OUTPUT_CRS = 'EPSG:5070';
 
-var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
+var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 
-var STATES = ['MA'];
+var STATES = ['PA'];
 // var STATES = ['PA', 'NY', 'NJ', 'MA', 'CT', 'RI', 'NY', 'VT', 'NH', 'ME'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
@@ -327,7 +327,7 @@ for (var state_index in STATES) {
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
     
-    Map.addLayer(final_img);
+    Map.addLayer(final_img, {}, 'year ' + year);
     
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     
@@ -352,7 +352,9 @@ for (var state_index in STATES) {
           region: broad_geo_footprint,
           crs: OUTPUT_CRS,
           scale: 30,
-          maxPixels: 1e13});
+          maxPixels: 1e13,
+          fileDimensions: 32000
+      });
           
     } else {
       print('Check export type, specify Drive or Asset');

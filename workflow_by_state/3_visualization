@@ -15,13 +15,15 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = v9_0p;
+var FINAL_PRODUCTS = v9_0;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2021;
-var END_ASSESS = 2021;
+var START_ASSESS = 2020;
+var END_ASSESS = 2020;
 
 var THRESHOLD = 1.5; 
+
+var MIN_NOBS = 3;
 
 var MIN = -4;
 var MAX = 4;
@@ -36,6 +38,7 @@ var water_mask = GSW.select('occurrence')
 var images = FINAL_PRODUCTS
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
     .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
+    
 var years = images
     .aggregate_array('monitor_year')
     .distinct();
@@ -54,9 +57,15 @@ for(var year = 0; year < num_years; year++){
   
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));
+  
+  var nobs_mask = score_disp
+      .select('total_nobs')
+      .gte(MIN_NOBS);
+  
   score_disp = score_disp
       .updateMask(thresh_mask)
-      .updateMask(water_mask);
+      .updateMask(water_mask)
+      .updateMask(nobs_mask);
 
   // c = (1 / (1 + s))^0.6;
   // c = (TanH(7*(c - 0.5)) + 1)*0.5;
@@ -74,7 +83,7 @@ for(var year = 0; year < num_years; year++){
   
   var year_str = year_value.getInfo();
   
-  Map.addLayer(images.select('total_nobs'), {min:0, max: 8}, 'nobs ' + year_str, true);
+  Map.addLayer(images.select('total_nobs'), {min:0, max: 10}, 'nobs ' + year_str, true);
   Map.addLayer(score_mean_viz_alpha, {}, 'score ' + year_str, true);
   Map.addLayer(images, {}, 'raw ' + year_str, false);
   

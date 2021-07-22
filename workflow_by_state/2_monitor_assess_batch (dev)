@@ -19,7 +19,7 @@ var VERSION = '9-1';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v8-0_by_state';
 
-var OUTPUT_TYPE = 'prelim';
+var OUTPUT_NAME = 'prelim';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_TYPE + '/';
 var OUTPUT_CRS = 'EPSG:5070';
 

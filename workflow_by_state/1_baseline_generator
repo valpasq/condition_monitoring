@@ -18,7 +18,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // --------------------------------- Imports & Outputs --------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '8-1';
+var VERSION = '8-0';
 
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
@@ -26,7 +26,7 @@ var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 var STATE = 'ME';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
-var DEPENDENT = 'sr';  // Select spectral transform   
+var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
 var START_YEAR = 1985;  // Starts 01-01

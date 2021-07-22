@@ -19,8 +19,8 @@ var VERSION = '9-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v8-0_by_state';
 
-var OUTPUT_TYPE = 'annual';
-var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_TYPE + '/';
+var OUTPUT_NAME = 'annual';
+var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '/';
 var OUTPUT_CRS = 'EPSG:5070';
 
 var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'

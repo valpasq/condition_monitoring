@@ -24,7 +24,6 @@ var END_ASSESS = 2021;
 var THRESHOLD = 1.5; 
 
 var MIN_NOBS = 3;
-var MONITOR_END = '2021-07-16';
 
 var MIN = -4;
 var MAX = 4;
@@ -38,8 +37,8 @@ var water_mask = GSW.select('occurrence')
 
 var images = FINAL_PRODUCTS
     .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
-    .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS)
-    .filterMetadata('monitor_end', 'equals', MONITOR_END);
+    .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
+    
 var years = images
     .aggregate_array('monitor_year')
     .distinct();

@@ -15,11 +15,11 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = v9_0p;
+var FINAL_PRODUCTS = v9_0;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2021;
-var END_ASSESS = 2021;
+var START_ASSESS = 2020;
+var END_ASSESS = 2020;
 
 var THRESHOLD = 1.5; 
 
@@ -83,7 +83,7 @@ for(var year = 0; year < num_years; year++){
   
   var year_str = year_value.getInfo();
   
-  Map.addLayer(images.select('total_nobs'), {min:0, max: 8}, 'nobs ' + year_str, true);
+  Map.addLayer(images.select('total_nobs'), {min:0, max: 10}, 'nobs ' + year_str, true);
   Map.addLayer(score_mean_viz_alpha, {}, 'score ' + year_str, true);
   Map.addLayer(images, {}, 'raw ' + year_str, false);
   

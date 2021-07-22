@@ -58,7 +58,9 @@ for(var year = 0; year < num_years; year++){
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));
   
-  var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
+  var nobs_mask = score_disp
+      .select('total_nobs')
+      .gte(MIN_NOBS);
   
   score_disp = score_disp
       .updateMask(thresh_mask)

@@ -49,8 +49,8 @@ var preprocess8 = function(image) {
 var preprocess8_c2 = function(image) {
   // Get bits for "bad QA"
   var dilatedcloud_bit = 1 << 1;
-  var cloud_bit = 1 << 3;
   var cirrus_bit = 1 << 2;
+  var cloud_bit = 1 << 3;
   var cloudshadow_bit = 1 << 4;
   var snow_bit = 1 << 5;
   var qa = image.select('QA_PIXEL');

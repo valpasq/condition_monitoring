@@ -25,7 +25,8 @@ var OUTPUT_CRS = 'EPSG:5070';
 
 var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 
-var STATES = ['PA', 'NY', 'NJ', 'MA', 'CT', 'RI', 'NY', 'VT', 'NH', 'ME'];
+var STATES = ['PA'];
+// var STATES = ['PA', 'NY', 'NJ', 'MA', 'CT', 'RI', 'NY', 'VT', 'NH', 'ME'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 1995;      // First year in monitoring year list

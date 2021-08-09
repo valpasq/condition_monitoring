@@ -28,6 +28,8 @@ var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 var STATES = ['PA'];
 // var STATES = ['PA', 'NY', 'NJ', 'MA', 'CT', 'RI', 'NY', 'VT', 'NH', 'ME'];
 
+var KERNEL_RADIUS = 0;
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 1995;      // First year in monitoring year list
 var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)
@@ -322,10 +324,12 @@ for (var state_index in STATES) {
             DEPENDENT + '_mean', DEPENDENT + '_stddev', 
             'total_nobs'])
         .reproject(OUTPUT_CRS, null, 30)
+        .focal_mean(KERNEL_RADIUS, 'square', 'pixels')
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
+        
     
-    // Map.addLayer(final_img, {}, 'year ' + year);
+    Map.addLayer(final_img, {}, 'year ' + year);
     
     var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     

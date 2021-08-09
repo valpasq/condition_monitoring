@@ -16,7 +16,6 @@ var MAX = 4;
 var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
-// var THRESHOLD = -1.5;
 var MIN_NOBS = 3;
 
 var START_YEAR = 1995;

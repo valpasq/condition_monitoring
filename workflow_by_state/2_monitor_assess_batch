@@ -321,8 +321,6 @@ for (var state_index in STATES) {
             DEPENDENT + '_mean', DEPENDENT + '_stddev', 
             'total_nobs'])
         .reproject(OUTPUT_CRS, null, 30)
-        .multiply(1000)
-        .short()
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
         

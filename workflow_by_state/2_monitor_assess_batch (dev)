@@ -25,10 +25,13 @@ var OUTPUT_CRS = 'EPSG:5070';
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['MA', 'NH', 'VT', 'CT', 'RI', 'NJ', 'PA', 'ME', 'NY'];
+// var STATES = ['MA', 'NH', 'VT', 'CT', 'RI', 'NJ', 'PA', 'ME', 'NY'];
+var STATE = ['PA'];
 
 var KERNEL = 3;
 var SCALE = 1000;
+
+var LANDSAT_COLLECTION = 'C1';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2021;      // First year in monitoring year list
@@ -81,22 +84,30 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(utils.preprocess457);
-      
+
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
       .filterDate(monitor_start, monitor_end) 
       .filterBounds(clipBound) 
       .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
       .map(utils.preprocess457);
-      
 
   // Get  Landsat 8 imagery
-  var collection8 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
-      .filterDate(monitor_start, monitor_end) 
-      .filterBounds(clipBound) 
-      .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
-      .map(utils.preprocess8_c2); 
-  
+  if (LANDSAT_COLLECTION == 'C1') {
+    var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+        .filterDate(monitor_start, monitor_end) 
+        .filterBounds(clipBound) 
+        .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+        .map(utils.preprocess8); 
+      
+  } else {
+    var collection8 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
+        .filterDate(monitor_start, monitor_end) 
+        .filterBounds(clipBound) 
+        .filterMetadata('CLOUD_COVER_LAND', "less_than", CC_THRESH)
+        .map(utils.preprocess8_c2); 
+  }
+    
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
       .map(utils.addCloudScore)

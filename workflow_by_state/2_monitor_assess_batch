@@ -326,7 +326,7 @@ for (var state_index in STATES) {
     
     Map.addLayer(final_img, {}, 'year ' + year);
     
-    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state
+    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
     
     if (EXPORT_TYPE === 'Drive') {
       

@@ -34,8 +34,8 @@ var SCALE = 1000;
 var LANDSAT_COLLECTION = 'C1';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 2021;      // First year in monitoring year list
-var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
+var START_YEAR = 1995;      // First year in monitoring year list
+var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring
 var DAY_END = '10-01';      // Date to end monitoring (not inclusive)

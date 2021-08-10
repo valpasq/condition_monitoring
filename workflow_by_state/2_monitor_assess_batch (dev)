@@ -321,14 +321,19 @@ for (var state_index in STATES) {
         .rename(['score_mean', 'score_stddev', 
             DEPENDENT + '_mean', DEPENDENT + '_stddev', 
             'total_nobs'])
+        .focal_mean((KERNEL / 2), 'square', 'pixels')
         .reproject(OUTPUT_CRS, null, 30)
+        .multiply(SCALE)
+        .short()
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
+
+    Map.addLayer(final_img, {}, 'year ' + year);
     
-    Map.addLayer(final_img);
-    
-    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state;
-    
+    var asset_name = year + '_' + DAY_START + '_' 
+        + DAY_END + '_' + state
+        + '_' + KERNEL + 'x' + KERNEL;
+        
     if (EXPORT_TYPE === 'Drive') {
       
       Export.image.toDrive({

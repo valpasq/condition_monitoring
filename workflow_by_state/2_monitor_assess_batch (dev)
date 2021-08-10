@@ -31,7 +31,7 @@ var STATES = ['PA'];
 var KERNEL = 3;
 var SCALE = 1000;
 
-var LANDSAT_COLLECTION = 'C2';
+var LANDSAT_COLLECTION = 'C1';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2021;      // First year in monitoring year list

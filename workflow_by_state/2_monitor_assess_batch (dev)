@@ -26,7 +26,7 @@ var OUTPUT_CRS = 'EPSG:5070';
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
 // var STATES = ['MA', 'NH', 'VT', 'CT', 'RI', 'NJ', 'PA', 'ME', 'NY'];
-var STATE = ['PA'];
+var STATES = ['PA'];
 
 var KERNEL = 3;
 var SCALE = 1000;

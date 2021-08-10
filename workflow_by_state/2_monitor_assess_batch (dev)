@@ -27,6 +27,9 @@ var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
 var STATES = ['MA', 'NH', 'VT', 'CT', 'RI', 'NJ', 'PA', 'ME', 'NY'];
 
+var KERNEL = 3;
+var SCALE = 1000;
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2021;      // First year in monitoring year list
 var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)

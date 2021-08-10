@@ -29,7 +29,6 @@ var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 var STATES = ['PA'];
 
 var KERNEL = 3;
-var SCALE = 1000;
 
 var LANDSAT_COLLECTION = 'C1';
 
@@ -334,8 +333,6 @@ for (var state_index in STATES) {
             'total_nobs'])
         .focal_mean((KERNEL / 2), 'square', 'pixels')
         .reproject(OUTPUT_CRS, null, 30)
-        .multiply(SCALE)
-        .short()
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
 

@@ -320,7 +320,6 @@ for (var state_index in STATES) {
         .rename(['score_mean', 'score_stddev', 
             DEPENDENT + '_mean', DEPENDENT + '_stddev', 
             'total_nobs'])
-        .focal_mean((KERNEL / 2), 'square', 'pixels')
         .reproject(OUTPUT_CRS, null, 30)
         .multiply(1000)
         .short()
@@ -330,9 +329,7 @@ for (var state_index in STATES) {
     
     Map.addLayer(final_img, {}, 'year ' + year);
     
-    var asset_name = year + '_' + DAY_START + '_' 
-        + DAY_END + '_' + state
-        + '_' + KERNEL + 'x' + KERNEL;
+    var asset_name = year + '_' + DAY_START + '_' + DAY_END + '_' + state
     
     if (EXPORT_TYPE === 'Drive') {
       

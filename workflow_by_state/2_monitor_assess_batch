@@ -323,7 +323,6 @@ for (var state_index in STATES) {
         .reproject(OUTPUT_CRS, null, 30)
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
-        
     
     Map.addLayer(final_img, {}, 'year ' + year);
     

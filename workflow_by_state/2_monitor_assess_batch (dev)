@@ -23,7 +23,7 @@ var OUTPUT_NAME = 'annual';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '/';
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
-var KERNEL = 1;
+var KERNEL = 3;
 
 var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 
@@ -341,7 +341,7 @@ for (var state_index in STATES) {
         .clip(roi)
         .setMulti(OUTPUT_PROPERTIES));
 
-    Map.addLayer(final_img, {bands: ['score_mean'], min:-3000, max:0, palette: ['red', 'blue', 'black']}, 'year ' + year);
+    Map.addLayer(final_img, {bands: ['score_mean'], min:-4000, max:0, palette: ['red', 'orange', 'yellow', 'blue']}, 'year ' + year);
     
     var asset_name = year + '_' + DAY_START + '_' 
         + DAY_END + '_' + state

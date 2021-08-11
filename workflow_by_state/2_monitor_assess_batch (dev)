@@ -339,6 +339,7 @@ for (var state_index in STATES) {
         .addBands(focal_img.select(['total_nobs']))
         .short()
         .clip(roi)
+        .reproject('EPSG:5070', null, 30)
         .setMulti(OUTPUT_PROPERTIES));
 
     Map.addLayer(final_img, {bands: ['score_mean'], min:-4000, max:0, palette: ['red', 'orange', 'yellow', 'blue']}, 'year ' + year);

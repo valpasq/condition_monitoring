@@ -22,6 +22,7 @@ var BASELINES = 'baselines_v8-0_by_state';
 var OUTPUT_NAME = 'annual';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '/';
 var OUTPUT_CRS = 'EPSG:5070';
+var OUTPUT_SCALE = 1000;
 
 var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 

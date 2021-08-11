@@ -23,13 +23,11 @@ var OUTPUT_NAME = 'annual';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '/';
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
+var KERNEL = 3;
 
 var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 
-// var STATES = ['MA', 'NH', 'VT', 'CT', 'RI', 'NJ', 'PA', 'ME', 'NY'];
 var STATES = ['PA'];
-
-var KERNEL = 3;
 
 var LANDSAT_COLLECTION = 'C1';
 

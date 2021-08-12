@@ -31,6 +31,15 @@ var STATES = ['PA'];
 
 var LANDSAT_COLLECTION = 'C1';
 
+var MIN = -4000;
+var MAX = 4000;
+var PALETTE = ['red', 'orange', 'black', 'teal', 'darkblue'];
+var viz = {
+    bands: ['score_mean'],
+    min: MIN, 
+    max: MAX, 
+    palette: PALETTE};
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2015;      // First year in monitoring year list
 var END_YEAR = 2015;        // Last year in monitoring year list (inclusive)
@@ -43,7 +52,6 @@ var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND
 var N_MODELS = 5;           // number of models to include in ensemble
 
 var MAX_STDDEV = 5;         // maximum allowable standard deviation to include scores in weighted average
-
 
 // -------------------------------- Baseline Info -------------------------------- 
 
@@ -342,7 +350,7 @@ for (var state_index in STATES) {
         .reproject('EPSG:5070', null, 30)
         .setMulti(OUTPUT_PROPERTIES));
 
-    Map.addLayer(final_img, {bands: ['score_mean'], min:-4000, max:0, palette: ['red', 'orange', 'yellow', 'blue']}, 'year ' + year);
+    Map.addLayer(final_img, viz, 'year ' + year);
     
     var asset_name = year + '_' + DAY_START + '_' 
         + DAY_END + '_' + state

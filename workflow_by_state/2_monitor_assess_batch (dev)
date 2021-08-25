@@ -32,8 +32,8 @@ var STATES = ['PA', 'NY', 'NJ', 'MA', 'CT', 'RI', 'NY', 'VT', 'NH', 'ME'];
 
 var LANDSAT_COLLECTION = 'C1';
 
-var MIN = -4000;
-var MAX = 4000;
+var MIN = -4;
+var MAX = 4;
 var PALETTE = ['red', 'orange', 'black', 'teal', 'darkblue'];
 var viz = {
     bands: ['score_mean'],
@@ -340,23 +340,22 @@ for (var state_index in STATES) {
             DEPENDENT + '_mean', DEPENDENT + '_stddev', 
             'total_nobs'])
         .focal_mean((KERNEL / 2), 'square', 'pixels');
-    
-    var final_img = ee.Image(focal_img
-        .select(['score_mean', 'score_stddev', 
-            DEPENDENT + '_mean', DEPENDENT + '_stddev'])
-        .multiply(OUTPUT_SCALE)
-        .addBands(focal_img.select(['total_nobs']).short())
-        .short()
-        .clip(roi)
-        .reproject('EPSG:5070', null, 30)
-        .setMulti(OUTPUT_PROPERTIES));
 
-    Map.addLayer(final_img, viz, 'year ' + year);
     
     var asset_name = year + '_' + DAY_START + '_' 
         + DAY_END + '_' + state;
         
     if (EXPORT_TYPE === 'Drive') {
+      
+      var final_img = ee.Image(focal_img
+          .select(['score_mean', 'score_stddev', 
+              DEPENDENT + '_mean', DEPENDENT + '_stddev'])
+          .multiply(OUTPUT_SCALE)
+          .addBands(focal_img.select(['total_nobs']).short())
+          .short()
+          .clip(roi)
+          .reproject('EPSG:5070', null, 30)
+          .setMulti(OUTPUT_PROPERTIES));
       
       Export.image.toDrive({
           image: final_img, 
@@ -369,6 +368,11 @@ for (var state_index in STATES) {
           maxPixels: 1e13}); 
           
     } else if (EXPORT_TYPE === 'Asset') {
+      
+      var final_img = ee.Image(focal_img
+          .clip(roi)
+          .reproject('EPSG:5070', null, 30)
+          .setMulti(OUTPUT_PROPERTIES));
       
       Export.image.toAsset({
           image: final_img,
@@ -383,4 +387,6 @@ for (var state_index in STATES) {
       print('Check export type, specify Drive or Asset');
     }
   } 
+  
+  Map.addLayer(final_img, viz, 'year ' + year);
 }

@@ -345,7 +345,7 @@ for (var state_index in STATES) {
         .select(['score_mean', 'score_stddev', 
             DEPENDENT + '_mean', DEPENDENT + '_stddev'])
         .multiply(OUTPUT_SCALE)
-        .addBands(focal_img.select(['total_nobs']))
+        .addBands(focal_img.select(['total_nobs']).short())
         .short()
         .clip(roi)
         .reproject('EPSG:5070', null, 30)

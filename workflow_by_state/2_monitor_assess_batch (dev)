@@ -14,20 +14,21 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '9-0';
+var VERSION = '9-1';
 
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v8-0_by_state';
 
-var OUTPUT_NAME = 'annual';
+var OUTPUT_NAME = 'prelim';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '/';
+
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
-var KERNEL = 3;
+var KERNEL = 1;
 
-var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
+var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['PA'];
+var STATES = ['PA', 'NY', 'NJ', 'MA', 'CT', 'RI', 'NY', 'VT', 'NH', 'ME'];
 
 var LANDSAT_COLLECTION = 'C1';
 
@@ -41,11 +42,11 @@ var viz = {
     palette: PALETTE};
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 2015;      // First year in monitoring year list
-var END_YEAR = 2015;        // Last year in monitoring year list (inclusive)
+var START_YEAR = 2021;      // First year in monitoring year list
+var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring
-var DAY_END = '10-01';      // Date to end monitoring (not inclusive)
+var DAY_END = '08-25';      // Date to end monitoring (not inclusive)
 
 var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 
@@ -353,8 +354,7 @@ for (var state_index in STATES) {
     Map.addLayer(final_img, viz, 'year ' + year);
     
     var asset_name = year + '_' + DAY_START + '_' 
-        + DAY_END + '_' + state
-        + '_' + KERNEL + 'x' + KERNEL;
+        + DAY_END + '_' + state;
         
     if (EXPORT_TYPE === 'Drive') {
       
@@ -362,7 +362,7 @@ for (var state_index in STATES) {
           image: final_img, 
           description: 'result_' + asset_name,
           folder: 'condition_monitoring_' + VERSION + '_by_state', 
-          fileNamePrefix: asset_name, 
+          fileNamePrefix: asset_name + '_' + KERNEL + 'x' + KERNEL, 
           region: broad_geo_footprint,
           crs: OUTPUT_CRS,
           scale: 30,

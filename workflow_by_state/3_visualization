@@ -50,7 +50,7 @@ for(var year = 0; year < num_years; year++){
   
   var disp_img = images
       .filterMetadata('monitor_year', 'equals', year_value)
-      // .filterMetadata('monitor_end', 'equals', '2021-08-25')
+      .filterMetadata('monitor_end', 'equals', '2021-08-25')
       .mosaic();
       
   var score_disp = disp_img

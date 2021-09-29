@@ -29,7 +29,7 @@ var STATE = 'MA';
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 1985;  // Starts 01-01
+var START_YEAR = 2005;  // Starts 01-01
 var END_YEAR = 2010;    // Year to stop (inclusive)
 var WINDOW = 5;
 
@@ -224,6 +224,7 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
         .clip(roi)
         .setMulti(outputProperties))
         .set('WRS_PATH', path);
+        // .set('CRS', path_proj);
     
     Export.image.toAsset({
         image: outputMosaic,

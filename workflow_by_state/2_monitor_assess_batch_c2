@@ -29,6 +29,7 @@ var KERNEL = 1;
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
 var STATES = ['MA'];
+
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 2020;      // First year in monitoring year list
 var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)

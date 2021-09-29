@@ -11,7 +11,7 @@ var L8_BANDS = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B10']; // Landsat OLI bands
 var L8_C2_BANDS = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6',  'SR_B7', 'ST_B10']; // Landsat OLI bands
 
 var L457_BANDS = ['B1', 'B2', 'B3', 'B4',  'B5',  'B7', 'B6']; // Landsat TM/ETM+ bands
-var L457_C2_BANDS = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4',  'SR_B5',  'SR_B7', 'SR_B6']; // Landsat TM/ETM+ bands
+var L457_C2_BANDS = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4',  'SR_B5',  'SR_B7', 'ST_B6']; // Landsat TM/ETM+ bands
 
 var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp']; // Common names
 

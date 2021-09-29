@@ -144,7 +144,7 @@ if (TS == 'full') {
       .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
       .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
       .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-      .map(utils.preprocess457);
+      .map(utils.preprocess457_c2);
   
   // Get Landsat 7 imagery to fill gap period between 5 and 8.
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
@@ -152,7 +152,7 @@ if (TS == 'full') {
       .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
       .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
       .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-      .map(utils.preprocess457);
+      .map(utils.preprocess457_c2);
   
   // Get Landsat 8 imagery.
   var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
@@ -160,7 +160,7 @@ if (TS == 'full') {
       .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
       .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
       .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
-      .map(utils.preprocess8);
+      .map(utils.preprocess8_c2);
 }
 
 // Merge pre-processed Landsat 5, 7 and 8 collections

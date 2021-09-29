@@ -273,6 +273,7 @@ exports = {
   addTime: addTime,
   addHarmonicsFnFactory: addHarmonicsFnFactory,
   preprocess457: preprocess457,
+  preprocess457_c2: preprocess457_c2,
   preprocess8: preprocess8,
   preprocess8_c2: preprocess8_c2,
   cloudScore: cloudScore,

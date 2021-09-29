@@ -216,7 +216,6 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   for(var path = path_start; path <= path_stop; path++){
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path);
     var path_proj = images.first().projection();
-    print(path_proj.crs());
     
     // Quality mosaic based on number of observations per pixel (endlap filter)
     var outputMosaic = ee.Image(images

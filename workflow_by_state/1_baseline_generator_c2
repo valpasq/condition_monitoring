@@ -215,7 +215,8 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   // Combine results by Path
   for(var path = path_start; path <= path_stop; path++){
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path);
-    var path_proj = images.first().projection();
+    var path_proj = images.first().projection().crs().getInfo();
+    print(path_proj);
     
     // Quality mosaic based on number of observations per pixel (endlap filter)
     var outputMosaic = ee.Image(images
@@ -229,7 +230,7 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
         description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,
         assetId: output_name + '_p' + path + '_' + STATE,
         region: roi.bounds(),
-        crs: path_proj.crs(),
+        crs: path_proj,
         scale: 30,
         maxPixels: 1e13});
   }

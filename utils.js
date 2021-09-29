@@ -64,7 +64,7 @@ var preprocess457_c2 = function(image) {
 
   return image
       .updateMask(mask.and(mask2))
-      .select(L8_C2_BANDS).rename(LTS_NAMES)
+      .select(L457_C2_BANDS).rename(LTS_NAMES)
       .multiply(0.0000275)
       .add(-0.2)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"])

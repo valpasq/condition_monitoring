@@ -130,7 +130,8 @@ if (TS == 'full') {
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
       .filterBounds(roi)
-      .filterDate(START_YEAR + '-01-01', 2017 + '-12-31') // change in acquisiton time
+      .filterDate(1999 + '-01-01', 2017 + '-12-31') // change in acquisiton time
+      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
       .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
       .map(utils.preprocess457_c2);
   

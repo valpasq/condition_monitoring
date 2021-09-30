@@ -4,16 +4,21 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
-// | Baseline Model Generator
+// | Baseline Model Generator (C2)
 // | 
-// | [valpasq@bu.edu], 2020
+// | [valpasq@bu.edu], 2021
 // |
 // |
 // | This script generates harmonic baseline models for a user-specified
 // | roi. Baseline parameters include time period, vegetation/spectral 
 // | index, harmonic frequencies, limited or full use of Landsat 7
 // | observations, and a scene-based cloud cover threshold. Results are
-// | generated per Path and are exported to an Image Collection. 
+// | generated per Path and are exported to an Image Collection.
+// |
+// | 2021-09: Script has been updated to used Landsat Collection 2 
+// |          imagery. Additionally, use of L7 imagery even for 'full'
+// |          option has been limited to pre-2018 due to orbital changes
+// |
 
 // --------------------------------- Imports & Outputs --------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');

@@ -125,7 +125,7 @@ if (TS == 'full') {
   // Get Landsat 7 imagery
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
       .filterBounds(roi)
-      .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
+      .filterDate(START_YEAR + '-01-01', 2017 + '-12-31') // change in acquisiton time
       .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))
       .map(utils.preprocess457_c2);
   
@@ -215,7 +215,7 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
   // Combine results by Path
   for(var path = path_start; path <= path_stop; path++){
     var images = outputFull.filterMetadata('WRS_PATH', 'equals', path);
-    var path_proj = images.first().projection().crs();
+    var path_proj = images.first().get('crs');
     
     // Quality mosaic based on number of observations per pixel (endlap filter)
     var outputMosaic = ee.Image(images
@@ -223,6 +223,7 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
         .clip(roi)
         .setMulti(outputProperties))
         .set('WRS_PATH', path)
+        .set('crs', crs)
         .reproject(path_proj, null, 30);
     
     Export.image.toAsset({

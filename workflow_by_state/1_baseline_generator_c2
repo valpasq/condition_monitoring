@@ -29,8 +29,8 @@ var STATE = 'MA';
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 2006;  // Starts 01-01
-var END_YEAR = 2010;    // Year to stop (inclusive)
+var START_YEAR = 1985;  // Starts 01-01
+var END_YEAR = 2020;    // Year to stop (inclusive)
 var WINDOW = 5;
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
@@ -230,7 +230,6 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
         description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,
         assetId: output_name + '_p' + path + '_' + STATE,
         region: roi.bounds(),
-        // crs: path_proj,
         scale: 30,
         maxPixels: 1e13});
   }

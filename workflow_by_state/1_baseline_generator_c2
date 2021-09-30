@@ -15,7 +15,7 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // | observations, and a scene-based cloud cover threshold. Results are
 // | generated per Path and are exported to an Image Collection.
 // |
-// | 2021-09: Script has been updated to used Landsat Collection 2 
+// | 2021-09: Script has been updated to use Landsat Collection 2 
 // |          imagery. Additionally, use of L7 imagery even for 'full'
 // |          option has been limited to pre-2018 due to orbital changes
 // |

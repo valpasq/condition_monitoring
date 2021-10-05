@@ -3,7 +3,7 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
-// | Monitoring & Assessment
+// | Monitoring & Assessment (C2)
 // | 
 // | [valpasq@bu.edu], 2021
 // |

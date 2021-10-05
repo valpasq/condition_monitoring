@@ -5,7 +5,7 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // | Landsat Time Series Harmonic Condition Assessment -- 
 // | Monitoring & Assessment
 // | 
-// | [valpasq@bu.edu], 2020
+// | [valpasq@bu.edu], 2021
 // |
 // | This script generates condition scores for each acquisition date
 // | within the specified monitoring period and averages across dates

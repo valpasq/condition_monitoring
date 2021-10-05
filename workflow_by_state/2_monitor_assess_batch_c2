@@ -31,8 +31,8 @@ var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 var STATES = ['MA'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 2010;      // First year in monitoring year list
-var END_YEAR = 2020;        // Last year in monitoring year list (inclusive)
+var START_YEAR = 1995;      // First year in monitoring year list
+var END_YEAR = 2009;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '06-01';    // Date to start monitoring
 var DAY_END = '09-01';      // Date to end monitoring (not inclusive)

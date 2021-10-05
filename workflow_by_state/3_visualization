@@ -19,10 +19,10 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 var FINAL_PRODUCTS = test;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2016;
-var END_ASSESS = 2016;
+var START_ASSESS = 2017;
+var END_ASSESS = 2017;
 
-var THRESHOLD = 1.5; 
+var THRESHOLD = 2; 
 
 var MIN_NOBS = 3;
 
@@ -75,7 +75,7 @@ for(var year = 0; year < num_years; year++){
       .pow(0.6)
       .subtract(0.5).multiply(7)
       .tanh()
-      .add(1).multiply(0.5);
+      .add(1)//.multiply(0.5);
 
   var score_mean_viz_alpha = score_disp.select('score_mean')
       .visualize(viz)

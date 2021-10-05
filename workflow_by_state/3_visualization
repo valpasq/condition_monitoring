@@ -1,7 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     v9_0p = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-1_by_state_prelim"),
-    GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater");
+    GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater"),
+    test = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-0_by_state_06-09");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -15,11 +16,11 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = v9_0p;
+var FINAL_PRODUCTS = test;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2021;
-var END_ASSESS = 2021;
+var START_ASSESS = 2016;
+var END_ASSESS = 2016;
 
 var THRESHOLD = 1.5; 
 
@@ -50,7 +51,6 @@ for(var year = 0; year < num_years; year++){
   
   var disp_img = images
       .filterMetadata('monitor_year', 'equals', year_value)
-      .filterMetadata('monitor_end', 'equals', '2021-08-25')
       .mosaic();
       
   var score_disp = disp_img

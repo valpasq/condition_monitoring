@@ -19,7 +19,7 @@ var VERSION = '10-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v10-0_by_state';
 
-var OUTPUT_NAME = 'jun-aug';
+var OUTPUT_NAME = '06-09';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '/';
 
 var OUTPUT_CRS = 'EPSG:5070';

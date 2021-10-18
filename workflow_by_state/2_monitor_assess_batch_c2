@@ -368,7 +368,7 @@ for (var state_index in STATES) {
       Export.image.toAsset({
           image: final_img,
           description: 'result_' + asset_name,
-          assetId: OUTPUT_COLLECTION + asset_name,
+          assetId: OUTPUT_COLLECTION + asset_name + '_' + KERNEL + 'x' + KERNEL,
           region: broad_geo_footprint,
           crs: OUTPUT_CRS,
           scale: 30,

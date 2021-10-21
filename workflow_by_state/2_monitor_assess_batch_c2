@@ -20,15 +20,15 @@ var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v10-0_by_state';
 
 var OUTPUT_NAME = '0601-0901';
-var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '/';
-
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
 var KERNEL = 3;
 
+var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
+
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['MA'];
+var STATES = ['PA'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 1995;      // First year in monitoring year list
@@ -368,7 +368,7 @@ for (var state_index in STATES) {
       Export.image.toAsset({
           image: final_img,
           description: 'result_' + asset_name,
-          assetId: OUTPUT_COLLECTION + asset_name + '_' + KERNEL + 'x' + KERNEL,
+          assetId: OUTPUT_COLLECTION + asset_name,
           region: broad_geo_footprint,
           crs: OUTPUT_CRS,
           scale: 30,

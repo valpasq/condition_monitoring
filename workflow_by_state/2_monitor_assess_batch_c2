@@ -24,7 +24,7 @@ var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NA
 
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
-var KERNEL = 1;
+var KERNEL = 3;
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 

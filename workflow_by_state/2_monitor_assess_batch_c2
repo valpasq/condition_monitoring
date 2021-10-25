@@ -20,6 +20,7 @@ var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v10-0_by_state';
 
 var OUTPUT_NAME = '0601-0901';
+
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
 var KERNEL = 1;

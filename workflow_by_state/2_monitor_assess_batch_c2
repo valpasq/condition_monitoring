@@ -19,14 +19,14 @@ var VERSION = '10-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v10-0_by_state';
 
-var OUTPUT_NAME = '0601-0901';
+var OUTPUT_NAME = '0501-1001';
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
 var KERNEL = 3;
 
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
-var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
+var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
 
 var STATES = ['PA'];
 

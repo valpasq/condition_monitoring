@@ -22,11 +22,11 @@ var BASELINES = 'baselines_v10-0_by_state';
 var OUTPUT_NAME = '0601-0901';
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
-var KERNEL = 3;
+var KERNEL = 1;
 
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
-var EXPORT_TYPE = 'Drive';  // 'Asset' or 'Drive'
+var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
 var STATES = ['PA'];
 
@@ -37,7 +37,7 @@ var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 var DAY_START = '06-01';    // Date to start monitoring
 var DAY_END = '09-01';      // Date to end monitoring (not inclusive)
 
-var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
+var CC_THRESH = 80;         // maximum CLOUD_COVER_LAND 
 
 var N_MODELS = 5;           // number of models to include in ensemble
 
@@ -333,13 +333,7 @@ for (var state_index in STATES) {
             'total_nobs'])
         .focal_mean((KERNEL / 2), 'square', 'pixels');
 
-    
-    var asset_name = year + '_' + DAY_START + '_' 
-        + DAY_END + '_' + state;
-        
-    if (EXPORT_TYPE === 'Drive') {
-      
-      var final_img = ee.Image(focal_img
+    var final_img = ee.Image(focal_img
           .select(['score_mean', 'score_stddev', 
               DEPENDENT + '_mean', DEPENDENT + '_stddev'])
           .multiply(OUTPUT_SCALE)
@@ -348,6 +342,11 @@ for (var state_index in STATES) {
           .clip(roi)
           .reproject('EPSG:5070', null, 30)
           .setMulti(OUTPUT_PROPERTIES));
+    
+    var asset_name = year + '_' + DAY_START + '_' 
+        + DAY_END + '_' + state;
+        
+    if (EXPORT_TYPE === 'Drive') {
       
       Export.image.toDrive({
           image: final_img, 
@@ -361,10 +360,10 @@ for (var state_index in STATES) {
           
     } else if (EXPORT_TYPE === 'Asset') {
       
-      var final_img = ee.Image(focal_img
-          .clip(roi)
-          .reproject('EPSG:5070', null, 30)
-          .setMulti(OUTPUT_PROPERTIES));
+      // var final_img = ee.Image(focal_img
+      //     .clip(roi)
+      //     .reproject('EPSG:5070', null, 30)
+      //     .setMulti(OUTPUT_PROPERTIES));
       
       Export.image.toAsset({
           image: final_img,

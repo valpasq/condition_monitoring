@@ -19,7 +19,7 @@ var VERSION = '10-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v10-0_by_state';
 
-var OUTPUT_NAME = '0501-1001';
+var OUTPUT_NAME = '0601-0901';
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
 var KERNEL = 3;
@@ -37,7 +37,7 @@ var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 var DAY_START = '06-01';    // Date to start monitoring
 var DAY_END = '09-01';      // Date to end monitoring (not inclusive)
 
-var CC_THRESH = 80;         // maximum CLOUD_COVER_LAND 
+var CC_THRESH = 50;         // maximum CLOUD_COVER_LAND 
 
 var N_MODELS = 5;           // number of models to include in ensemble
 

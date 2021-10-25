@@ -53,8 +53,7 @@ for(var year = 0; year < num_years; year++){
       .filterMetadata('monitor_year', 'equals', year_value)
       .mosaic();
       
-  var score_disp = disp_img
-      // .focal_mean(30, 'circle', 'meters', 1);
+  var score_disp = disp_img;
   
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));

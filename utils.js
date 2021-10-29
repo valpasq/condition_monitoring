@@ -62,7 +62,7 @@ var preprocess457_c2 = function(image) {
   var mask2 = image.mask().reduce('min');
 
   return image
-      .updateMask(mask2)
+      .updateMask(mask.and(mask2))
       .select(L457_C2_BANDS).rename(LTS_NAMES_SR)
       .multiply(0.0000275)
       .add(-0.2)

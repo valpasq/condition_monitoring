@@ -59,7 +59,10 @@ var preprocess457_c2 = function(image) {
       .and(qa.bitwiseAnd(cloudshadow_bit).eq(0))
       .and(qa.bitwiseAnd(snow_bit).eq(0));
       
-  var mask2 = image.mask().reduce('min');
+  var mask2 = image
+      .select(L457_C2_BANDS)
+      .mask()
+      .reduce('min');
 
   return image
       .updateMask(mask.and(mask2))
@@ -85,7 +88,10 @@ var preprocess8_c2 = function(image) {
       .and(qa.bitwiseAnd(cloudshadow_bit).eq(0))
       .and(qa.bitwiseAnd(snow_bit).eq(0));
       
-  var mask2 = image.mask().reduce('min');
+  var mask2 = image
+      .select(L8_C2_BANDS)
+      .mask()
+      .reduce('min');
 
   return image
       .updateMask(mask.and(mask2))

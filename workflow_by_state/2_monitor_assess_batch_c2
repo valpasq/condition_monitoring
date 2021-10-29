@@ -19,7 +19,7 @@ var VERSION = '10-0';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v10-0_by_state';
 
-var OUTPUT_NAME = '0501-1001';
+var OUTPUT_NAME = '0601-0901';
 
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
@@ -32,11 +32,11 @@ var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 var STATES = ['PA'];
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 1995;      // First year in monitoring year list
-var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
+var START_YEAR = 2011;      // First year in monitoring year list
+var END_YEAR = 2011;        // Last year in monitoring year list (inclusive)
 
-var DAY_START = '05-01';    // Date to start monitoring
-var DAY_END = '10-01';      // Date to end monitoring (not inclusive)
+var DAY_START = '06-01';    // Date to start monitoring
+var DAY_END = '09-01';      // Date to end monitoring (not inclusive)
 
 var CC_THRESH = 80;         // maximum CLOUD_COVER_LAND 
 

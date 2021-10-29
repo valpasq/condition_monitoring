@@ -361,11 +361,6 @@ for (var state_index in STATES) {
           
     } else if (EXPORT_TYPE === 'Asset') {
       
-      // var final_img = ee.Image(focal_img
-      //     .clip(roi)
-      //     .reproject('EPSG:5070', null, 30)
-      //     .setMulti(OUTPUT_PROPERTIES));
-      
       Export.image.toAsset({
           image: final_img,
           description: 'result_' + asset_name,

@@ -110,8 +110,8 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
     
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
-      .map(utils.addCloudScore)
-      .map(utils.maskCloudScore) 
+      // .map(utils.addCloudScore)
+      // .map(utils.maskCloudScore) 
       .map(utils.spectralTransformsFnFactory(dependent))
       .sort('system:time_start');
   print(collection);

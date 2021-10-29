@@ -23,19 +23,19 @@ var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
 // --------------------------------- Imports & Outputs --------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-var VERSION = '10-0';
+var VERSION = '10-1';
 
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
-var STATE = 'NJ';
+var STATE = 'PA';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 var DEPENDENT = 'tcg';  // Select spectral transform   
 var HARMONICS = 'h13';  // 'h12' => 12 & 6 month, 'h13' => 12 & 4 month
 
-var START_YEAR = 1985;  // Starts 01-01
-var END_YEAR = 2020;    // Year to stop (inclusive)
+var START_YEAR = 2006;  // Starts 01-01
+var END_YEAR = 2010;    // Year to stop (inclusive)
 var WINDOW = 5;
 
 var TS = 'full';        // 'full' or '16d' (limits L7 use)
@@ -145,7 +145,7 @@ if (TS == 'full') {
 } else if (TS == '16d') {
   
   // Get Landsat 5 imagery.
-  var collection5 = ee.ImageCollection('LANDSAT/LT05/C01/T1_SR')
+  var collection5 = ee.ImageCollection('LANDSAT/LT05/C02/T1_L2')
       .filterBounds(roi)
       .filterDate(1985 + '-01-01', 2011 + '-10-31')  // Landsat 5 fails Nov. 2011
       .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
@@ -153,7 +153,7 @@ if (TS == 'full') {
       .map(utils.preprocess457_c2);
   
   // Get Landsat 7 imagery to fill gap period between 5 and 8.
-  var collection7 = ee.ImageCollection('LANDSAT/LE07/C01/T1_SR')
+  var collection7 = ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
       .filterBounds(roi)
       .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
       .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
@@ -161,7 +161,7 @@ if (TS == 'full') {
       .map(utils.preprocess457_c2);
   
   // Get Landsat 8 imagery.
-  var collection8 = ee.ImageCollection('LANDSAT/LC08/C01/T1_SR')
+  var collection8 = ee.ImageCollection('LANDSAT/LC08/C02/T1_L2')
       .filterBounds(roi)
       .filterDate(2013 + '-04-11', 2020 + '-12-31') // Landsat 8 achieves WRS-2 April 11, 2013
       .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
@@ -173,8 +173,8 @@ if (TS == 'full') {
 var collection = collection5
     .merge(collection7)
     .merge(collection8)
-    .map(utils.addCloudScore)
-    .map(utils.maskCloudScore) // mask based on simple cloud score
+    // .map(utils.addCloudScore)
+    // .map(utils.maskCloudScore) // mask based on simple cloud score
     .map(utils.spectralTransformsFnFactory(DEPENDENT))
     .sort('system:time_start');
 
@@ -232,6 +232,7 @@ for(var start = START_YEAR; start <= (END_YEAR - (WINDOW - 1)); start++){
         .set('crs', path_proj)
         .reproject(path_proj, null, 30);
     
+    Map.addLayer(outputMosaic);
     Export.image.toAsset({
         image: outputMosaic,
         description: DEPENDENT + '_' + start + '-' + end + '_' + STATE + '-' + path,

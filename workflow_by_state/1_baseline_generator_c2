@@ -55,7 +55,6 @@ var COS_NAMES = utils.getNames('cos_', HARMONIC_FREQUENCIES);
 var SIN_NAMES = utils.getNames('sin_', HARMONIC_FREQUENCIES);
 
 var INDEPENDENTS = ee.List(['constant', 't']).cat(COS_NAMES).cat(SIN_NAMES);
-    
 
 // ---------------------------------- Functions ---------------------------------- 
 

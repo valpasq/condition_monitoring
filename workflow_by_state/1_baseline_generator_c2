@@ -1,6 +1,19 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var wrs2 = ee.FeatureCollection("projects/google/wrs2_descending"),
-    table = ee.FeatureCollection("TIGER/2018/States");
+    table = ee.FeatureCollection("TIGER/2018/States"),
+    geometry = 
+    /* color: #98ff00 */
+    /* shown: false */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-78.49709151219092, 41.318398888493796],
+          [-78.49709151219092, 41.204844707371926],
+          [-78.0562650961753, 41.204844707371926],
+          [-78.0562650961753, 41.318398888493796]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -103,9 +116,11 @@ function getCoeffs(feature) {
 
 // ------------------------------------- Analysis -------------------------------------- 
 
-var roi = ee.FeatureCollection(table)
-    .filterMetadata('STUSPS', 'equals', STATE)
-    .geometry().dissolve().buffer(BUFFER);
+// var roi = ee.FeatureCollection(table)
+//     .filterMetadata('STUSPS', 'equals', STATE)
+//     .geometry().dissolve().buffer(BUFFER);
+
+var roi = geometry;
 
 // Get WRS2 scenes
 var scenes = wrs2.filterBounds(roi);

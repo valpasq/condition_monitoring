@@ -155,7 +155,6 @@ if (TS == 'full') {
   // Get Landsat 7 imagery to fill gap period between 5 and 8.
   var collection7 = ee.ImageCollection('LANDSAT/LE07/C02/T1_L2')
       .filterBounds(roi)
-      .filterDate(1999 + '-01-01', 2017 + '-12-31') // change in acquisiton time
       .filterDate(2011 + '-11-01', 2013 + '-04-10') // Use Landsat 7 only when 5/8 not avail.
       .filterDate(START_YEAR + '-01-01', END_YEAR + '-12-31') 
       .filter(ee.Filter.lt('CLOUD_COVER_LAND', CC_THRESH))

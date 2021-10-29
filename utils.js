@@ -7,13 +7,14 @@
 // ---------------------------- LANDSAT Pre-processing ---------------------------- 
 
 
-var L8_BANDS = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7']; // Landsat OLI bands
+var L8_BANDS = ['B2', 'B3', 'B4', 'B5', 'B6', 'B7', 'B11']; // Landsat OLI bands
 var L8_C2_BANDS = ['SR_B2', 'SR_B3', 'SR_B4', 'SR_B5', 'SR_B6',  'SR_B7']; // Landsat OLI bands
 
-var L457_BANDS = ['B1', 'B2', 'B3', 'B4',  'B5',  'B7']; // Landsat TM/ETM+ bands
+var L457_BANDS = ['B1', 'B2', 'B3', 'B4',  'B5',  'B7', 'B6']; // Landsat TM/ETM+ bands
 var L457_C2_BANDS = ['SR_B1', 'SR_B2', 'SR_B3', 'SR_B4',  'SR_B5',  'SR_B7']; // Landsat TM/ETM+ bands
 
-var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2']; // Common names
+var LTS_NAMES = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2', 'temp']; // Common names
+var LTS_NAMES_SR = ['blue', 'green', 'red', 'nir', 'swir1', 'swir2']; // Common names
 
 
 var preprocess457 = function(image) {
@@ -64,7 +65,7 @@ var preprocess457_c2 = function(image) {
 
   return image
       .updateMask(mask.and(mask2))
-      .select(L457_C2_BANDS).rename(LTS_NAMES)
+      .select(L457_C2_BANDS).rename(LTS_NAMES_SR)
       .multiply(0.0000275)
       .add(-0.2)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"])
@@ -90,7 +91,7 @@ var preprocess8_c2 = function(image) {
 
   return image
       .updateMask(mask.and(mask2))
-      .select(L8_C2_BANDS).rename(LTS_NAMES)
+      .select(L8_C2_BANDS).rename(LTS_NAMES_SR)
       .multiply(0.0000275)
       .add(-0.2)
       .copyProperties(image, ["system:time_start", "WRS_PATH", "WRS_ROW"])

@@ -1,5 +1,17 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var table = ee.FeatureCollection("TIGER/2018/States");
+var table = ee.FeatureCollection("TIGER/2018/States"),
+    geometry = 
+    /* color: #d63000 */
+    /* displayProperties: [
+      {
+        "type": "rectangle"
+      }
+    ] */
+    ee.Geometry.Polygon(
+        [[[-79.2892899359513, 40.3607584655741],
+          [-79.2892899359513, 40.2450295763071],
+          [-78.97892616642005, 40.2450295763071],
+          [-78.97892616642005, 40.3607584655741]]], null, false);
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -110,8 +122,6 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
     
   // FINAL LTS COLLECTION
   var collection = collection5.merge(collection7).merge(collection8)
-      // .map(utils.addCloudScore)
-      // .map(utils.maskCloudScore) 
       .map(utils.spectralTransformsFnFactory(dependent))
       .sort('system:time_start');
   print(collection);

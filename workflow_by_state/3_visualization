@@ -2,7 +2,7 @@
 var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     v9_0p = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-1_by_state_prelim"),
     GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater"),
-    test = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-0_by_state_0601-0901_1x1");
+    test = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0601-0901_1x1");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -19,8 +19,8 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 var FINAL_PRODUCTS = test;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2017;
-var END_ASSESS = 2017;
+var START_ASSESS = 2010;
+var END_ASSESS = 2012;
 
 var THRESHOLD = 2; 
 var MIN_NOBS = 3;
@@ -56,7 +56,7 @@ for(var year = 0; year < num_years; year++){
   var score_disp = disp_img
       .select(['score_mean', 'score_stddev', 
                'tcg_mean', 'tcg_stddev'])
-      .divide(OUTPUT_SCALE);
+      // .divide(OUTPUT_SCALE);
   
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));

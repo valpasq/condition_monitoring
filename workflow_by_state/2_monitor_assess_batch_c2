@@ -119,14 +119,14 @@ function monitorTS(clipBound, monitor_start, monitor_end, dependent) {
   
   // Take mean for each acquisition date (Path)
   var monitorC = ee.ImageCollection.fromImages(acquisitions.map(function(d) {
-        var date = ee.Date(d);
-        var date2 = date.advance(24, 'hour');
-        var path = collection.filterDate(date, date2).first().get('WRS_PATH');
-        
-        return collection.filterDate(date, date2).mean()
-            .set({
-                'system:time_start': date.millis(), 
-                'WRS_PATH': path});
+      var date = ee.Date(d);
+      var date2 = date.advance(24, 'hour');
+      var path = collection.filterDate(date, date2).first().get('WRS_PATH');
+      
+      return collection.filterDate(date, date2).mean()
+          .set({
+              'system:time_start': date.millis(), 
+              'WRS_PATH': path});
       }));
   
   // Return image collection for monitoring period

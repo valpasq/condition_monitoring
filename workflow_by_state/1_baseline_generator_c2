@@ -28,7 +28,7 @@ var VERSION = '10-1';
 var ROOT = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = ROOT + 'baselines_v' + VERSION + '_by_state/';
 
-var STATE = 'PA';
+var STATE = 'CT';
 
 // ---------------------------------- Model Parameters ---------------------------------- 
 var DEPENDENT = 'tcg';  // Select spectral transform   

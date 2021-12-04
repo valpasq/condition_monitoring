@@ -25,7 +25,7 @@ var KERNEL = 1;
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['NH', 'VT', 'NY', 'ME', 'NJ', 'RI', 'CT', 'MA' , 'PA'];
+var STATES = ['NH', 'VT',];
 
 var OUTPUT_NAME = '0501-1001';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';

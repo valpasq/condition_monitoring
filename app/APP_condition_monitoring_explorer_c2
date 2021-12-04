@@ -9,6 +9,19 @@ var stylers = require('users/valeriepasquarella/shared:map_stylers');
 
 //  Results collection
 var images = v10_1;
+var OUTPUT_SCALE = 1000;
+
+function rescale(img) {
+  var scaled = img
+      .select(['score_mean', 'score_stddev', 
+               'tcg_mean', 'tcg_stddev'])
+      .divide(OUTPUT_SCALE)
+      .addBands(img.select('total_nobs'));
+  return scaled.copyProperties(img, ['system:time_start', 'monitor_year']);
+}
+
+images = images.map(rescale);
+print(images);
     
 // -----------------------------
 //  Visualization parameters
@@ -18,7 +31,6 @@ var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
 var viz = {min: MIN, max: MAX, palette: PALETTE};
 
 var MIN_NOBS = 3;
-var OUTPUT_SCALE = 1000;
 
 var START_YEAR = 1995;
 var END_YEAR = 2021;
@@ -151,18 +163,6 @@ var draw_map_fn = function(year, threshold) {
 };
 
 // ----------------------------------
-
-function rescale(img) {
-  var scaled = img
-      .select(['score_mean', 'score_stddev', 
-               'tcg_mean', 'tcg_stddev'])
-      .divide(OUTPUT_SCALE)
-      .addBands(img.select('total_nobs'));
-  return scaled.copyProperties(img);
-}
-
-images = images.map(rescale);
-print(images)
 
 // Create collection for charts and display
 var chart_collection = images

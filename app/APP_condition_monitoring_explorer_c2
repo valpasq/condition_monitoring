@@ -116,13 +116,8 @@ var draw_map_fn = function(year, threshold) {
   var assessment = images
       .filterMetadata('monitor_year', 'equals', year)
       .mosaic();
-
-  var score_disp = assessment
-      .select(['score_mean', 'score_stddev', 
-               'tcg_mean', 'tcg_stddev'])
-      .divide(OUTPUT_SCALE);
   
-  score_disp = score_disp
+  var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
   var thresh_mask = score_disp.select('score_mean').lte(threshold * -1)
@@ -156,8 +151,21 @@ var draw_map_fn = function(year, threshold) {
 };
 
 // ----------------------------------
+
+function rescale(img) {
+  var scaled = img
+      .select(['score_mean', 'score_stddev', 
+               'tcg_mean', 'tcg_stddev'])
+      .divide(OUTPUT_SCALE)
+      .addBands(img.select('total_nobs'));
+  return scaled.copyProperties(img);
+}
+
+images = images.map(rescale);
+
 // Create collection for charts and display
-var chart_collection = images.map(get_range_fn_factory('tcg'))
+var chart_collection = images
+    .map(get_range_fn_factory('tcg'))
     .map(get_range_fn_factory('score'));
 
 // ----------------------------------

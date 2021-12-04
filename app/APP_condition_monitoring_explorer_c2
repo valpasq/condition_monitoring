@@ -162,6 +162,7 @@ function rescale(img) {
 }
 
 images = images.map(rescale);
+print(images)
 
 // Create collection for charts and display
 var chart_collection = images

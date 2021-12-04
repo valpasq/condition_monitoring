@@ -25,7 +25,7 @@ var END_YEAR = 2021;
 var GSW_MASK = 'on'; // set to 'on' to apply GSW mask
 
 // -----------------------------
-//  Rescale (new for C2 outputs).
+//  Rescale (new for C2 assessments).
 var OUTPUT_SCALE = 1000;
 
 function rescale(img) {

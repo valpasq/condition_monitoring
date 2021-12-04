@@ -23,7 +23,6 @@ function rescale(img) {
 }
 
 images = images.map(rescale);
-print(images);
     
 // -----------------------------
 //  Visualization parameters

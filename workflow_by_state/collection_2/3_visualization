@@ -1,0 +1,144 @@
+/**** Start of imports. If edited, may not auto-convert in the playground. ****/
+var GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater");
+/***** End of imports. If edited, may not auto-convert in the playground. *****/
+// |
+// | Landsat Time Series Harmonic Condition Assessment -- 
+// | Visualize products
+// | 
+// | [valpasq@bu.edu], 2020
+// |
+// |
+// | This script is used to add spatially smoothed and thresholded 
+// | products to the map. All years added at once.
+
+// -------------------- Image Collection ---------------------
+
+var FINAL_PRODUCTS = test;
+
+// ---------------------- Visualization ---------------------- 
+var START_ASSESS = 2010;
+var END_ASSESS = 2020;
+
+var THRESHOLD = 2; 
+var MIN_NOBS = 3;
+var OUTPUT_SCALE = 1000;
+
+var MIN = -4;
+var MAX = 4;
+var PALETTE = ['red', 'orange', 'white', 'teal', 'darkblue'];
+var viz = {min: MIN, max: MAX, palette: PALETTE};
+
+var water_mask = GSW.select('occurrence')
+    .gte(50).unmask().not();
+
+// ----------------------- Map Results ------------------------
+
+var images = FINAL_PRODUCTS
+    .filterMetadata('monitor_year', 'not_less_than', START_ASSESS)
+    .filterMetadata('monitor_year', 'not_greater_than', END_ASSESS);
+    
+var years = images
+    .aggregate_array('monitor_year')
+    .distinct();
+var num_years = years.size().getInfo();
+
+// Loop over years to add each product to Map
+for(var year = 0; year < num_years; year++){
+  var year_value = years.get(year);
+  
+  var disp_img = images
+      .filterMetadata('monitor_year', 'equals', year_value)
+      .mosaic();
+
+  var score_disp = disp_img
+      .select(['score_mean', 'score_stddev', 
+               'tcg_mean', 'tcg_stddev'])
+      .divide(OUTPUT_SCALE);
+  
+  var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
+      .or(score_disp.select('score_mean').gte(THRESHOLD));
+  
+  var nobs_mask = disp_img
+      .select('total_nobs')
+      .gte(MIN_NOBS);
+  
+  score_disp = score_disp
+      .updateMask(thresh_mask)
+      .updateMask(water_mask)
+      .updateMask(nobs_mask);
+
+  // c = (1 / (1 + s))^0.6;
+  // c = (TanH(7*(c - 0.5)) + 1)*0.5;
+  var confidence_scale = ee.Image(1)
+      .divide(score_disp.select('score_stddev').add(1))
+      .pow(0.6)
+      .subtract(0.5).multiply(7)
+      .tanh()
+      .add(1).multiply(0.5);
+
+  var score_mean_viz_alpha = score_disp.select('score_mean')
+      .visualize(viz)
+      .toUint8()
+      .updateMask(thresh_mask.multiply(confidence_scale));
+  
+  var year_str = year_value.getInfo();
+  
+  // Map.addLayer(images.select('total_nobs'), {min:0, max: 10}, 'nobs ' + year_str, true);
+  Map.addLayer(score_mean_viz_alpha, {}, 'score ' + year_str, true);
+  Map.addLayer(images, {}, 'raw ' + year_str, false);
+  
+}
+
+// ----------------------- Map Styling ------------------------
+var stylers = require('users/valeriepasquarella/shared:map_stylers');
+Map.setOptions('Dark', {Dark: stylers.dark_mode});
+// Map.setOptions('SATELLITE');
+
+// ------------------------------------------
+// Create colorbar for legend.
+function ColorBar(palette) {
+  return ui.Thumbnail({
+    image: ee.Image.pixelLonLat().select(0),
+    params: {
+      bbox: [0, 0, 1, 0.1],
+      dimensions: '100x10',
+      format: 'png',
+      min: 0,
+      max: 1,
+      palette: palette,
+    },
+    style: {stretch: 'horizontal', margin: '2px 2px'},
+  });
+}
+
+// Build legend
+function makeLegend(palette) {
+  var legendTitle = ui.Label({
+    value: 'Detected Change in Greenness',
+    style: {
+      fontWeight: 'bold',
+      fontSize: '13px',
+      margin: '0 0 2px 0',
+      padding: '0',
+      backgroundColor: 'rgba(255, 255, 255, 0)'
+    }
+    });
+    
+  var labelPanel = ui.Panel({
+      widgets: [
+        ui.Label('Less Green', {margin: '0px 0px', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label(' ', {margin: '0px 0px', textAlign: 'center', stretch: 'horizontal', backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'}),
+        ui.Label('More Green', {margin: '0px 0px',backgroundColor: 'rgba(255, 255, 255, 0)', fontSize: '12px'})
+      ],
+      layout: ui.Panel.Layout.flow('horizontal'),
+      style: { backgroundColor: 'rgba(255, 255, 255, 0)'}});
+  
+  return ui.Panel({
+    widgets: [legendTitle, ColorBar(palette), labelPanel],
+    style: {position: 'bottom-right',
+      backgroundColor: 'rgba(255, 255, 255, 0.75)'
+    }
+  });
+}
+
+Map.add(makeLegend(PALETTE));

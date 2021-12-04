@@ -370,7 +370,7 @@ for (var state_index in STATES) {
     } else {
       print('Check export type, specify Drive or Asset');
     }
-    
+
     // Map.addLayer(final_img, viz, 'year ' + year);
   } 
   

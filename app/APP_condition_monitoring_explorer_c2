@@ -1,7 +1,8 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater"),
     STATES = ee.FeatureCollection("TIGER/2018/States"),
-    v10_1 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0501-1001_1x1");
+    v10_1 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0501-1001_1x1"),
+    v10_1_gs = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0601-0901_1x1");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
 var stylers = require('users/valeriepasquarella/shared:map_stylers');

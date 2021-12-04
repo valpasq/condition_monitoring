@@ -1,8 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
     v9_0p = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-1_by_state_prelim"),
-    GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater"),
-    test = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0601-0901_1x1");
+    GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 

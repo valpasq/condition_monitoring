@@ -17,7 +17,9 @@ function rescale(img) {
                'tcg_mean', 'tcg_stddev'])
       .divide(OUTPUT_SCALE)
       .addBands(img.select('total_nobs'));
-  return scaled.copyProperties(img, ['system:time_start', 'monitor_year', 'state']);
+  return scaled
+      .copyProperties(img)
+      .copyProperties(img, ['system:time_start']);
 }
 
 images = images.map(rescale);

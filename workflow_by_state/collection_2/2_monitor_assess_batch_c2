@@ -31,7 +31,7 @@ var OUTPUT_NAME = '0501-1001';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 2021;      // First year in monitoring year list
+var START_YEAR = 1995;      // First year in monitoring year list
 var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring

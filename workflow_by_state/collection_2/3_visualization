@@ -17,8 +17,8 @@ var GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater"),
 var FINAL_PRODUCTS = v10_1;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2010;
-var END_ASSESS = 2020;
+var START_ASSESS = 2015;
+var END_ASSESS = 2021;
 
 var THRESHOLD = 2; 
 var MIN_NOBS = 3;

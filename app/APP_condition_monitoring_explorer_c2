@@ -262,7 +262,7 @@ var threshold_slider = ui.Slider({
 var docs_link = ui.Label({
     value: 'View documentation', 
     style: {
-        margin: '0px 0px 0px 8px', 
+        margin: '0px 0px 0px 0px', 
         backgroundColor: 'rgba(255, 255, 255, 0)', 
         fontSize: '11px',
         color: '#1E90FF'

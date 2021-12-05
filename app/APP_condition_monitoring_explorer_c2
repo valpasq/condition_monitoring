@@ -540,3 +540,6 @@ Map.setControlVisibility({
     zoomControl: true,
     drawingToolsControl: false,
     layerList: true});
+    
+    
+// https://valpasq.github.io/condition_monitoring/

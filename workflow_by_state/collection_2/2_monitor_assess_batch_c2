@@ -25,7 +25,7 @@ var KERNEL = 1;
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['PA',];
+var STATES = ['PA'];
 
 var OUTPUT_NAME = '0501-1001';
 var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';

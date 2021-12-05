@@ -259,10 +259,19 @@ var threshold_slider = ui.Slider({
   
 });
 
+var docs_link = ui.Label({
+    value: 'Link to documentation', 
+    style: {
+        margin: '4px', 
+        backgroundColor: 'rgba(255, 255, 255, 0)', 
+        fontSize: '11px'}})
+        .setUrl('https://valpasq.github.io/condition_monitoring/');
+
 panel.add(panel_title)
     .add(panel_descrip)
     .add(year_slider)
-    .add(threshold_container.add(threshold_label).add(threshold_slider));
+    .add(threshold_container.add(threshold_label).add(threshold_slider))
+    .add(docs_link);
 
 // ----------------------------------
 // Set up UI Panel - Time series chart
@@ -540,6 +549,3 @@ Map.setControlVisibility({
     zoomControl: true,
     drawingToolsControl: false,
     layerList: true});
-    
-    
-// https://valpasq.github.io/condition_monitoring/

@@ -1,13 +1,14 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var GSW = ee.Image("JRC/GSW1_2/GlobalSurfaceWater"),
     STATES = ee.FeatureCollection("TIGER/2018/States"),
-    v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual");
+    v10_1 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0501-1001_1x1"),
+    v10_1_gs = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0601-0901_1x1");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // -----------------------------
 var stylers = require('users/valeriepasquarella/shared:map_stylers');
 
 //  Results collection
-var images = v9_0;
+var images = v10_1;
     
 // -----------------------------
 //  Visualization parameters
@@ -19,9 +20,26 @@ var viz = {min: MIN, max: MAX, palette: PALETTE};
 var MIN_NOBS = 3;
 
 var START_YEAR = 1995;
-var END_YEAR = 2020;
+var END_YEAR = 2021;
 
 var GSW_MASK = 'on'; // set to 'on' to apply GSW mask
+
+// -----------------------------
+//  Rescale (new for C2 assessments).
+var OUTPUT_SCALE = 1000;
+
+function rescale(img) {
+  var scaled = img
+      .select(['score_mean', 'score_stddev', 
+               'tcg_mean', 'tcg_stddev'])
+      .divide(OUTPUT_SCALE)
+      .addBands(img.select('total_nobs'));
+  return scaled
+      .copyProperties(img)
+      .copyProperties(img, ['system:time_start']);
+}
+
+images = images.map(rescale);
 
 // ------------------------------------------
 // Get state outlines and style
@@ -111,44 +129,48 @@ function makeLegend(palette) {
 
 // Function to draw map layer
 var draw_map_fn = function(year, threshold) {
-    var assessment = images
+  var assessment = images
       .filterMetadata('monitor_year', 'equals', year)
       .mosaic();
-    
-    var score_disp = assessment
+  
+  var score_disp = assessment
       .focal_mean(30, 'circle', 'meters', 1);
   
-    var thresh_mask = score_disp.select('score_mean').lte(threshold * -1)
+  var thresh_mask = score_disp.select('score_mean').lte(threshold * -1)
         .or(score_disp.select('score_mean').gte(threshold));
     score_disp = score_disp.updateMask(thresh_mask);
-    
-    var nobs_mask = score_disp.select('total_nobs').gte(MIN_NOBS);
-    score_disp = score_disp.updateMask(nobs_mask);
-    
-    if (GSW_MASK === 'on') {
+  
+  var nobs_mask = assessment
+      .select('total_nobs')
+      .gte(MIN_NOBS);
+  score_disp = score_disp.updateMask(nobs_mask);
+  
+  if (GSW_MASK === 'on') {
       score_disp = score_disp.updateMask(water_mask);
-    }
-    
-    // c = (1 / (1 + s))^0.6;
-    // c = (TanH(7*(c - 0.5)) + 1)*0.5;
-    var confidence_scale = ee.Image(1)
+  }
+
+  // c = (1 / (1 + s))^0.6;
+  // c = (TanH(7*(c - 0.5)) + 1)*0.5;
+  var confidence_scale = ee.Image(1)
       .divide(score_disp.select('score_stddev').add(1))
       .pow(0.6)
       .subtract(0.5).multiply(7)
       .tanh()
       .add(1).multiply(0.5);
-  
-    var score_mean_viz_alpha = score_disp.select('score_mean')
-        .visualize(viz)
-        .toUint8()
-        .updateMask(thresh_mask.multiply(confidence_scale));
+
+  var score_mean_viz_alpha = score_disp.select('score_mean')
+      .visualize(viz)
+      .toUint8()
+      .updateMask(thresh_mask.multiply(confidence_scale));
   
   return score_mean_viz_alpha;
 };
 
 // ----------------------------------
+
 // Create collection for charts and display
-var chart_collection = images.map(get_range_fn_factory('tcg'))
+var chart_collection = images
+    .map(get_range_fn_factory('tcg'))
     .map(get_range_fn_factory('score'));
 
 // ----------------------------------
@@ -237,10 +259,19 @@ var threshold_slider = ui.Slider({
   
 });
 
+var docs_link = ui.Label({
+    value: 'Link to documentation', 
+    style: {
+        margin: '0px 0px 0px 0px', 
+        backgroundColor: 'rgba(255, 255, 255, 0)', 
+        fontSize: '11px'}})
+        .setUrl('https://valpasq.github.io/condition_monitoring/');
+
 panel.add(panel_title)
     .add(panel_descrip)
     .add(year_slider)
-    .add(threshold_container.add(threshold_label).add(threshold_slider));
+    .add(threshold_container.add(threshold_label).add(threshold_slider))
+    .add(docs_link);
 
 // ----------------------------------
 // Set up UI Panel - Time series chart

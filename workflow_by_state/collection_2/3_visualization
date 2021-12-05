@@ -1,7 +1,6 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
-var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-0_by_state_annual"),
-    v9_0p = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v9-1_by_state_prelim"),
-    GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater");
+var GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater"),
+    v10_1 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0601-0901_1x1");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -15,15 +14,15 @@ var v9_0 = ee.ImageCollection("projects/sites-project/condition_monitoring/produ
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = v9_0;
+var FINAL_PRODUCTS = v10_1;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2020;
+var START_ASSESS = 2010;
 var END_ASSESS = 2020;
 
-var THRESHOLD = 1.5; 
-
+var THRESHOLD = 2; 
 var MIN_NOBS = 3;
+var OUTPUT_SCALE = 1000;
 
 var MIN = -4;
 var MAX = 4;
@@ -51,14 +50,16 @@ for(var year = 0; year < num_years; year++){
   var disp_img = images
       .filterMetadata('monitor_year', 'equals', year_value)
       .mosaic();
-      
+
   var score_disp = disp_img
-      .focal_mean(30, 'circle', 'meters', 1);
+      .select(['score_mean', 'score_stddev', 
+               'tcg_mean', 'tcg_stddev'])
+      .divide(OUTPUT_SCALE);
   
   var thresh_mask = score_disp.select('score_mean').lte(THRESHOLD * -1)
       .or(score_disp.select('score_mean').gte(THRESHOLD));
   
-  var nobs_mask = score_disp
+  var nobs_mask = disp_img
       .select('total_nobs')
       .gte(MIN_NOBS);
   
@@ -83,7 +84,7 @@ for(var year = 0; year < num_years; year++){
   
   var year_str = year_value.getInfo();
   
-  Map.addLayer(images.select('total_nobs'), {min:0, max: 10}, 'nobs ' + year_str, true);
+  // Map.addLayer(images.select('total_nobs'), {min:0, max: 10}, 'nobs ' + year_str, true);
   Map.addLayer(score_mean_viz_alpha, {}, 'score ' + year_str, true);
   Map.addLayer(images, {}, 'raw ' + year_str, false);
   

@@ -260,11 +260,13 @@ var threshold_slider = ui.Slider({
 });
 
 var docs_link = ui.Label({
-    value: 'Link to documentation', 
+    value: 'View documentation', 
     style: {
-        margin: '0px 0px 0px 0px', 
+        margin: '0px 0px 0px 8px', 
         backgroundColor: 'rgba(255, 255, 255, 0)', 
-        fontSize: '11px'}})
+        fontSize: '11px',
+        color: '#1E90FF'
+    }})
         .setUrl('https://valpasq.github.io/condition_monitoring/');
 
 panel.add(panel_title)

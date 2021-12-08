@@ -71,7 +71,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#2_monitor_assess_batch" class="md-skip">
+        <a href="#2_monitor_assess_batch_c2" class="md-skip">
           Skip to content
         </a>
       
@@ -427,7 +427,7 @@
               
                 
                 
-                <h1 id="2_monitor_assess_batch"><code>2_monitor_assess_batch</code><a class="headerlink" href="#2_monitor_assess_batch" title="Permanent link">&para;</a></h1>
+                <h1 id="2_monitor_assess_batch_c2"><code>2_monitor_assess_batch_c2</code><a class="headerlink" href="#2_monitor_assess_batch_c2" title="Permanent link">&para;</a></h1>
 <p>This script reads a collection of baseline models and generates tasks to export condition assessment results to Earth Engine assets or to Google Drive. Updated "batch" version loops over a list of states and monitoring years creating tasks by monitoring year and state, enabling more flexible production of assessment products over large areas. Results can be added to the Map for testing; however this is not recommended when using this script to generate products for many states and/or years.</p>
 <h2 id="output-specifications">Output specifications<a class="headerlink" href="#output-specifications" title="Permanent link">&para;</a></h2>
 <p>Monitoring results are generated for an ROI and final assessment layer is exported to a specified Image Collection.</p>
@@ -441,7 +441,7 @@
 <tbody>
 <tr>
 <td>VERSION</td>
-<td align="left">current version, <code>9-0</code></td>
+<td align="left">current version, <code>10-1</code></td>
 </tr>
 <tr>
 <td>ROOT</td>
@@ -452,16 +452,24 @@
 <td align="left">baselines Image Collection</td>
 </tr>
 <tr>
+<td>OUTPUT_CRS</td>
+<td align="left">ESPG code, e.g. <code>'EPSG:5070'</code></td>
+</tr>
+<tr>
+<td>OUTPUT_SCALE</td>
+<td align="left">multiplier, default: <code>1000</code></td>
+</tr>
+<tr>
+<td>KERNEL</td>
+<td align="left">kernel for result smoothing, default: <code>1</code></td>
+</tr>
+<tr>
 <td>OUTPUT_NAME</td>
 <td align="left">string to include in name of output Image Collection</td>
 </tr>
 <tr>
 <td>OUTPUT_COLLECTION</td>
 <td align="left">new monitoring output Image Collection</td>
-</tr>
-<tr>
-<td>OUTPUT_CRS</td>
-<td align="left">ESPG code, e.g. <code>'EPSG:5070'</code></td>
 </tr>
 <tr>
 <td>EXPORT_TYPE</td>
@@ -495,7 +503,7 @@
 <tr>
 <td>END_YEAR</td>
 <td align="center">string</td>
-<td align="center"><code>2020</code></td>
+<td align="center"><code>2021</code></td>
 <td align="left">last year in monitoring year list (YYYY) ,  end year is inclusive</td>
 </tr>
 <tr>
@@ -537,7 +545,7 @@
 </tbody>
 </table>
 <h2 id="results">Results<a class="headerlink" href="#results" title="Permanent link">&para;</a></h2>
-<p>Condition assessment products include Path-integrated mean (score_mean) and standard deviation (score_stddev) of condition scores, as well as the number of  observations during the monitoring period (total_nobs). Updated version also now includes additional bands for mean and standard deviation of observed Tasseled Cap Greenness (tcg_mean and tcg_stddev), which provide context on the nature of post-disturbance dynamics and may be useful for separating emphermeral changes in vegetation condition from more changes in land cover.</p>
+<p>Condition assessment products include Path-integrated mean (score_mean) and standard deviation (score_stddev) of condition scores, as well as the number of  observations during the monitoring period (total_nobs). Updated version also now includes additional bands for mean and standard deviation of observed Tasseled Cap Greenness (tcg_mean and tcg_stddev), which provide context on the nature of post-disturbance dynamics and may be useful for separating emphermeral changes in vegetation condition from more changes in land cover. All outputs multiplied by output multiplier (default: 1000) and converted to in16 (short) to reduce output file size.</p>
 <p>Example output:</p>
 <table>
 <thead>
@@ -553,35 +561,35 @@
 <tr>
 <td>0</td>
 <td align="center">score_mean</td>
-<td align="center">double</td>
+<td align="center">signed int16</td>
 <td align="center">EPSG:5070</td>
 <td align="center">30</td>
 </tr>
 <tr>
 <td>1</td>
 <td align="center">score_stddev</td>
-<td align="center">double</td>
+<td align="center">signed int16</td>
 <td align="center">EPSG:5070</td>
 <td align="center">30</td>
 </tr>
 <tr>
 <td>2</td>
 <td align="center">tcg_mean</td>
-<td align="center">double</td>
+<td align="center">signed int16</td>
 <td align="center">EPSG:5070</td>
 <td align="center">30</td>
 </tr>
 <tr>
 <td>3</td>
 <td align="center">tcg_stddev</td>
-<td align="center">double</td>
+<td align="center">signed int16</td>
 <td align="center">EPSG:5070</td>
 <td align="center">30</td>
 </tr>
 <tr>
 <td>4</td>
 <td align="center">total_nobs</td>
-<td align="center">signed int64</td>
+<td align="center">signed int16</td>
 <td align="center">EPSG:5070</td>
 <td align="center">30</td>
 </tr>

@@ -428,7 +428,7 @@
                 
                 
                 <h1 id="3_visualization"><code>3_visualization</code><a class="headerlink" href="#3_visualization" title="Permanent link">&para;</a></h1>
-<p>This script can be used to visualize final assessment products as spatially smoothed and magnitude-thresholded maps.</p>
+<p>This script can be used to visualize final assessment products as spatially smoothed and magnitude-thresholded maps. </p>
 <h2 id="product-specification">Product specification<a class="headerlink" href="#product-specification" title="Permanent link">&para;</a></h2>
 <p>Assessment products to be visualized are read from specified Image Collection.</p>
 <table>
@@ -460,20 +460,32 @@
 <tr>
 <td>START_ASSESS</td>
 <td align="center">int</td>
-<td align="left"><code>1995</code></td>
+<td align="left"><code>2015</code></td>
 <td align="left">first year to add to map</td>
 </tr>
 <tr>
 <td>END_ASSESS</td>
 <td align="center">int</td>
-<td align="left"><code>2020</code></td>
+<td align="left"><code>2021</code></td>
 <td align="left">last year to add to map</td>
 </tr>
 <tr>
 <td>THRESHOLD</td>
 <td align="center">int</td>
-<td align="left"><code>-1.5</code></td>
+<td align="left"><code>2</code></td>
 <td align="left">condition score threshold</td>
+</tr>
+<tr>
+<td>MIN_NOBS</td>
+<td align="center">int</td>
+<td align="left"><code>3</code></td>
+<td align="left">mask pixels with too few observations</td>
+</tr>
+<tr>
+<td>OUTPUT_SCALE</td>
+<td align="center">int</td>
+<td align="left"><code>1000</code></td>
+<td align="left">output scale (multiplier)</td>
 </tr>
 <tr>
 <td>MIN</td>

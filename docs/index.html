@@ -418,22 +418,26 @@
 <p>Detecting changes in surface conditions requires establishing reference or "baseline" conditions to be used for comparison. Our approach uses time series of <a href="https://www.usgs.gov/core-science-systems/nli/landsat">Landsat</a> observations to estimate a series of harmonic baseline models that account for seasonal variability in vegetation conditions and builds on <a href="https://www.mdpi.com/1999-4907/8/8/275">previously published methods</a>. An ensemble of the <em>n</em> preceding harmonic models is used to estimate the average anomaly in Greenness for a given acquisition date. By then aggregating average anomalies over a specified monitoring period (i.e. summer growing season), a relatively stable and robust annual estimate of change in Greenness can be produced. Spatial smoothing and thresholding by anomaly magnitude improves visualization of disturbance patches, and the resulting map products can be used to compare disturbances across years.</p>
 <hr />
 <h2 id="workflow">Workflow<a class="headerlink" href="#workflow" title="Permanent link">&para;</a></h2>
-<p>Our workflow is designed to generate estimates of mean annual Tasseled Cap Greenness anomalies over large spatial extents using <a href="https://earthengine.google.com/">Google Earth Engine</a>.</p>
+<p>Our workflow is designed to generate estimates of mean annual Tasseled Cap Greenness anomalies over large spatial extents using <a href="https://earthengine.google.com/">Google Earth Engine</a>. The original workflow was based on Landsat Collection 1 (C1) but has recently been updated for use with <a href="https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-2">Collection 2 (C2)</a> Surface Reflectance products <a href="https://developers.google.com/earth-engine/datasets/catalog/landsat">available in Earth Engine</a>.</p>
 <p>Earth Engine users can add this repository with Reader access <a href="https://code.earthengine.google.com/?accept_repo=users/valeriepasquarella/condition_monitoring">here</a>.</p>
 <p>The scripts in this repository include:</p>
 <ul>
 <li><code>app/</code><ul>
-<li><code>APP_condition_monitoring_explorer</code> - Interactive mapping app with updated chart options.</li>
+<li><code>APP_condition_monitoring_explorer</code> (Deprecated)</li>
+<li><code>APP_condition_monitoring_explorer_c2</code> - Interactive mapping app for exploring condition monitoring results. All analysis has been updated to use Landsat Collection 2 for both baseline fitting and monitoring.</li>
 </ul>
 </li>
 <li><code>workflow_by_state/</code><ul>
-<li><code>1_baseline_generator</code> - Generate harmonic baseline models using fixed-length moving window (default: 5-year models).</li>
-<li><code>2_monitor_assess_batch</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across Landsat orbital Paths. Batch version can be used to queue tasks for multiple states and/or years.</li>
-<li><code>2_monitor_assess_batch (dev)</code> - WIP update of workflow to use Landsat Collection 2 imagery. Currently only using L8 C2 for monitoring (07/2021).</li>
-<li><code>3_visualization</code> - Spatially smooth and threshold map results for visualization. </li>
+<li>collection_1 (deprecated)/</li>
+<li>collection_2/<ul>
+<li><code>1_baseline_generator_c2</code> - Generate harmonic baseline models using fixed-length moving window (default: 5-year models).</li>
+<li><code>2_monitor_assess_batch_c2</code> - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across Landsat orbital Paths. Batch version can be used to queue tasks for multiple states and/or years.</li>
+<li><code>3_visualization</code> - Spatially smooth and threshold map results for visualization.</li>
 </ul>
 </li>
-<li><code>utils.js</code> - Utility functions shared across scripts. </li>
+</ul>
+</li>
+<li><code>utils.js</code> - Utility functions shared across scripts. Includes both C1 and C2 processing functions.</li>
 </ul>
 <p>While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas.</p>
 <p><em>Note: Current scripts have been developed and tested for US State geographies, and example products are available for select Northeastern states within USFS Region 9. However, assets are currently not publicly shared. To access the assets associated with these scripts, please contact <a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#118;&#97;&#108;&#112;&#97;&#115;&#113;&#64;&#98;&#117;&#46;&#101;&#100;&#117;">&#118;&#97;&#108;&#112;&#97;&#115;&#113;&#64;&#98;&#117;&#46;&#101;&#100;&#117;</a> and request to join our Google Group by clicking "Ask to Join Group" <a href="https://groups.google.com/g/harmonic-condition-monitoring">here</a>.</em></p>

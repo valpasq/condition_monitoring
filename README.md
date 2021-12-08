@@ -12,20 +12,22 @@ Detecting changes in surface conditions requires establishing reference or "base
 ___
 
 ## Workflow
-Our workflow is designed to generate estimates of mean annual Tasseled Cap Greenness anomalies over large spatial extents using [Google Earth Engine](https://earthengine.google.com/).
+Our workflow is designed to generate estimates of mean annual Tasseled Cap Greenness anomalies over large spatial extents using [Google Earth Engine](https://earthengine.google.com/). The original workflow was based on Landsat Collection 1 (C1) but has recently been updated for use with [Collection 2 (C2)]((https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-2) Surface Reflectance products [available in Earth Engine](https://developers.google.com/earth-engine/datasets/catalog/landsat).
 
 Earth Engine users can add this repository with Reader access [here](https://code.earthengine.google.com/?accept_repo=users/valeriepasquarella/condition_monitoring).
 
 The scripts in this repository include:
 
 * `app/`
-    * `APP_condition_monitoring_explorer` - Interactive mapping app with updated chart options.
+    * `APP_condition_monitoring_explorer` (Deprecated)
+    * `APP_condition_monitoring_explorer_c2` - Interactive mapping app for exploring condition monitoring results. All analysis has been updated to use Landsat Collection 2 for both baseline fitting and monitoring.
 * `workflow_by_state/`
-    * `1_baseline_generator` - Generate harmonic baseline models using fixed-length moving window (default: 5-year models).
-    * `2_monitor_assess_batch` - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across Landsat orbital Paths. Batch version can be used to queue tasks for multiple states and/or years.
-    * `2_monitor_assess_batch (dev)` - WIP update of workflow to use Landsat Collection 2 imagery. Currently only using L8 C2 for monitoring (07/2021).
-    * `3_visualization` - Spatially smooth and threshold map results for visualization. 
-* `utils.js` - Utility functions shared across scripts.
+    * collection_1 (deprecated)
+    * collection_2
+        * `1_baseline_generator_c2` - Generate harmonic baseline models using fixed-length moving window (default: 5-year models).
+        * `2_monitor_assess_batch_c2` - Estimate average Greenness anomalies for dates within monitoring period (default: May 1 - September 30) and combine results across Landsat orbital Paths. Batch version can be used to queue tasks for multiple states and/or years.
+       * `3_visualization` - Spatially smooth and threshold map results for visualization.
+* `utils.js` - Utility functions shared across scripts. Includes both C1 and C2 processing functions.
 
 
 While these scripts are expected to provide a useful starting point for those seeking to replicate or build on our methods, users should carefully review all paths, inputs, and other parameter specifications in order to tune to their own study areas.
@@ -38,6 +40,8 @@ ___
 As proof of concept, we have piloted the harmonic baseline monitoring workflow for a selection of Northeastern states within USFS Region 9 and generated annual change assessments for 1995-2020 using a May 1 through September 30 monitoring period.
 
 To interactively view these preliminary results, visit our [Condition Monitoring Explorer App](https://valeriepasquarella.users.earthengine.app/view/condition-monitoring-explorer).
+
+Previous releases of this app displayed results based on Landsat Collection 1 inputs. All analysis has been re-run using the Landsat Collection 2 workflow and results have been updated (2021-12-05).
 
 
 ___

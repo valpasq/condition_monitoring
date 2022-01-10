@@ -1,6 +1,7 @@
 /**** Start of imports. If edited, may not auto-convert in the playground. ****/
 var GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater"),
-    v10_1 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0601-0901_1x1");
+    v10_1_0609 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0601-0901_1x1"),
+    v10_1_0510 = ee.ImageCollection("projects/sites-project/condition_monitoring/products_v10-1_by_state_0501-1001_1x1");
 /***** End of imports. If edited, may not auto-convert in the playground. *****/
 // |
 // | Landsat Time Series Harmonic Condition Assessment -- 
@@ -14,10 +15,10 @@ var GSW = ee.Image("JRC/GSW1_3/GlobalSurfaceWater"),
 
 // -------------------- Image Collection ---------------------
 
-var FINAL_PRODUCTS = v10_1;
+var FINAL_PRODUCTS = v10_1_0510;
 
 // ---------------------- Visualization ---------------------- 
-var START_ASSESS = 2015;
+var START_ASSESS = 2019;
 var END_ASSESS = 2021;
 
 var THRESHOLD = 2; 

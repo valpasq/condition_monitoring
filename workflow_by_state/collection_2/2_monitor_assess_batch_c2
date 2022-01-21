@@ -60,12 +60,12 @@ var viz = {
 
 // -------------------------------- Baseline Info -------------------------------- 
 
-var BASELINES_COLLECTION = ee.ImageCollection(BASELINES_DIR + BASELINES_COLLECTION);
+var baselines_collection = ee.ImageCollection(BASELINES_DIR + BASELINES_COLLECTION);
 
-var DEPENDENT = BASELINES_COLLECTION.first()
+var DEPENDENT = baselines_collection.first()
     .get('spectral_band').getInfo();
     
-var HARMONICS = BASELINES_COLLECTION.first()
+var HARMONICS = baselines_collection.first()
     .get('harmonics').getInfo();
 
 // ------------------------------ Modeling Constants -------------------------------- 
@@ -191,7 +191,7 @@ for (var state_index in STATES) {
         'state': state});
         
     // Get baselines
-    var baselines_for_state = BASELINES_COLLECTION
+    var baselines_for_state = baselines_collection
         .filterMetadata('state', 'equals', state)
         .filter(ee.Filter.rangeContains('year_end', year - N_MODELS, year - 1));
     

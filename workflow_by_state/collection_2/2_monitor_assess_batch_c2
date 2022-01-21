@@ -34,6 +34,7 @@ var OUTPUT_DIR = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
+
 var START_YEAR = 1995;      // First year in monitoring year list
 var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 

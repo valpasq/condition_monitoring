@@ -15,6 +15,7 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // Specify EE directory and collection with baseline models.
+// Do not change this if you want to use existing baseline results.
 var BASELINES_DIR = 'projects/sites-project/condition_monitoring/';
 var VERSION = '10-1';
 var BASELINES_COLLECTION = 'baselines_v' + VERSION + '_by_state';
@@ -57,7 +58,7 @@ var viz = {
 
 // -------------------------------- Baseline Info -------------------------------- 
 
-var BASELINES_COLLECTION = ee.ImageCollection(BASELINES_DIR + BASELINES);
+var BASELINES_COLLECTION = ee.ImageCollection(BASELINES_DIR + BASELINES_COLLECTION);
 
 var DEPENDENT = BASELINES_COLLECTION.first()
     .get('spectral_band').getInfo();

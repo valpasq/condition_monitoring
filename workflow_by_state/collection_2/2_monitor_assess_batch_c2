@@ -28,7 +28,7 @@ var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 var STATES = ['MA', 'RI', 'CT'];
 
 // Specify output name and location for EE exports.
-// (Note: Must first create Image Collection to write assets to.)
+// Note: Must first create Image Collection to write assets to.
 var OUTPUT_NAME = '0501-1001';
 var OUTPUT_DIR = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';

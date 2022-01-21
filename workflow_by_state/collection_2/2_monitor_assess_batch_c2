@@ -16,7 +16,7 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 var VERSION = '10-1';
 
-var ROOT = 'projects/sites-project/condition_monitoring/';
+var BASELINES_ROOT = 'projects/sites-project/condition_monitoring/';
 var BASELINES = 'baselines_v10-1_by_state';
 
 var OUTPUT_CRS = 'EPSG:5070';
@@ -25,10 +25,11 @@ var KERNEL = 1;
 
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 
-var STATES = ['PA'];
+var STATES = ['MA', 'RI', 'CT'];
 
 var OUTPUT_NAME = '0501-1001';
-var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
+var OUTPUT_ROOT = 'projects/sites-project/condition_monitoring/';
+var OUTPUT_COLLECTION = OUTPUT_ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 1995;      // First year in monitoring year list
@@ -56,7 +57,7 @@ var viz = {
 
 // -------------------------------- Baseline Info -------------------------------- 
 
-var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
+var BASELINES_COLLECTION = ee.ImageCollection(BASELINES_ROOT + BASELINES);
 
 var DEPENDENT = BASELINES_COLLECTION.first()
     .get('spectral_band').getInfo();

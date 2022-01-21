@@ -14,19 +14,19 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// Specify 
+// Specify EE directory and collection with baseline models.
 var BASELINES_DIR = 'projects/sites-project/condition_monitoring/';
 var VERSION = '10-1';
 var BASELINES_COLLECTION = 'baselines_v' + VERSION + '_by_state';
 
+// Output parameters.
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
 var KERNEL = 1;
-
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
-
 var STATES = ['MA', 'RI', 'CT'];
 
+// Specify output name and location.
 var OUTPUT_NAME = '0501-1001';
 var OUTPUT_DIR = 'projects/sites-project/condition_monitoring/';
 var OUTPUT_COLLECTION = 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';

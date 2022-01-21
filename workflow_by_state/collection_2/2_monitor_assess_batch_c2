@@ -14,10 +14,10 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
+// Specify 
+var BASELINES_DIR = 'projects/sites-project/condition_monitoring/';
 var VERSION = '10-1';
-
-var BASELINES_ROOT = 'projects/sites-project/condition_monitoring/';
-var BASELINES = 'baselines_v10-1_by_state';
+var BASELINES_COLLECTION = 'baselines_v' + VERSION + '_by_state';
 
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
@@ -28,8 +28,8 @@ var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
 var STATES = ['MA', 'RI', 'CT'];
 
 var OUTPUT_NAME = '0501-1001';
-var OUTPUT_ROOT = 'projects/sites-project/condition_monitoring/';
-var OUTPUT_COLLECTION = OUTPUT_ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
+var OUTPUT_DIR = 'projects/sites-project/condition_monitoring/';
+var OUTPUT_COLLECTION = 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 var START_YEAR = 1995;      // First year in monitoring year list
@@ -57,7 +57,7 @@ var viz = {
 
 // -------------------------------- Baseline Info -------------------------------- 
 
-var BASELINES_COLLECTION = ee.ImageCollection(BASELINES_ROOT + BASELINES);
+var BASELINES_COLLECTION = ee.ImageCollection(BASELINES_DIR + BASELINES);
 
 var DEPENDENT = BASELINES_COLLECTION.first()
     .get('spectral_band').getInfo();
@@ -362,7 +362,7 @@ for (var state_index in STATES) {
       Export.image.toAsset({
           image: final_img,
           description: 'result_' + asset_name,
-          assetId: OUTPUT_COLLECTION + asset_name,
+          assetId: OUTPUT_DIR + OUTPUT_COLLECTION + asset_name,
           region: broad_geo_footprint,
           crs: OUTPUT_CRS,
           scale: 30,

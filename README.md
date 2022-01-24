@@ -12,14 +12,14 @@ Detecting changes in surface conditions requires establishing reference or "base
 ___
 
 ## Workflow
-Our workflow is designed to generate estimates of mean annual Tasseled Cap Greenness anomalies over large spatial extents using [Google Earth Engine](https://earthengine.google.com/). The original workflow was based on Landsat Collection 1 (C1) but has recently been updated for use with [Collection 2 (C2)]((https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-2) Surface Reflectance products [available in Earth Engine](https://developers.google.com/earth-engine/datasets/catalog/landsat).
+Our workflow is designed to generate estimates of mean annual Tasseled Cap Greenness anomalies over large spatial extents using [Google Earth Engine](https://earthengine.google.com/). The original workflow was based on Landsat Collection 1 (C1) but has recently been updated for use with [Collection 2 (C2)](https://www.usgs.gov/core-science-systems/nli/landsat/landsat-collection-2) Surface Reflectance products [available in Earth Engine](https://developers.google.com/earth-engine/datasets/catalog/landsat).
 
 Earth Engine users can add this repository with Reader access [here](https://code.earthengine.google.com/?accept_repo=users/valeriepasquarella/condition_monitoring).
 
 The scripts in this repository include:
 
 * `app/`
-    * `APP_condition_monitoring_explorer` (Deprecated)
+    * `APP_condition_monitoring_explorer` (deprecated)
     * `APP_condition_monitoring_explorer_c2` - Interactive mapping app for exploring condition monitoring results. All analysis has been updated to use Landsat Collection 2 for both baseline fitting and monitoring.
 * `workflow_by_state/`
     * collection_1 (deprecated)

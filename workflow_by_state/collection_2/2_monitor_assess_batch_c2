@@ -14,24 +14,28 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
+// Specify EE directory and collection with baseline models.
+// Do not change this if you want to use existing baseline results.
+var BASELINES_DIR = 'projects/sites-project/condition_monitoring/';
 var VERSION = '10-1';
+var BASELINES_COLLECTION = 'baselines_v' + VERSION + '_by_state';
 
-var ROOT = 'projects/sites-project/condition_monitoring/';
-var BASELINES = 'baselines_v10-1_by_state';
-
+// Output parameters.
 var OUTPUT_CRS = 'EPSG:5070';
 var OUTPUT_SCALE = 1000;
 var KERNEL = 1;
-
 var EXPORT_TYPE = 'Asset';  // 'Asset' or 'Drive'
+var STATES = ['MA', 'RI', 'CT'];
 
-var STATES = ['PA'];
-
+// Specify output name and location for EE exports.
+// Note: Must first create Image Collection to write assets to.
 var OUTPUT_NAME = '0501-1001';
-var OUTPUT_COLLECTION = ROOT + 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
+var OUTPUT_DIR = 'projects/sites-project/condition_monitoring/';
+var OUTPUT_COLLECTION = 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
-var START_YEAR = 2021;      // First year in monitoring year list
+
+var START_YEAR = 1995;      // First year in monitoring year list
 var END_YEAR = 2021;        // Last year in monitoring year list (inclusive)
 
 var DAY_START = '05-01';    // Date to start monitoring
@@ -56,12 +60,12 @@ var viz = {
 
 // -------------------------------- Baseline Info -------------------------------- 
 
-var BASELINES_COLLECTION = ee.ImageCollection(ROOT + BASELINES);
+var baselines_collection = ee.ImageCollection(BASELINES_DIR + BASELINES_COLLECTION);
 
-var DEPENDENT = BASELINES_COLLECTION.first()
+var DEPENDENT = baselines_collection.first()
     .get('spectral_band').getInfo();
     
-var HARMONICS = BASELINES_COLLECTION.first()
+var HARMONICS = baselines_collection.first()
     .get('harmonics').getInfo();
 
 // ------------------------------ Modeling Constants -------------------------------- 
@@ -187,7 +191,7 @@ for (var state_index in STATES) {
         'state': state});
         
     // Get baselines
-    var baselines_for_state = BASELINES_COLLECTION
+    var baselines_for_state = baselines_collection
         .filterMetadata('state', 'equals', state)
         .filter(ee.Filter.rangeContains('year_end', year - N_MODELS, year - 1));
     
@@ -361,7 +365,7 @@ for (var state_index in STATES) {
       Export.image.toAsset({
           image: final_img,
           description: 'result_' + asset_name,
-          assetId: OUTPUT_COLLECTION + asset_name,
+          assetId: OUTPUT_DIR + OUTPUT_COLLECTION + asset_name,
           region: broad_geo_footprint,
           crs: OUTPUT_CRS,
           scale: 30,

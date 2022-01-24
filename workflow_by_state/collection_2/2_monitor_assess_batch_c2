@@ -16,9 +16,8 @@ var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
 // Specify EE directory and collection with baseline models.
 // Do not change this if you want to use existing baseline results.
-var BASELINES_DIR = 'projects/sites-project/condition_monitoring/';
-var VERSION = '10-1';
-var BASELINES_COLLECTION = 'baselines_v' + VERSION + '_by_state';
+var BASELINES_COLLECTION = 'projects/sites-project/condition_monitoring/' +
+    'baselines_v10-1_by_state';
 
 // Output parameters.
 var OUTPUT_CRS = 'EPSG:5070';
@@ -30,8 +29,8 @@ var STATES = ['MA', 'RI', 'CT'];
 // Specify output name and location for EE exports.
 // Note: Must first create Image Collection to write assets to.
 var OUTPUT_NAME = '0501-1001';
-var OUTPUT_DIR = 'projects/sites-project/condition_monitoring/';
-var OUTPUT_COLLECTION = 'products_v' + VERSION + '_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
+var OUTPUT_COLLECTION = 'projects/sites-project/condition_monitoring/' +
+    'products_v10-1_by_state_' + OUTPUT_NAME + '_' + KERNEL + 'x' + KERNEL + '/';
 
 // -------------------------------- Monitoring Parameters --------------------------------- 
 
@@ -60,13 +59,16 @@ var viz = {
 
 // -------------------------------- Baseline Info -------------------------------- 
 
-var baselines_collection = ee.ImageCollection(BASELINES_DIR + BASELINES_COLLECTION);
+var baselines_collection = ee.ImageCollection(BASELINES_COLLECTION);
 
 var DEPENDENT = baselines_collection.first()
     .get('spectral_band').getInfo();
     
 var HARMONICS = baselines_collection.first()
     .get('harmonics').getInfo();
+    
+var VERSION = baselines_collection.first()
+    .get('version').getInfo();
 
 // ------------------------------ Modeling Constants -------------------------------- 
 
@@ -365,7 +367,7 @@ for (var state_index in STATES) {
       Export.image.toAsset({
           image: final_img,
           description: 'result_' + asset_name,
-          assetId: OUTPUT_DIR + OUTPUT_COLLECTION + asset_name,
+          assetId: OUTPUT_COLLECTION + asset_name,
           region: broad_geo_footprint,
           crs: OUTPUT_CRS,
           scale: 30,

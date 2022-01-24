@@ -14,7 +14,7 @@ var table = ee.FeatureCollection("TIGER/2018/States");
 // ---------------------------------- Imports & Outputs ---------------------------------- 
 var utils = require('users/valeriepasquarella/condition_monitoring:utils.js');
 
-// Specify EE collection with baseline models.
+// Specify EE collection with baseline model results.
 // Do not change this if you want to use existing baseline results.
 var BASELINES_COLLECTION = 'projects/sites-project/condition_monitoring/' +
     'baselines_v10-1_by_state';
